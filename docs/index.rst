@@ -25,6 +25,7 @@ Our core features include:
 
    basic_usage/qwen3_omni.md
    basic_usage/tts.md
+   basic_usage/voxtral.md
    basic_usage/omni_router.md
 
 
