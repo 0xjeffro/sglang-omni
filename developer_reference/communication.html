@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Communication &#8212; SGLang</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=ccdb6887"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer_reference/communication';</script>
+    <link rel="icon" href="https://docs.sglang.io/_static/logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Request-level profiler" href="profiler.html" />
+    <link rel="prev" title="Config" href="config.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+    <meta name="docbuild:last-update" content="May 26, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Get Started</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/qwen3_omni.html">Omni Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/tts.html">TTS Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/omni_router.html">Omni Router Usage</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/relay.html">Benchmark Relay</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="main.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apiserver_design.html">API Server Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipeline Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Config</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiler.html">Request-level profiler</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io/blob/main/developer_reference/communication.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io/edit/main/developer_reference/communication.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io/issues/new?title=Issue%20on%20page%20%2Fdeveloper_reference/communication.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/developer_reference/communication.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Communication</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-planes">Two Planes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normal-payload-flow">Normal Payload Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming-flow">Streaming Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relay-interface">Relay Interface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backends">Backends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-lifetime">Resource Lifetime</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="communication">
+<h1>Communication<a class="headerlink" href="#communication" title="Link to this heading">#</a></h1>
+<p>For the communication among stages in sglang-omni, the control plane moves small
+coordination messages over ZMQ; data plane, which is relay moves tensors and tensor-like blobs between
+stage processes.</p>
+<p>The main implementation entry points are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/pipeline/control_plane.py</span></code></p></td>
+<td><p>ZMQ sockets, msgpack serialization, stage/coordinator message routing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/pipeline/relay_io.py</span></code></p></td>
+<td><p>Stage-facing payload and stream transfer helpers</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/relay/base.py</span></code></p></td>
+<td><p>Backend interface and backend registry</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/relay/{shm,nccl,nixl,mooncake}.py</span></code></p></td>
+<td><p>Concrete relay backends</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/proto/messages.py</span></code></p></td>
+<td><p>Control-plane message types</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="two-planes">
+<h2>Two Planes<a class="headerlink" href="#two-planes" title="Link to this heading">#</a></h2>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>sequenceDiagram
+    participant A as Stage A
+    participant R as Relay
+    participant Z as ZMQ Control Plane
+    participant B as Stage B
+
+    A-&gt;&gt;R: put tensor buffer or blob
+    A-&gt;&gt;Z: DataReadyMessage(metadata)
+    Z-&gt;&gt;B: receive DataReadyMessage
+    B-&gt;&gt;R: get tensor buffer or blob
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Plane</p></th>
+<th class="head"><p>Transport</p></th>
+<th class="head"><p>Carries</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Control</p></td>
+<td><p>ZMQ<code class="docutils literal notranslate"><span class="pre">PUSH/PULL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">CompleteMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">StreamMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">ShutdownMessage</span></code>, profiler control</p></td>
+</tr>
+<tr class="row-odd"><td><p>Broadcast control</p></td>
+<td><p>ZMQ<code class="docutils literal notranslate"><span class="pre">PUB/SUB</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AbortMessage</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Data</p></td>
+<td><p>Relay backend</p></td>
+<td><p>Full<code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> tensor buffers and cross-GPU stream blobs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Same-GPU stream fast path</p></td>
+<td><p>CUDA IPC via<code class="docutils literal notranslate"><span class="pre">ForkingPickler</span></code></p></td>
+<td><p>Stream chunks and stream metadata tensors when sender and receiver share the same primary GPU</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">DataReadyMessage.shm_metadata</span></code> is the bridge between the planes. The field name
+is historical; today it carries generic relay metadata, not only shared-memory
+metadata. The message itself may also carry stream fields such as <code class="docutils literal notranslate"><span class="pre">chunk_id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">is_done</span></code>, and <code class="docutils literal notranslate"><span class="pre">error</span></code>.</p>
+</section>
+<section id="normal-payload-flow">
+<h2>Normal Payload Flow<a class="headerlink" href="#normal-payload-flow" title="Link to this heading">#</a></h2>
+<p>The coordinator submits the first <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> directly to the entry stage in a
+<code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>. After that, stage-to-stage payloads use relay.</p>
+<ol class="arabic simple">
+<li><p>The sender calls <code class="docutils literal notranslate"><span class="pre">relay_io.write_payload(relay,</span> <span class="pre">request_id,</span> <span class="pre">payload)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">write_payload()</span></code> recursively extracts tensors from <code class="docutils literal notranslate"><span class="pre">payload.data</span></code>, replaces
+them with placeholders, pickles the tensor-free <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code>, and
+concatenates tensors into one <code class="docutils literal notranslate"><span class="pre">uint8</span></code> buffer.</p></li>
+<li><p>The sender calls <code class="docutils literal notranslate"><span class="pre">relay.put_async()</span></code> for that buffer and sends a
+<code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code> containing:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">relay_info</span></code>: backend-specific metadata from <code class="docutils literal notranslate"><span class="pre">RelayOperation.metadata</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">payload_pickle</span></code>: base64-encoded <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> without tensors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tensor_info</span></code>: path, shape, dtype, offset, and byte size for each tensor</p></li>
+</ul>
+</li>
+<li><p>The receiver handles the message in <code class="docutils literal notranslate"><span class="pre">Stage._on_data_ready()</span></code>, calls
+<code class="docutils literal notranslate"><span class="pre">relay_io.read_payload()</span></code>, waits for <code class="docutils literal notranslate"><span class="pre">relay.get_async()</span></code>, restores tensors,
+and passes the payload through the stage input handler.</p></li>
+<li><p>If fan-in is complete, the stage enqueues an <code class="docutils literal notranslate"><span class="pre">IncomingMessage</span></code> into
+<code class="docutils literal notranslate"><span class="pre">scheduler.inbox</span></code>.</p></li>
+</ol>
+<p>The payload relay format is intentionally backend-neutral. Backends only need to
+move a flat tensor buffer and return metadata that another backend instance can
+use for <code class="docutils literal notranslate"><span class="pre">get_async()</span></code>.</p>
+</section>
+<section id="streaming-flow">
+<h2>Streaming Flow<a class="headerlink" href="#streaming-flow" title="Link to this heading">#</a></h2>
+<p>Streaming is used for producer-consumer edges such as thinker to talker hidden
+states or talker to vocoder codec codes. The stage layer exposes one sending
+helper, <code class="docutils literal notranslate"><span class="pre">relay_io.send_stream_chunk()</span></code>, because the sender must choose the
+transport path.</p>
+<p>For same-GPU stream targets:</p>
+<ul class="simple">
+<li><p>runtime prep detects targets whose sender and receiver share the same
+primary GPU</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">send_stream_chunk()</span></code> serializes the chunk with <code class="docutils literal notranslate"><span class="pre">ForkingPickler</span></code></p></li>
+<li><p>CUDA tensors are shared through CUDA IPC instead of copied through relay</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code> carries <code class="docutils literal notranslate"><span class="pre">_ipc=True</span></code> metadata and a <code class="docutils literal notranslate"><span class="pre">chunk_id</span></code></p></li>
+</ul>
+<p>For cross-GPU stream targets:</p>
+<ul class="simple">
+<li><p>the chunk is written with <code class="docutils literal notranslate"><span class="pre">write_blob()</span></code></p></li>
+<li><p>tensor-valued metadata is extracted and written as separate blob transfers</p></li>
+<li><p>the control message is sent before waiting for pending put operations</p></li>
+<li><p>the receiver reads the blob in <code class="docutils literal notranslate"><span class="pre">Stage._on_stream_chunk()</span></code> and enqueues a
+<code class="docutils literal notranslate"><span class="pre">stream_chunk</span></code> message into <code class="docutils literal notranslate"><span class="pre">scheduler.inbox</span></code></p></li>
+</ul>
+<p>The control-before-wait ordering is important for NIXL and other credit-based
+backends. If the sender waited for completion before notifying the receiver, the
+receiver would never start the read that releases the sender’s credit.</p>
+<p>Stream completion and stream errors are control-only messages sent with
+<code class="docutils literal notranslate"><span class="pre">send_stream_signal()</span></code>.</p>
+</section>
+<section id="relay-interface">
+<h2>Relay Interface<a class="headerlink" href="#relay-interface" title="Link to this heading">#</a></h2>
+<p>All backends implement <code class="docutils literal notranslate"><span class="pre">Relay</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Relay</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">put_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dst_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RelayOperation</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">dest_tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RelayOperation</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">put_async()</span></code> returns a <code class="docutils literal notranslate"><span class="pre">RelayOperation</span></code> whose <code class="docutils literal notranslate"><span class="pre">metadata</span></code> is placed in the
+control message. Both put and get operations expose
+<code class="docutils literal notranslate"><span class="pre">await</span> <span class="pre">wait_for_completion(timeout=...)</span></code>. Stages keep the operation alive until
+the transfer is safe to release.</p>
+</section>
+<section id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">PipelineConfig.relay_backend</span></code> accepts <code class="docutils literal notranslate"><span class="pre">shm</span></code>, <code class="docutils literal notranslate"><span class="pre">nccl</span></code>, <code class="docutils literal notranslate"><span class="pre">nixl</span></code>, or <code class="docutils literal notranslate"><span class="pre">mooncake</span></code>.
+<code class="docutils literal notranslate"><span class="pre">RelayConfig</span></code> can override slot size, credits, rank, world size, and device per
+stage. If no per-stage relay config is provided, runtime prep infers the relay
+device from stage placement. For <code class="docutils literal notranslate"><span class="pre">shm</span></code>, it keeps relay buffers on CPU because
+the backend copies through host shared memory.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Backend</p></th>
+<th class="head"><p>Current behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shm</span></code></p></td>
+<td><p>Creates a Python shared-memory block, copies tensor bytes into it, and lets the receiver copy out and unlink the block. Useful for local process transfer and CPU fallback.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nccl</span></code></p></td>
+<td><p>Uses<code class="docutils literal notranslate"><span class="pre">torch.distributed</span></code> NCCL <code class="docutils literal notranslate"><span class="pre">isend</span></code>/<code class="docutils literal notranslate"><span class="pre">irecv</span></code> with explicit send and receive rank topology. Useful for GPU-to-GPU transfer inside an NCCL world.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nixl</span></code></p></td>
+<td><p>Uses a preallocated registered memory pool, NIXL agent metadata, remote reads, completion notifications, and credits for safe buffer reuse.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mooncake</span></code></p></td>
+<td><p>Uses Mooncake Transfer Engine with a registered memory pool, P2P session metadata, protocol selection, notifications, and credits.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each backend owns only transport mechanics. It does not route requests, perform
+fan-in, choose downstream stages, or interpret model payloads.</p>
+</section>
+<section id="resource-lifetime">
+<h2>Resource Lifetime<a class="headerlink" href="#resource-lifetime" title="Link to this heading">#</a></h2>
+<p>The stage layer follows a simple ownership rule:</p>
+<ul class="simple">
+<li><p>sender writes data, sends <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>, then waits for the put operation
+when required by the backend</p></li>
+<li><p>receiver allocates the destination buffer, waits for the get operation,
+restores the payload, and calls <code class="docutils literal notranslate"><span class="pre">relay.cleanup(request_id)</span></code></p></li>
+<li><p>aborts call <code class="docutils literal notranslate"><span class="pre">relay.cleanup(request_id)</span></code> from the stage abort path</p></li>
+<li><p>stage shutdown calls <code class="docutils literal notranslate"><span class="pre">relay.close()</span></code></p></li>
+</ul>
+<p>Backend-specific cleanup is hidden behind that interface. For example, <code class="docutils literal notranslate"><span class="pre">shm</span></code>
+unlinks blocks on receive, NIXL and Mooncake release memory-pool credits after
+completion, and NCCL tears down the process group on close.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="config.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Config</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="profiler.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Request-level profiler</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-planes">Two Planes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normal-payload-flow">Normal Payload Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming-flow">Streaming Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relay-interface">Relay Interface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backends">Backends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-lifetime">Resource Lifetime</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SGLang-Omni Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, SGLang-Omni.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on May 26, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

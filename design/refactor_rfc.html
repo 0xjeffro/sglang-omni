@@ -1,0 +1,1483 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SGLang Omni Refactor Tracking &#8212; SGLang</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=ccdb6887"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'design/refactor_rfc';</script>
+    <link rel="icon" href="https://docs.sglang.io/_static/logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+    <meta name="docbuild:last-update" content="May 26, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Get Started</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/qwen3_omni.html">Omni Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/tts.html">TTS Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/omni_router.html">Omni Router Usage</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/relay.html">Benchmark Relay</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/main.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/apiserver_design.html">API Server Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/pipeline.html">Pipeline Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/communication.html">Communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/profiler.html">Request-level profiler</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io/blob/main/design/refactor_rfc.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io/edit/main/design/refactor_rfc.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sgl-project.github.io/issues/new?title=Issue%20on%20page%20%2Fdesign/refactor_rfc.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/design/refactor_rfc.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>SGLang Omni Refactor Tracking</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#system-overview">System Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-responsibilities">Layer Responsibilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-layout">Directory Layout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-diagram">Class Diagram</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-layer">Pipeline Layer</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#http-websocket">HTTP/Websocket</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client">Client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coordinator">Coordinator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage">Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inter-stage-communication">Inter-Stage Communication</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relay-io-utility-module"><code class="docutils literal notranslate"><span class="pre">relay_io</span></code> Utility Module</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduling-layer">Scheduling Layer</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#omnischeduler-composition-with-sglang">OmniScheduler — Composition with SGLang</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplescheduler">SimpleScheduler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code2wavscheduler">Code2WavScheduler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#message-types">Message Types</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-runner-callbacks">Model Runner + Callbacks</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modelrunner-base"><code class="docutils literal notranslate"><span class="pre">ModelRunner</span></code> (Base)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thinkermodelrunner"><code class="docutils literal notranslate"><span class="pre">ThinkerModelRunner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feedbackarmodelrunner"><code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#callback-pattern">Callback Pattern</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-forward-one-decode-step-ar-codebook">Model.forward(): One Decode Step (AR + Codebook)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-directory-convention">Model Directory Convention</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qwen3-omni">Qwen3-Omni</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fish-audio-s2-pro">Fish Audio S2-Pro</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declarative-config">Declarative Config</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stageconfig-reference"><code class="docutils literal notranslate"><span class="pre">StageConfig</span></code> reference</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelineconfig-reference"><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> reference</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-process-runner">Multi-Process Runner</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stageprocessspec"><code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stagegroup"><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiprocessrunner"><code class="docutils literal notranslate"><span class="pre">MultiProcessRunner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-parallelism-support">Tensor Parallelism Support</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-pipelines">Supported Pipelines</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qwen3-omni-8-stage-speech">Qwen3-Omni (8-stage speech)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fish-audio-s2-pro-3-stage-tts">Fish Audio S2-Pro (3-stage TTS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mimo-audio-249-planned">MiMo-Audio (#249) — planned</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ming-omni-236-planned">Ming-Omni (#236) — planned</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-new-model">Adding a New Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tp-size">tp_size</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#progress-tracking">Progress Tracking</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="sglang-omni-refactor-tracking">
+<h1>SGLang Omni Refactor Tracking<a class="headerlink" href="#sglang-omni-refactor-tracking" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p>Follows from <a class="reference external" href="https://github.com/sgl-project/sglang/issues/16546">sglang#16546</a>. Addresses problems in <a class="reference external" href="https://github.com/sgl-project/sglang-omni/issues/188">#188</a>.</p>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<section id="system-overview">
+<h3>System Overview<a class="headerlink" href="#system-overview" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>HTTP API → Client → Coordinator → Stage → [Scheduler → ModelRunner → forward]
+</pre></div>
+</div>
+</section>
+<section id="layer-responsibilities">
+<h3>Layer Responsibilities<a class="headerlink" href="#layer-responsibilities" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Responsibility</p></th>
+<th class="head"><p>Model-aware?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Coordinator</strong></p></td>
+<td><p>Request lifecycle, routing to entry stage, multi-terminal merge, abort broadcast</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Stage</strong></p></td>
+<td><p>IO shell — ZMQ control plane, relay data plane, fan-in aggregation, stream routing</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Scheduler</strong></p></td>
+<td><p>Batch selection, KV cache management, compute dispatch</p></td>
+<td><p>Partially</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ModelRunner</strong></p></td>
+<td><p>Forward pass, sampling, model-specific hooks</p></td>
+<td><p>Yes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="directory-layout">
+<h3>Directory Layout<a class="headerlink" href="#directory-layout" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sglang_omni/
+├── pipeline/           # Inter-stage orchestration (model-agnostic)
+├── scheduling/         # Scheduling loops (OmniScheduler, SimpleScheduler)
+├── model_runner/       # Model runner base + shared FeedbackARModelRunner
+├── models/             # Model definitions + pipeline configs
+├── config/             # Pipeline config schema + compiler
+├── relay/              # Data transfer backends (SHM, NCCL, NixL)
+├── serve/              # HTTP server, OpenAI API
+├── client/             # Client library
+└── proto/              # Message types
+</pre></div>
+</div>
+</section>
+<section id="class-diagram">
+<h3>Class Diagram<a class="headerlink" href="#class-diagram" title="Link to this heading">#</a></h3>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>classDiagram
+    class Coordinator {
+        +entry_stage: str
+        +register_stage(name, endpoint)
+        +submit(request_id, request) result
+        +stream(request_id, request) AsyncIterator
+        +abort(request_id) bool
+        +run_completion_loop()
+    }
+
+    class Stage {
+        +name: str
+        +control_plane: StageControlPlane
+        +relay: Relay
+        +scheduler: Scheduler
+        +start()
+        +run()
+        +stop()
+    }
+
+    class Scheduler {
+        &lt;&lt;interface&gt;&gt;
+        +inbox: Queue~IncomingMessage~
+        +outbox: Queue~OutgoingMessage~
+        +start()
+        +stop()
+        +abort(request_id)
+    }
+
+    class OmniScheduler {
+        +request_builder: Callable
+        +recv_requests()
+        +process_input_requests()
+        +run_batch()
+    }
+
+    class SimpleScheduler {
+        -compute_fn: Callable
+    }
+
+    class Code2WavScheduler {
+        -model: Code2Wav
+    }
+
+    class ModelRunner {
+        +execute(scheduler_output) ModelRunnerOutput
+        +prepare_forward()* hook
+        +post_forward()* hook
+    }
+
+    class ThinkerModelRunner {
+        +prepare_forward(): inject multimodal embeds
+    }
+
+    class FeedbackARModelRunner {
+        +write_buffers_fn: Callable
+        +extract_output_fn: Callable
+        +prefill_forward_fn: Callable
+    }
+
+    Coordinator --&gt; Stage : routes requests to
+    Stage --&gt; Scheduler : inbox/outbox
+    Scheduler &lt;|-- OmniScheduler
+    Scheduler &lt;|-- SimpleScheduler
+    Scheduler &lt;|-- Code2WavScheduler
+    OmniScheduler --&gt; ModelRunner : run_batch delegates to
+    ModelRunner &lt;|-- ThinkerModelRunner
+    ModelRunner &lt;|-- FeedbackARModelRunner
+
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> HTTP API → Client is currently lost from the original lifecycle diagram and should be added back to the system overview. &#64;Huapeng</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> Please add the WebSocket here. &#64;huapeng</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Yichi):</strong> nit: ModelRunner hook can be illustrated more clearly in the overview (e.g. by splitting into prepare_prefill/decode and post_prefill/decode rather than generic prepare/post_forward). Since they have different behavior on thinker and talker, and it is important enough to demonstrate in the graph.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Yichi):</strong> Also, “Client” section doesn’t seem to be appear in the doc, should we add it as well?</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>【TODO: Huapeng make up https design layer】</strong></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pipeline-layer">
+<h2>Pipeline Layer<a class="headerlink" href="#pipeline-layer" title="Link to this heading">#</a></h2>
+<section id="http-websocket">
+<h3>HTTP/Websocket<a class="headerlink" href="#http-websocket" title="Link to this heading">#</a></h3>
+<p>HTTP and websocket is sglang omni’s request endpoint which exposes to the outside, as user we can get the response we want via these endpoint.</p>
+<ul class="simple">
+<li><p><strong>HTTP:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/chat/completions</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/audio/speech</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/v1/models</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>WebSocket:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">WS</span> <span class="pre">/v1/realtime</span></code></p></li>
+</ul>
+</li>
+</ul>
+<p>For the difference between http and websocket, you can think it’s like when you chat, you use messages or phone call, one is request and get, one is duplex communication. PR ref</p>
+</section>
+<section id="client">
+<h3>Client<a class="headerlink" href="#client" title="Link to this heading">#</a></h3>
+<p>Client is like the adapter between http/websocket and coordinator, it’s like the real implementation of endpoint.</p>
+<p>Like the <code class="docutils literal notranslate"><span class="pre">/speech</span></code>, it refines the input calls the generate and return the refined output.</p>
+<p>Code part:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="n">request_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">audio_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">audio_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">audio_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">sample_rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">sample_rate</span>
+    <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">chunk</span>
+</pre></div>
+</div>
+</section>
+<section id="coordinator">
+<h3>Coordinator<a class="headerlink" href="#coordinator" title="Link to this heading">#</a></h3>
+<p>Global request router. Tracks the request lifecycle across stages.</p>
+<ol class="arabic simple">
+<li><p>Routes new requests to the entry stage</p></li>
+<li><p>Collects completions from terminal stages</p></li>
+<li><p>Merges results when multiple terminal stages exist (e.g., <code class="docutils literal notranslate"><span class="pre">decode</span></code> + <code class="docutils literal notranslate"><span class="pre">code2wav</span></code>)</p></li>
+<li><p>Broadcasts abort to all stages</p></li>
+</ol>
+</section>
+<section id="stage">
+<h3>Stage<a class="headerlink" href="#stage" title="Link to this heading">#</a></h3>
+<p>IO shell. Every stage has one scheduler (no branching). Handles all inter-stage communication.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Stage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">control_plane</span><span class="p">,</span> <span class="n">relay</span><span class="p">,</span> <span class="n">route_fn</span><span class="p">,</span>
+                 <span class="n">input_handler</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">stream_targets</span><span class="p">,</span> <span class="n">same_gpu_targets</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>  <span class="c1"># always present</span>
+</pre></div>
+</div>
+<p>Responsibilities:</p>
+<ul class="simple">
+<li><p><strong>Control plane (ZMQ):</strong> receive <code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">AbortMessage</span></code></p></li>
+<li><p><strong>Data plane (Relay):</strong> read/write tensors between stages via SHM/NCCL/NixL</p></li>
+<li><p><strong>Input aggregation:</strong> wait for multiple upstream stages before dispatching (<code class="docutils literal notranslate"><span class="pre">AggregatedInput</span></code>)</p></li>
+<li><p><strong>Stream routing:</strong> receive/send streaming chunks (hidden states, codec codes)</p></li>
+<li><p><strong>Dispatch:</strong> push all messages into <code class="docutils literal notranslate"><span class="pre">scheduler.inbox</span></code>, drain <code class="docutils literal notranslate"><span class="pre">scheduler.outbox</span></code></p></li>
+</ul>
+<p>One code path. Stage never checks scheduler type.</p>
+</section>
+<section id="inter-stage-communication">
+<h3>Inter-Stage Communication<a class="headerlink" href="#inter-stage-communication" title="Link to this heading">#</a></h3>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>sequenceDiagram
+   participant A as Stage A
+   participant Relay as Relay (SHM/NCCL/NixL)
+   participant ZMQ as Control Plane (ZMQ)
+   participant B as Stage B
+   A-&gt;&gt;Relay: write(tensors)
+   A-&gt;&gt;ZMQ: send(DataReadyMessage)
+   ZMQ-&gt;&gt;B: recv(DataReadyMessage)
+   B-&gt;&gt;Relay: read(tensors)
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Control plane (ZMQ):</strong> small messages — Submit, DataReady, Abort, Shutdown. PUB/SUB for abort broadcast, PUSH/PULL for point-to-point.</p></li>
+<li><p><strong>Data plane (Relay):</strong> large tensors. Pluggable backends: SHM (single machine), NCCL (multi-GPU), NixL (RDMA multi-node), Mooncake. Same-GPU stages use CUDA IPC zero-copy automatically.</p></li>
+<li><p><strong>Streaming:</strong> hidden states / codec codes flow via <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code> with <code class="docutils literal notranslate"><span class="pre">chunk_id</span></code> and <code class="docutils literal notranslate"><span class="pre">is_done</span></code> fields, parallel to normal result routing.</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> The split between control and data planes is core: ZMQ carries small coordination messages (<code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">AbortMessage</span></code>), while the relay (SHM/NCCL/NIXL/Mooncake) carries the actual tensors.</p>
+</div></blockquote>
+<blockquote>
+<div><p>The thinker→talker relationship is fundamentally producer-consumer — thinker produces hidden states / text tokens, talker consumes them and produces audio codes. This is structurally the same pattern as RL training (e.g., actor produces trajectories, learner consumes them), where Ray is the dominant orchestration layer. So a first-principles question: should we consider Ray for the inter-stage scheduling layer instead of hand-rolling ZMQ + relay? (Jingwen) As discussed, not adding it for now due to heaviness of Ray.</p>
+</div></blockquote>
+</section>
+<section id="relay-io-utility-module">
+<h3><code class="docutils literal notranslate"><span class="pre">relay_io</span></code> Utility Module<a class="headerlink" href="#relay-io-utility-module" title="Link to this heading">#</a></h3>
+<p>Utility module providing:</p>
+<ul class="simple">
+<li><p><strong>User-facing API</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">write_payload</span></code> / <code class="docutils literal notranslate"><span class="pre">read_payload</span></code> — full <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> serialization via relay</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">send_stream_chunk</span></code> — handles same-GPU IPC vs cross-GPU relay, NIXL credit deadlock avoidance</p></li>
+</ul>
+</li>
+<li><p><strong>Internal facing-API</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">write_blob</span></code> / <code class="docutils literal notranslate"><span class="pre">read_blob</span></code> — raw tensor transfer for streaming chunks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extract_tensors</span></code> / <code class="docutils literal notranslate"><span class="pre">restore_tensors</span></code> — recursive tensor extraction from nested dicts</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> (Solved)</p>
+<ol class="arabic simple">
+<li><p>API layering. <code class="docutils literal notranslate"><span class="pre">write_payload</span></code> / <code class="docutils literal notranslate"><span class="pre">read_payload</span></code> and <code class="docutils literal notranslate"><span class="pre">send_stream_chunk</span></code> are the user-facing APIs that stages actually call. <code class="docutils literal notranslate"><span class="pre">write_blob</span></code> / <code class="docutils literal notranslate"><span class="pre">read_blob</span></code> and <code class="docutils literal notranslate"><span class="pre">extract_tensors</span></code> / <code class="docutils literal notranslate"><span class="pre">restore_tensors</span></code> are internal building blocks — the former gets wrapped by <code class="docutils literal notranslate"><span class="pre">send_stream_chunk</span></code> for cross-GPU transfer, the latter gets used inside <code class="docutils literal notranslate"><span class="pre">write_payload</span></code> / <code class="docutils literal notranslate"><span class="pre">read_payload</span></code> to pull tensors out of nested dicts.</p></li>
+<li><p>Asymmetric stream API. There is no <code class="docutils literal notranslate"><span class="pre">recv_stream_chunk</span></code>. Only <code class="docutils literal notranslate"><span class="pre">send_stream_chunk</span></code> exists because the sender has real decisions to make (same-GPU IPC vs cross-GPU relay, NIXL credit management), while the receiver just calls <code class="docutils literal notranslate"><span class="pre">read_blob</span></code> from the stage’s main message loop — wrapping a one-liner into <code class="docutils literal notranslate"><span class="pre">recv_stream_chunk</span></code> would add a layer without adding any value.</p></li>
+</ol>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="scheduling-layer">
+<h2>Scheduling Layer<a class="headerlink" href="#scheduling-layer" title="Link to this heading">#</a></h2>
+<p>All schedulers share the same interface: <code class="docutils literal notranslate"><span class="pre">inbox</span></code>, <code class="docutils literal notranslate"><span class="pre">outbox</span></code>, <code class="docutils literal notranslate"><span class="pre">start()</span></code>, <code class="docutils literal notranslate"><span class="pre">stop()</span></code>, <code class="docutils literal notranslate"><span class="pre">abort()</span></code>.</p>
+<section id="omnischeduler-composition-with-sglang">
+<h3>OmniScheduler — Composition with SGLang<a class="headerlink" href="#omnischeduler-composition-with-sglang" title="Link to this heading">#</a></h3>
+<p><img alt="OmniScheduler — Composition with SGLang" src="../_images/omni_scheduler_composition.png" /></p>
+<p>For AR stages. Subset of SGLang Scheduler — reuses <code class="docutils literal notranslate"><span class="pre">get_next_batch_to_run()</span></code>, <code class="docutils literal notranslate"><span class="pre">run_batch()</span></code>, <code class="docutils literal notranslate"><span class="pre">process_batch_result()</span></code>, <code class="docutils literal notranslate"><span class="pre">event_loop_normal()</span></code>, overlap scheduling.</p>
+<ul class="simple">
+<li><p><strong>Reused from SGLang:</strong> <code class="docutils literal notranslate"><span class="pre">get_next_batch_to_run()</span></code>, <code class="docutils literal notranslate"><span class="pre">process_batch_result()</span></code>, <code class="docutils literal notranslate"><span class="pre">self_check_during_idle()</span></code> — KV cache management, prefill/decode scheduling, tree cache, dLLM support</p></li>
+<li><p><strong>Overridden:</strong> <code class="docutils literal notranslate"><span class="pre">init</span></code> (skip ZMQ/tokenizer/metrics), <code class="docutils literal notranslate"><span class="pre">recv_requests()</span></code> (drain inbox, route stream chunks to per-request state), <code class="docutils literal notranslate"><span class="pre">process_input_requests()</span></code> (<code class="docutils literal notranslate"><span class="pre">request_builder</span></code> conversion), <code class="docutils literal notranslate"><span class="pre">run_batch()</span></code> (delegate to ModelRunner), <code class="docutils literal notranslate"><span class="pre">send_to_tokenizer()</span></code> (no-op)</p></li>
+<li><p><strong>Not used from SGLang:</strong> ZMQ channels, tokenizer init, grammar backend, metrics exporter, disaggregation, LoRA, speculative decoding, PP, watchdog</p></li>
+</ul>
+<p>Runs in a dedicated thread. Stage communicates via thread-safe queues.</p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> Should we separately discuss <code class="docutils literal notranslate"><span class="pre">ThinkerScheduler</span></code> and <code class="docutils literal notranslate"><span class="pre">CodePredictorScheduler</span></code>? Their KV cache is quite different. <code class="docutils literal notranslate"><span class="pre">CodePredictor</span></code> is put under Talker.</p>
+<p>Composition with SGLang’s Scheduler is reasonable, but we should pin down the boundary now to avoid the kind of upgrade pain SGLang RL forks have hit repeatedly.</p>
+<p>Four points:</p>
+<ol class="arabic simple">
+<li><p><strong>Pin or track?</strong> Tracking SGLang main fits the same-umbrella relationship, but only if CI runs against the real Scheduler, not mocks. Otherwise pin. (now it’s a pin. It’s too expensive currently to track)</p></li>
+<li><p><strong>Minimize reuse surface.</strong> Use PrefillManager and DecodeManager as black boxes — public methods only, no reads or writes of internal attributes. The moment we touch internals, composition becomes a de facto fork.</p></li>
+<li><p><strong>Upstream-first.</strong> When OmniScheduler needs something SGLang doesn’t cleanly expose, push a hook or factored-out method into SGLang main rather than patching downstream. The RFC already notes SGLang needs a clean-based Scheduler — contributing to that is directly in our interest. (too expensive for now, will try to do in the future)</p></li>
+</ol>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong>
+The same OOM behaves differently across models today: S2-Pro and Voxtral return HTTP 500 (correct), Ming-Omni returns HTTP 200 with <code class="docutils literal notranslate"><span class="pre">waveform=None</span></code> (silent failure), Qwen3-Omni returns HTTP 200 with a zero tensor (worst — looks like a valid waveform downstream). The first two work correctly only because they did nothing; the latter two fail because a broad <code class="docutils literal notranslate"><span class="pre">except</span> <span class="pre">Exception</span></code> in the executor swallowed the error. Under the current architecture, writing less code is writing more correct code — that’s not a healthy signal, and every new model integration has to rediscover error handling from scratch.</p>
+<p>This refactor should fix it at the Scheduler layer: (Jingwen: pr #449)</p>
+<ol class="arabic simple">
+<li><p><strong>Unified catch in <code class="docutils literal notranslate"><span class="pre">run_batch()</span></code></strong> — Scheduler wraps forward, catches exceptions, marks request failed, propagates via outbox → Coordinator → HTTP 500 for non-streaming. For streaming responses, HTTP headers are already flushed before the first chunk, so HTTP 500 cannot fire mid-stream — instead, successful streams must terminate with an explicit completion sentinel frame, and failed streams abort the connection before emitting it. Absent sentinel + premature close is the client-side failure signal.</p></li>
+<li><p><strong>Model executors forbidden from writing <code class="docutils literal notranslate"><span class="pre">except</span> <span class="pre">Exception</span></code></strong> — model-side code is pure functional, doesn’t own lifecycle, exceptions propagate naturally. Specific expected exceptions must catch specific types, never base <code class="docutils literal notranslate"><span class="pre">Exception</span></code>. Must be enforced via lint rule, not review discipline: rule 1’s catch is path-local to <code class="docutils literal notranslate"><span class="pre">run_batch()</span></code>, so a broad catch in <code class="docutils literal notranslate"><span class="pre">add_request</span></code> or embed-load paths (e.g. <code class="docutils literal notranslate"><span class="pre">_load_thinker_embedding_rows</span></code>’ per-shard catch) slips past it. Lint is the only mechanism that closes that gap.</p></li>
+<li><p><strong>Fallbacks architecturally disallowed</strong> — executor either succeeds or hands off to Scheduler. No third path returning a “fake success” indistinguishable from a real result. Concrete violations to clean up at enforcement time include <code class="docutils literal notranslate"><span class="pre">_generate_speech</span></code> returning <code class="docutils literal notranslate"><span class="pre">(None,</span> <span class="pre">44100,</span> <span class="pre">0.0)</span></code>.</p></li>
+<li><p><strong>CI fault injection</strong> — inject OOM and verify the correct failure signal per model: HTTP 500 for non-streaming, sentinel-absent + premature close for streaming. Detection-only by nature, so it complements but does not substitute for rule 2’s lint enforcement.</p></li>
+</ol>
+<p>Short-term bridge fix (#302) should land as-is without an <code class="docutils literal notranslate"><span class="pre">is_oom_error()</span></code> helper, since that helper becomes dead code once the Scheduler-layer catch lands.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>【TODO: chenyang, I pinged my comment in#449】</strong></p>
+</div></blockquote>
+</section>
+<section id="simplescheduler">
+<h3>SimpleScheduler<a class="headerlink" href="#simplescheduler" title="Link to this heading">#</a></h3>
+<p>For non-AR stages (preprocessing, encoders, aggregate, decode). No KV cache, no batching. Just <code class="docutils literal notranslate"><span class="pre">inbox.get()</span></code> → <code class="docutils literal notranslate"><span class="pre">fn(data)</span></code> → <code class="docutils literal notranslate"><span class="pre">outbox.put()</span></code>. Supports inbox/outbox and basic forward operation; batched processing supported where useful.</p>
+</section>
+<section id="code2wavscheduler">
+<h3>Code2WavScheduler<a class="headerlink" href="#code2wavscheduler" title="Link to this heading">#</a></h3>
+<p>Streaming vocoder. Handles:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">new_request</span></code> → init</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream_chunk</span></code> → accumulate + decode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream_done</span></code> → flush + output</p></li>
+</ul>
+</section>
+<section id="message-types">
+<h3>Message Types<a class="headerlink" href="#message-types" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">IncomingMessage</span><span class="p">:</span>
+    <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;new_request&quot;</span> <span class="o">|</span> <span class="s2">&quot;stream_chunk&quot;</span> <span class="o">|</span> <span class="s2">&quot;stream_done&quot;</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Any</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">OutgoingMessage</span><span class="p">:</span>
+    <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;result&quot;</span> <span class="o">|</span> <span class="s2">&quot;stream&quot;</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>  <span class="c1"># for stream: downstream stage name</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="model-runner-callbacks">
+<h2>Model Runner + Callbacks<a class="headerlink" href="#model-runner-callbacks" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ForwardBatch → prepare_forward() → forward() → post_forward() → sample() → ModelRunnerOutput
+                    ↑ hook                          ↑ hook
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Runner</p></th>
+<th class="head"><p>Used by</p></th>
+<th class="head"><p>Hook behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>ThinkerModelRunner</strong></p></td>
+<td><p>Qwen3 / Ming thinker</p></td>
+<td><p>prepare_forward: inject multimodal embeddings</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>FeedbackARModelRunner</strong></p></td>
+<td><p>Qwen3 talker, Fish TTS</p></td>
+<td><p>3 callbacks: write_buffers_fn, extract_output_fn, prefill_forward_fn</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> Open question — with the current design, can we treat CUDA Graph and <code class="docutils literal notranslate"><span class="pre">torch.compile</span></code> as class-sharable rather than configured model by model? (Jingwen) Yes, currently it’s intentionally designed to be so (that’s why such modelrunner abstraction exists, but special model has special cases).</p>
+</div></blockquote>
+<blockquote>
+<div><p>DiffusionModelRunner is no longer speculative — Ming-Omni (#236) requires it, and image-gen diffusion is functionally working. Should be added as a first-class runner type alongside <code class="docutils literal notranslate"><span class="pre">ThinkerModelRunner</span></code> and <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code> later.</p>
+</div></blockquote>
+<section id="modelrunner-base">
+<h3><code class="docutils literal notranslate"><span class="pre">ModelRunner</span></code> (Base)<a class="headerlink" href="#modelrunner-base" title="Link to this heading">#</a></h3>
+<p>Shared execute pipeline for all AR models.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ModelRunner</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler_output</span><span class="p">):</span>
+        <span class="n">forward_batch</span> <span class="o">=</span> <span class="n">ForwardBatch</span><span class="o">.</span><span class="n">init_new</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+        <span class="n">batch_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_forward</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># hook</span>
+        <span class="k">if</span> <span class="n">batch_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">batch_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tp_worker</span><span class="o">.</span><span class="n">forward_batch_generation</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_forward</span><span class="p">(</span><span class="n">batch_result</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>       <span class="c1"># hook</span>
+        <span class="c1"># sample, logit processing, output extraction</span>
+        <span class="k">return</span> <span class="n">ModelRunnerOutput</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Shared: <code class="docutils literal notranslate"><span class="pre">ForwardBatch</span></code> construction, sampling, repetition penalty, codec suppression, output processing.</p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> The earlier <code class="docutils literal notranslate"><span class="pre">prepare_forward</span></code> / <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">batch_result</span> <span class="pre">is</span> <span class="pre">None</span></code> block was misleading — <code class="docutils literal notranslate"><span class="pre">prepare_forward</span></code> was doing two unrelated things (mutating the batch and short-circuiting to a custom forward result). The version above splits those into <code class="docutils literal notranslate"><span class="pre">before_forward</span></code> (always mutates in place) and an explicit <code class="docutils literal notranslate"><span class="pre">custom_forward</span></code> branch, which makes the prefill-with-injection path (Fish TTS) honest instead of disguising it as “the hook returned a value.” My suggestions are:</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler_output</span><span class="p">):</span>
+    <span class="n">forward_batch</span> <span class="o">=</span> <span class="n">ForwardBatch</span><span class="o">.</span><span class="n">init_new</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># Mutate forward_batch in place (e.g. inject multimodal embeds).</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">before_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># Two mutually exclusive paths:</span>
+    <span class="c1">#   - custom_forward: model-specific forward (e.g. Fish TTS prefill</span>
+    <span class="c1">#     with VQ embedding injection).</span>
+    <span class="c1">#   - default forward: standard tp_worker.forward_batch_generation.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_custom_forward</span><span class="p">:</span>
+        <span class="n">forward_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">forward_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tp_worker</span><span class="o">.</span><span class="n">forward_batch_generation</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">post_forward</span><span class="p">(</span><span class="n">forward_output</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ModelRunnerOutput</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>【TODO: Jingwen, have we done this part】</strong></p>
+</div></blockquote>
+</section>
+<section id="thinkermodelrunner">
+<h3><code class="docutils literal notranslate"><span class="pre">ThinkerModelRunner</span></code><a class="headerlink" href="#thinkermodelrunner" title="Link to this heading">#</a></h3>
+<p>Injects multimodal embeddings (image / video / audio) + deepstack before forward.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ThinkerModelRunner</span><span class="p">(</span><span class="n">ModelRunner</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="c1"># Inject multimodal embeds into forward_batch</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="feedbackarmodelrunner">
+<h3><code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code><a class="headerlink" href="#feedbackarmodelrunner" title="Link to this heading">#</a></h3>
+<p>Shared model runner for all AR + codebook models (Qwen3 talker, Fish TTS, future models). The model’s <code class="docutils literal notranslate"><span class="pre">forward()</span></code> handles backbone + secondary head internally. This runner writes / reads model buffers around forward.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FeedbackARModelRunner</span><span class="p">(</span><span class="n">ModelRunner</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tp_worker</span><span class="p">,</span> <span class="n">output_processor</span><span class="p">,</span> <span class="n">outbox</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">write_buffers_fn</span><span class="p">,</span> <span class="n">extract_output_fn</span><span class="p">,</span> <span class="n">prefill_forward_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">decode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_buffers</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">prefill</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefill_forward</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefill_forward</span><span class="p">(</span><span class="n">tp_worker</span><span class="p">,</span> <span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_output</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">outbox</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Model-specific behavior via three callbacks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">write_buffers_fn</span></code>: write previous step’s feedback into model buffers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extract_output_fn</span></code>: read codes / feedback from model after forward</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prefill_forward_fn</span></code>: custom forward for prefill (optional)</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong></p>
+<p>One design point on the callback pattern in <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code> — currently each model provides three bare functions (<code class="docutils literal notranslate"><span class="pre">write_buffers_fn</span></code>, <code class="docutils literal notranslate"><span class="pre">extract_output_fn</span></code>, <code class="docutils literal notranslate"><span class="pre">prefill_forward_fn</span></code>) that get passed in individually. This works, but the three functions are semantically coupled (they all operate on the same model’s buffers) and there’s nothing at the type level enforcing that coupling.</p>
+<p>A lightweight improvement: collect them into a Strategy object.</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FeedbackStrategy</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">outbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefill_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tp_worker</span><span class="p">,</span> <span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BatchResult</span><span class="p">]:</span> <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">QwenTalkerStrategy</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">):</span>
+        <span class="c1"># feedback_embeds + trailing/pad → model._feedback_buffer</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">outbox</span><span class="p">):</span>
+        <span class="c1"># model._output_codes → outbox, _output_embeds → feedback</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefill_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tp_worker</span><span class="p">,</span> <span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="c1"># projected input_embeds prefill</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FishTTSStrategy</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefill_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Also, the current design groups S2 Pro (Slow AR + Fast AR) and Qwen3-Omni (Talker + MTP) under the same <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code>. This works because in both cases, the feedback producer and receiver live inside the same ModelRunner — the loop is self-contained within one decode step.</p>
+<p>Worth making this assumption explicit in the RFC: <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code> covers AR models whose feedback loop is self-contained within a single ModelRunner instance. Cross-stage feedback (producer and receiver in separate schedulers, communicating via relay) is out of scope for this abstraction and would need a different design. This isn’t a problem today — both models fit the self-contained shape — but documenting the boundary now prevents future contributors from trying to bend the abstraction to cover topologies it wasn’t designed for.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>【TODO: Jingwen, have we done this part】</strong></p>
+</div></blockquote>
+</section>
+<section id="callback-pattern">
+<h3>Callback Pattern<a class="headerlink" href="#callback-pattern" title="Link to this heading">#</a></h3>
+<p>Each model provides a <code class="docutils literal notranslate"><span class="pre">callbacks.py</span></code> with three functions:</p>
+<p><strong>Qwen3 Talker</strong> — <code class="docutils literal notranslate"><span class="pre">models/qwen3_omni/callbacks.py</span></code>:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">write_talker_buffers</span></code>: <code class="docutils literal notranslate"><span class="pre">feedback_embeds</span></code> + trailing/pad → <code class="docutils literal notranslate"><span class="pre">model._feedback_buffer</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extract_talker_output</span></code>: <code class="docutils literal notranslate"><span class="pre">model._output_codes</span></code> → outbox, <code class="docutils literal notranslate"><span class="pre">_output_embeds</span></code> → feedback</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">talker_prefill_forward</span></code>: projected <code class="docutils literal notranslate"><span class="pre">input_embeds</span></code> prefill</p></li>
+</ol>
+<p><strong>Fish TTS</strong> — <code class="docutils literal notranslate"><span class="pre">models/fishaudio_s2_pro/callbacks.py</span></code>:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">write_fish_buffers</span></code>: codebook values → <code class="docutils literal notranslate"><span class="pre">model._vq_codes</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extract_fish_output</span></code>: <code class="docutils literal notranslate"><span class="pre">model._output_codes</span></code> → per-request output</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fish_prefill_forward</span></code>: VQ embedding injection into <code class="docutils literal notranslate"><span class="pre">input_embeds</span></code></p></li>
+</ol>
+<p>Adding a third model = write a new <code class="docutils literal notranslate"><span class="pre">callbacks.py</span></code> with three functions.</p>
+</section>
+<section id="model-forward-one-decode-step-ar-codebook">
+<h3>Model.forward(): One Decode Step (AR + Codebook)<a class="headerlink" href="#model-forward-one-decode-step-ar-codebook" title="Link to this heading">#</a></h3>
+<p>Both Qwen3 talker and Fish TTS follow the same internal pattern:</p>
+<ol class="arabic simple">
+<li><p>Read previous step’s feedback from model buffers (written by <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code>)</p></li>
+<li><p>AR backbone → hidden states → logits</p></li>
+<li><p>Sample first code from logits</p></li>
+<li><p>Secondary head predicts remaining codebook layers autoregressively</p></li>
+<li><p>Store combined output → buffers for next step</p></li>
+<li><p>Output: multi-layer codes + feedback</p></li>
+</ol>
+<p>The model class handles steps 1–6 inside <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code> handles writing (before) and reading (after).</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="model-directory-convention">
+<h2>Model Directory Convention<a class="headerlink" href="#model-directory-convention" title="Link to this heading">#</a></h2>
+<p>Every model follows the same file structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>models/&lt;model_name&gt;/
+├── config.py              — Pipeline config (stage definitions, GPU placement)
+├── stages.py              — Stage factories (returns callable or OmniScheduler)
+├── routing.py             — Stage routing functions (which stage follows which)
+├── request_builders.py    — Inter-stage data transform (build engine requests)
+├── payload_types.py       — Model-specific pipeline state
+├── callbacks.py           — FeedbackARModelRunner callbacks
+├── __init__.py
+└── components/            — Model-specific torch modules, preprocessors, encoders
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> Tend not to over-abstract. <code class="docutils literal notranslate"><span class="pre">routing.py</span></code> and <code class="docutils literal notranslate"><span class="pre">request_builders.py</span></code> could plausibly be merged into one file — both describe the data-shape contract between consecutive stages, and splitting them across two files just adds navigation cost. (Jingwen) Request builder is a model-specific component for model requiring special format of input, such as qwen3-omni thinker-talker.</p>
+</div></blockquote>
+<section id="qwen3-omni">
+<h3>Qwen3-Omni<a class="headerlink" href="#qwen3-omni" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>models/qwen3_omni/
+├── config.py              — 8-stage speech, 6-stage text
+├── stages.py              — 8 factories
+├── routing.py             — 8 routing functions
+├── request_builders.py    — build thinker/talker/encoder requests
+├── payload_types.py       — PipelineState, OmniEvent, ThinkerOutput
+├── callbacks.py           — write_talker_buffers, extract_talker_output, talker_prefill_forward
+├── hf_config.py           — HF config classes
+├── merge.py               — Merge 3 encoder outputs for thinker
+├── components/
+│   ├── thinker.py         — Model loader/wrapper (Qwen3OmniSplitThinker)
+│   ├── thinker_model.py   — SGLang thinker model definition
+│   ├── talker.py          — SGLang talker model (fused MTP)
+│   ├── preprocessor.py    — Tokenize, load media, apply HF processor
+│   ├── image_encoder.py   — Image tower
+│   ├── audio_encoder.py   — Audio tower
+│   ├── talker_input.py    — Build talker prefill
+│   ├── streaming_detokenizer.py — Streaming text detokenizer scheduler
+│   ├── code2wav_scheduler.py — Vocoder streaming scheduler
+│   └── common.py          — Shared helpers
+</pre></div>
+</div>
+<p>Speech pipeline (8 stages): <code class="docutils literal notranslate"><span class="pre">preprocessing</span> <span class="pre">→</span> <span class="pre">image_encoder</span> <span class="pre">→</span> <span class="pre">audio_encoder</span> <span class="pre">→</span> <span class="pre">aggregate</span> <span class="pre">→</span> <span class="pre">thinker</span> <span class="pre">→</span> <span class="pre">decode</span> <span class="pre">→</span> <span class="pre">talker</span> <span class="pre">→</span> <span class="pre">code2wav</span></code></p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong></p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PipelineState</span></code> and <code class="docutils literal notranslate"><span class="pre">OmniEvent</span></code> are ambiguous names — both sound like they belong to the framework, but they’re model-specific. Rename later. <strong>【TODO: Jingwen, have we done this part】</strong></p></li>
+<li><p>“Image tower” / “Audio tower” — why “tower”? Inherited terminology from VLM literature. Worth aligning on either “encoder” or “tower” consistently rather than mixing. Jingwen: this is followed the name from official qwen3-omni.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">image_encoder</span></code> → <code class="docutils literal notranslate"><span class="pre">audio_encoder</span></code> should run in parallel, not sequentially as the arrow chain might suggest. There should also be design space for offloading them to CPU. Jingwen: Changed.</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="fish-audio-s2-pro">
+<h3>Fish Audio S2-Pro<a class="headerlink" href="#fish-audio-s2-pro" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>models/fishaudio_s2_pro/
+├── config.py              — 3-stage TTS
+├── stages.py              — 3 factories
+├── routing.py             — 3 routing functions
+├── request_builders.py    — build_sglang_tts_request, apply_tts_result
+├── payload_types.py       — S2ProState
+├── callbacks.py           — write_fish_buffers, extract_fish_output, fish_prefill_forward
+├── sglang_model.py        — SGLang model registration
+├── tokenizer.py           — Tokenizer wrapper
+└── fish_speech/           — Model definitions (text2semantic, DAC codec)
+</pre></div>
+</div>
+<p>Pipeline (3 stages): <code class="docutils literal notranslate"><span class="pre">preprocessing</span> <span class="pre">→</span> <span class="pre">tts_engine</span> <span class="pre">→</span> <span class="pre">vocoder</span></code></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="declarative-config">
+<h2>Declarative Config<a class="headerlink" href="#declarative-config" title="Link to this heading">#</a></h2>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;preprocessing&quot;</span><span class="p">,</span>
+                <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...create_preprocessing_executor&quot;</span><span class="p">,</span>
+                <span class="n">route_fn</span><span class="o">=</span><span class="s2">&quot;...routing.preprocessing_next&quot;</span><span class="p">),</span>
+
+    <span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;image_encoder&quot;</span><span class="p">,</span>
+                <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...create_image_encoder_executor&quot;</span><span class="p">,</span>
+                <span class="n">gpu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="s2">&quot;mm_aggregate&quot;</span><span class="p">),</span>
+
+    <span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;mm_aggregate&quot;</span><span class="p">,</span>
+                <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...create_aggregate_executor&quot;</span><span class="p">,</span>
+                <span class="n">wait_for</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;preprocessing&quot;</span><span class="p">,</span> <span class="s2">&quot;image_encoder&quot;</span><span class="p">,</span> <span class="s2">&quot;audio_encoder&quot;</span><span class="p">],</span>
+                <span class="n">merge_fn</span><span class="o">=</span><span class="s2">&quot;...merge_for_thinker&quot;</span><span class="p">,</span>
+                <span class="nb">next</span><span class="o">=</span><span class="s2">&quot;thinker&quot;</span><span class="p">),</span>
+
+    <span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;thinker&quot;</span><span class="p">,</span>
+                <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...create_thinker_executor&quot;</span><span class="p">,</span>
+                <span class="n">factory_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;speech_enabled&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+                <span class="n">gpu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;decode&quot;</span><span class="p">,</span> <span class="s2">&quot;talker_ar&quot;</span><span class="p">],</span>
+                <span class="n">stream_to</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;talker_ar&quot;</span><span class="p">,</span> <span class="s2">&quot;decode&quot;</span><span class="p">]),</span>
+
+    <span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;decode&quot;</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...create_decode&quot;</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+
+    <span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;code2wav&quot;</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...create_code2wav&quot;</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note (Huapeng):</strong> I feel realtime is needed supporting streaming in, an important feature for voice agent. https://vllm.ai/blog/streaming-realtime Do we need to consider more? We will do this in https://github.com/sgl-project/sglang-omni/pull/385</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note(Huapeng):</strong> /realtime feature, for low latency voice agent and realtime transcription and translation, if we accept streaming input, it can get better results and be useful in daily usecase. I think sglang omni might need to implement this and implement features in openai’s realtime interface, https://developers.openai.com/api/docs/guides/realtime This will unlock voice model’s potential for real use case, like https://x.com/OpenAIDevs/status/2048871260512473385?s=20. For implement this, we get a streaming audio in, at the same time, the inference engine can receive the chunk and send the SSE back via websocket. We can reference some implementation in https://vllm.ai/blog/streaming-realtime and https://github.com/sgl-project/sglang/issues/22474#issuecomment-4241744895. Detailed plan is TBD.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong>
+<strong>Runtime parameter plumbing.</strong> Critical params (<code class="docutils literal notranslate"><span class="pre">mem_fraction_static</span></code>, <code class="docutils literal notranslate"><span class="pre">thinker_max_seq_len</span></code>, soon <code class="docutils literal notranslate"><span class="pre">video_fps</span></code>) are either hardcoded deep in the stack or routed through ad-hoc overrides nobody fully understands. CLI / config-file / override paths don’t compose, and every new param reinvents its own precedence resolution. The refactor needs one canonical mechanism: a typed, stage-addressable override primitive at the <code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> layer, with CLI / config / env as thin adapters on top. All runtime params go through it. As a related symmetry gap, length validation today only guards the thinker input side; talker also needs an output-length cap, otherwise an unbounded decode loop (missed stop token, hallucination loop) hits OOM or tail latency the same way. Both should route through the same plumbing once it exists.</p>
+<p><strong>Stage placement — co-location as first-class.</strong> Two issues here, both informed by Ratish’s vLLM-Omni investigation:</p>
+<ol class="arabic simple">
+<li><p>Stages must be allowed to share GPUs. vLLM co-locates thinker + talker on one device via per-stage memory budgeting + NVML accounting. We currently hard-reject same-GPU speech-stage placement, which leaves Talker on H200 at &lt;2% utilization long-term. The placement model must treat “any stage on any GPU” as first-class, with budgeting that accounts for co-tenants rather than rejecting the topology. (Done)</p></li>
+<li><p>Pick one memory-fraction semantics deliberately. vLLM’s <code class="docutils literal notranslate"><span class="pre">gpu_memory_utilization</span></code> is fraction of total VRAM. SGLang’s <code class="docutils literal notranslate"><span class="pre">mem_fraction_static</span></code> is fraction of remaining VRAM after weights load — more principled for single-stage LLM, but ambiguous for omni where stages load sequentially and “remaining” depends on load order. Either keep SGLang semantics with a careful sequential-allocation model, or switch to vLLM’s total-VRAM semantics. Don’t inherit the current ambiguity. (Done)</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="stageconfig-reference">
+<h3><code class="docutils literal notranslate"><span class="pre">StageConfig</span></code> reference<a class="headerlink" href="#stageconfig-reference" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>str</p></td>
+<td><p><em>required</em></p></td>
+<td><p>Unique stage identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>factory</p></td>
+<td><p>str</p></td>
+<td><p><em>required</em></p></td>
+<td><p>Dotted import path to factory function</p></td>
+</tr>
+<tr class="row-even"><td><p>factory_args</p></td>
+<td><p>dict</p></td>
+<td><p>{}</p></td>
+<td><p>Args forwarded to factory (model_path, gpu_id auto-injected)</p></td>
+</tr>
+<tr class="row-odd"><td><p>next</p></td>
+<td><p>str | list[str]</p></td>
+<td><p>None</p></td>
+<td><p>Static routing: downstream stage(s). Replaces routing functions for most stages</p></td>
+</tr>
+<tr class="row-even"><td><p>route_fn</p></td>
+<td><p>str</p></td>
+<td><p>None</p></td>
+<td><p>Dynamic routing: dotted path to fn(request_id, output) → str | list[str] | None</p></td>
+</tr>
+<tr class="row-odd"><td><p>terminal</p></td>
+<td><p>bool</p></td>
+<td><p>FALSE</p></td>
+<td><p>Terminal stage — no downstream. Coordinator collects the result here</p></td>
+</tr>
+<tr class="row-even"><td><p>gpu</p></td>
+<td><p>int | list[int]</p></td>
+<td><p>None</p></td>
+<td><p>GPU id(s). None = CPU stage. List for TP (one GPU per rank)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp_size</p></td>
+<td><p>int</p></td>
+<td><p>1</p></td>
+<td><p>Tensor parallelism ranks. Must match len(gpu) if gpu is a list</p></td>
+</tr>
+<tr class="row-even"><td><p>wait_for</p></td>
+<td><p>list[str]</p></td>
+<td><p>None</p></td>
+<td><p>Fan-in: wait for these upstream stages before dispatching</p></td>
+</tr>
+<tr class="row-odd"><td><p>merge_fn</p></td>
+<td><p>str</p></td>
+<td><p>None</p></td>
+<td><p>Dotted path to fn(dict[str, StagePayload]) -&gt; StagePayload. Required with wait_for</p></td>
+</tr>
+<tr class="row-even"><td><p>stream_to</p></td>
+<td><p>list[str]</p></td>
+<td><p>[]</p></td>
+<td><p>Stream hidden states / codes to these stages (parallel to normal routing)</p></td>
+</tr>
+<tr class="row-odd"><td><p>relay</p></td>
+<td><p>RelayConfig</p></td>
+<td><p>None</p></td>
+<td><p>Override relay settings. Auto-inferred from gpu if not set</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Routing rule:</strong> exactly one of <code class="docutils literal notranslate"><span class="pre">next</span></code>, <code class="docutils literal notranslate"><span class="pre">route_fn</span></code>, or <code class="docutils literal notranslate"><span class="pre">terminal=True</span></code>.</p>
+<p>Derived from stages: <code class="docutils literal notranslate"><span class="pre">entry_stage</span></code> (first stage), <code class="docutils literal notranslate"><span class="pre">terminal_stages</span></code>, <code class="docutils literal notranslate"><span class="pre">gpu_placement</span></code>, relay device.</p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong></p>
+<ol class="arabic simple">
+<li><p>There is no “one thinker, multiple talkers” case. Talker decode requires the thinker’s hidden state as prefix, and driving two independent talkers from the same prefix has no business meaning.</p></li>
+<li><p>More broadly, <code class="docutils literal notranslate"><span class="pre">route_fn</span></code> has limited utility: Qwen3-Omni and Fish S2 Pro are fully covered by <code class="docutils literal notranslate"><span class="pre">next</span></code> + <code class="docutils literal notranslate"><span class="pre">stream_to</span></code>, and it’s only needed when the hidden state itself carries a modality tag and the downstream branch must be decided from the data (e.g. Ming, where the output if/else’s into a video or audio head). Given the narrow use case, the contract should stay narrow — return value must be a stage already declared in <code class="docutils literal notranslate"><span class="pre">next</span></code> (so topology stays statically derivable), <code class="docutils literal notranslate"><span class="pre">None</span></code> return should be disallowed (drops belong in an explicit terminal sink, not hidden in routing), and the docstring should restrict use to data-driven modality dispatch. One field, narrow contract, easy to widen later when a real consumer shows up.</p></li>
+<li><p>Should we merge <code class="docutils literal notranslate"><span class="pre">factory_args</span></code> and <code class="docutils literal notranslate"><span class="pre">factory</span></code> into one field?</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="pipelineconfig-reference">
+<h3><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> reference<a class="headerlink" href="#pipelineconfig-reference" title="Link to this heading">#</a></h3>
+<p>Derived (computed from stages, not set manually): <code class="docutils literal notranslate"><span class="pre">terminal_stages</span></code>, <code class="docutils literal notranslate"><span class="pre">gpu_placement</span></code>.</p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> The <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> vs <code class="docutils literal notranslate"><span class="pre">Stages</span></code> distinction in code needs to be sharper. Right now both names show up in different places without a crisp mental model — pin this down before the field set grows.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> Open question — do we need a compiler class, or is an <code class="docutils literal notranslate"><span class="pre">init</span></code> function per model’s pipeline enough? The current proposal leans toward “compiler” as a concept; I think a plain init function per pipeline is likely sufficient given how few pipelines we maintain. (compile-pipeline deleted #447)</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Note (Yichi):</strong> <code class="docutils literal notranslate"><span class="pre">compiler_pipeline()</span></code> is described as the compilation entry point, but the multi-process path (<code class="docutils literal notranslate"><span class="pre">mp_runner._build_stage_groups</span></code>) re-implements most of the same logic independently. And two paths share some private helpers but each has its own <code class="docutils literal notranslate"><span class="pre">_resolve_factory_args</span></code> with nearly identical code. –&gt; would suggest at least set clear boundary on responsibility of each class, either let compiler class be single compilation entry point, or discard compiler class. Jingwen: (fixed, #447)</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="multi-process-runner">
+<h2>Multi-Process Runner<a class="headerlink" href="#multi-process-runner" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pipeline/
+├── stage_process.py    # StageProcessSpec (picklable) + subprocess entrypoint
+├── stage_group.py      # StageGroup — manages N processes per stage
+└── mp_runner.py        # MultiProcessRunner — orchestrates all groups
+</pre></div>
+</div>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph TB
+    Main[&quot;Main Process&lt;br/&gt;&lt;b&gt;Coordinator&lt;/b&gt;&quot;]
+
+    subgraph &quot;StageGroup: thinker (tp_size=2)&quot;
+        P0[&quot;Process tp_rank=0&lt;br/&gt;GPU 0&quot;]
+        P1[&quot;Process tp_rank=1&lt;br/&gt;GPU 1&quot;]
+        P0 &lt;--&gt;|NCCL| P1
+    end
+
+    subgraph &quot;StageGroup: talker (tp_size=1)&quot;
+        P2[&quot;Process&lt;br/&gt;GPU 2&quot;]
+    end
+
+    subgraph &quot;StageGroup: preprocessing (tp_size=1)&quot;
+        P3[&quot;Process&lt;br/&gt;CPU&quot;]
+    end
+
+    Main --&gt;|&quot;ZMQ (rank 0 only)&quot;| P0
+    Main --&gt;|ZMQ| P2
+    Main --&gt;|ZMQ| P3
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> <code class="docutils literal notranslate"><span class="pre">stage_group.py</span></code> and <code class="docutils literal notranslate"><span class="pre">stage_process.py</span></code> are tightly coupled — <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> is the only consumer of <code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code>, the subprocess entrypoint is ~40 lines, and the spec is a small dataclass. None of the three justifies its own file. Merging into a single <code class="docutils literal notranslate"><span class="pre">stage_workers.py</span></code> keeps everything about “how a stage’s processes get defined, spawned, and managed” in one place, and leaves <code class="docutils literal notranslate"><span class="pre">mp_runner.py</span></code> focused on cross-stage orchestration. Two files, cleaner ownership.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>【TODO: Jingwen, have we merged these files】</strong></p>
+</div></blockquote>
+<section id="stageprocessspec">
+<h3><code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code><a class="headerlink" href="#stageprocessspec" title="Link to this heading">#</a></h3>
+<p>A fully-resolved, picklable dataclass built once in the main process. Subprocesses never re-compile the pipeline config — they just construct a <code class="docutils literal notranslate"><span class="pre">Stage</span></code> from the spec and run it.</p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> “Spec” is too vague a class name. Rename to <code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code>.</p>
+</div></blockquote>
+<p>The main process resolves all dotted strings, injects <code class="docutils literal notranslate"><span class="pre">model_path</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code> into factory args, allocates ZMQ endpoints, and computes stream targets and relay config. The spec captures everything the child process needs.</p>
+<p>The subprocess entrypoint (<code class="docutils literal notranslate"><span class="pre">stage_process_main</span></code>) is ~40 lines: import factory, call it, build routing callable from <code class="docutils literal notranslate"><span class="pre">route_fn</span></code> or <code class="docutils literal notranslate"><span class="pre">next_stages</span></code>, build input handler from <code class="docutils literal notranslate"><span class="pre">wait_for</span></code> / <code class="docutils literal notranslate"><span class="pre">merge_fn</span></code>, construct <code class="docutils literal notranslate"><span class="pre">Stage</span></code>, run.</p>
+<blockquote>
+<div><p><strong>Note (Chenyang):</strong> Promoting <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> to a top-level field treats TP as special, but it’s just one parallelism axis. Qwen3-Omni’s Thinker is MoE and could want EP; throughput-oriented stages might want DP across replicas. If we add those later, we’ll end up with <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> / <code class="docutils literal notranslate"><span class="pre">ep_size</span></code> / <code class="docutils literal notranslate"><span class="pre">dp_size</span></code> proliferating at the top level. Cleaner to group them under a single <code class="docutils literal notranslate"><span class="pre">parallelism:</span> <span class="pre">ParallelismConfig</span></code> field now — <code class="docutils literal notranslate"><span class="pre">ParallelismConfig(tp=N)</span></code> reads as clearly as <code class="docutils literal notranslate"><span class="pre">tp_size=N</span></code> and leaves room to add <code class="docutils literal notranslate"><span class="pre">ep</span></code>, <code class="docutils literal notranslate"><span class="pre">dp</span></code> without further schema churn. If the intent is TP-only for the foreseeable future, at least document that explicitly so readers don’t assume other strategies were deliberately excluded. (maybe we should add this as we get more parallelism and not now, or the class will only have tp attribute, increasing visual burden)</p>
+</div></blockquote>
+</section>
+<section id="stagegroup">
+<h3><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code><a class="headerlink" href="#stagegroup" title="Link to this heading">#</a></h3>
+<p>Manages the lifecycle (spawn, <code class="docutils literal notranslate"><span class="pre">wait_ready</span></code>, shutdown, health monitoring) of all OS processes backing one logical stage. For <code class="docutils literal notranslate"><span class="pre">tp_size</span> <span class="pre">==</span> <span class="pre">1</span></code> (default), one process. For <code class="docutils literal notranslate"><span class="pre">tp_size</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, spawns one process per TP rank with appropriate <code class="docutils literal notranslate"><span class="pre">tp_rank</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>.</p>
+</section>
+<section id="multiprocessrunner">
+<h3><code class="docutils literal notranslate"><span class="pre">MultiProcessRunner</span></code><a class="headerlink" href="#multiprocessrunner" title="Link to this heading">#</a></h3>
+<p>Orchestrates startup across all <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code>s. <code class="docutils literal notranslate"><span class="pre">_build_stage_groups(config)</span></code> turns a <code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> into <code class="docutils literal notranslate"><span class="pre">list[StageGroup]</span></code> by iterating over stages, resolving factory args, allocating endpoints, and building one <code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code> per TP rank per stage. The Coordinator runs in the main process and only talks to rank 0 of each group.</p>
+</section>
+<section id="tensor-parallelism-support">
+<h3>Tensor Parallelism Support<a class="headerlink" href="#tensor-parallelism-support" title="Link to this heading">#</a></h3>
+<p>TP within a stage is orthogonal to pipeline parallelism between stages. The <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> spawns <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> processes per AR stage. Each process runs a full <code class="docutils literal notranslate"><span class="pre">OmniScheduler</span></code> + <code class="docutils literal notranslate"><span class="pre">ModelWorker</span></code> with a different <code class="docutils literal notranslate"><span class="pre">tp_rank</span></code> and <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>. NCCL collectives inside the model forward keep TP ranks in lockstep. The Coordinator is TP-unaware — it only talks to rank 0 of each group.</p>
+<p>Within a TP group, rank 0 receives from the control plane and broadcasts to peer ranks. All ranks make identical scheduling decisions. Only rank 0 sends results downstream. Each stage gets its own NCCL port (<code class="docutils literal notranslate"><span class="pre">_NcclPortAllocator</span></code> in <code class="docutils literal notranslate"><span class="pre">mp_runner.py</span></code>).</p>
+<p>Declaring TP in a stage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;thinker&quot;</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">tp_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> spawns 4 processes. NCCL collectives inside the model forward keep them in lockstep. The coordinator only talks to rank 0. Each stage gets its own NCCL port.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="supported-pipelines">
+<h2>Supported Pipelines<a class="headerlink" href="#supported-pipelines" title="Link to this heading">#</a></h2>
+<section id="qwen3-omni-8-stage-speech">
+<h3>Qwen3-Omni (8-stage speech)<a class="headerlink" href="#qwen3-omni-8-stage-speech" title="Link to this heading">#</a></h3>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph LR
+      P[preprocessing] --&gt; IE[image_encoder]
+      P --&gt; AE[audio_encoder]
+      P --&gt; AG[mm_aggregate]
+      IE --&gt; AG
+      AE --&gt; AG
+      AG --&gt; T[thinker&lt;br/&gt;GPU 0]
+      T --&gt;|result| D[decode&lt;br/&gt;terminal]
+      T -.-&gt;|stream token ids| D
+      T -.-&gt;|stream hidden states| TA[talker_ar&lt;br/&gt;GPU 1]
+      TA -.-&gt;|stream codes| C2W[code2wav&lt;br/&gt;GPU 1&lt;br/&gt;terminal]
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">result</span></code>: from decode (terminal)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream</span> <span class="pre">token</span> <span class="pre">ids</span></code>: thinker → decode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream</span> <span class="pre">hidden</span> <span class="pre">states</span></code>: thinker → talker_ar</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream</span> <span class="pre">codes</span></code>: talker_ar → code2wav</p></li>
+</ul>
+<p>Thinker streams hidden states to talker while simultaneously outputting text. Coordinator merges both terminals.</p>
+</section>
+<section id="fish-audio-s2-pro-3-stage-tts">
+<h3>Fish Audio S2-Pro (3-stage TTS)<a class="headerlink" href="#fish-audio-s2-pro-3-stage-tts" title="Link to this heading">#</a></h3>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph LR
+    P[preprocessing] --&gt; E[tts_engine&lt;br/&gt;GPU 0] --&gt; V[vocoder&lt;br/&gt;terminal]
+</pre></div>
+</div>
+</section>
+<section id="mimo-audio-249-planned">
+<h3>MiMo-Audio (<a class="reference external" href="https://github.com/sgl-project/sglang-omni/issues/249">#249</a>) — planned<a class="headerlink" href="#mimo-audio-249-planned" title="Link to this heading">#</a></h3>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph LR
+    P[preprocessing] --&gt; T[&quot;thinker&lt;br/&gt;(text + audio codes)&quot;] --&gt; CP[code_predictor] --&gt; V[vocoder&lt;br/&gt;terminal]
+    T --&gt;|text-only| Term[terminal]
+</pre></div>
+</div>
+<p>4-stage, single GPU. Thinker generates text + audio codes in one pass. No new abstractions needed.</p>
+</section>
+<section id="ming-omni-236-planned">
+<h3>Ming-Omni (<a class="reference external" href="https://github.com/sgl-project/sglang-omni/issues/236">#236</a>) — planned<a class="headerlink" href="#ming-omni-236-planned" title="Link to this heading">#</a></h3>
+<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph LR
+   P[preprocessing] --&gt; AE[audio_encoder] --&gt; AG[aggregate]
+   P --&gt; AG
+   AG --&gt; T[&quot;thinker&lt;br/&gt;100B MoE&lt;br/&gt;GPU 0-3, tp_size=4&quot;]
+   T --&gt; D[decode&lt;br/&gt;terminal]
+   T --&gt; TK[&quot;talker&lt;br/&gt;(CFM+DiT diffusion)&lt;br/&gt;GPU 4&lt;br/&gt;terminal&quot;]
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="adding-a-new-model">
+<h2>Adding a New Model<a class="headerlink" href="#adding-a-new-model" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">models/&lt;name&gt;/config.py</span></code> — <code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> subclass with stage definitions (routing, GPU placement, fan-in all inline via <code class="docutils literal notranslate"><span class="pre">next</span></code> / <code class="docutils literal notranslate"><span class="pre">wait_for</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu</span></code>)</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">models/&lt;name&gt;/stages.py</span></code> — factory per stage (return callable for <code class="docutils literal notranslate"><span class="pre">SimpleScheduler</span></code>, or <code class="docutils literal notranslate"><span class="pre">OmniScheduler</span></code> for AR)</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">models/&lt;name&gt;/callbacks.py</span></code> — if AR + codebook: three functions for <code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code></p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">models/&lt;name&gt;/components/</span></code> — model definitions, preprocessor, encoders</p></li>
+<li><p>(Optional) Create <code class="docutils literal notranslate"><span class="pre">models/&lt;name&gt;/routing.py</span></code> — only if a stage needs dynamic routing (<code class="docutils literal notranslate"><span class="pre">route_fn</span></code>)</p></li>
+</ol>
+<p>Everything else (<code class="docutils literal notranslate"><span class="pre">Stage</span></code>, <code class="docutils literal notranslate"><span class="pre">Coordinator</span></code>, <code class="docutils literal notranslate"><span class="pre">OmniScheduler</span></code>, <code class="docutils literal notranslate"><span class="pre">ModelRunner</span></code>, relay, compiler, mp_runner) is reused as-is.</p>
+</section>
+<hr class="docutils" />
+<section id="tp-size">
+<h2>tp_size<a class="headerlink" href="#tp-size" title="Link to this heading">#</a></h2>
+</section>
+<hr class="docutils" />
+<section id="progress-tracking">
+<h2>Progress Tracking<a class="headerlink" href="#progress-tracking" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://github.com/sgl-project/sglang-omni/pull/334">PR #334</a> — V1 pipeline is still being debugged to pass all CIs.</p>
+<p>Following the suggestion in <a class="reference external" href="https://github.com/sgl-project/sglang-omni/issues/188#issuecomment-4161198732">#188 (comment)</a>, we should also track how many files need to be touched and the upper bound of the cost of integrating a new model. Boson’s upcoming model will serve as the first concrete data point.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#system-overview">System Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-responsibilities">Layer Responsibilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-layout">Directory Layout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-diagram">Class Diagram</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-layer">Pipeline Layer</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#http-websocket">HTTP/Websocket</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client">Client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coordinator">Coordinator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage">Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inter-stage-communication">Inter-Stage Communication</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relay-io-utility-module"><code class="docutils literal notranslate"><span class="pre">relay_io</span></code> Utility Module</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scheduling-layer">Scheduling Layer</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#omnischeduler-composition-with-sglang">OmniScheduler — Composition with SGLang</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplescheduler">SimpleScheduler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code2wavscheduler">Code2WavScheduler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#message-types">Message Types</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-runner-callbacks">Model Runner + Callbacks</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modelrunner-base"><code class="docutils literal notranslate"><span class="pre">ModelRunner</span></code> (Base)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thinkermodelrunner"><code class="docutils literal notranslate"><span class="pre">ThinkerModelRunner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feedbackarmodelrunner"><code class="docutils literal notranslate"><span class="pre">FeedbackARModelRunner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#callback-pattern">Callback Pattern</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-forward-one-decode-step-ar-codebook">Model.forward(): One Decode Step (AR + Codebook)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-directory-convention">Model Directory Convention</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qwen3-omni">Qwen3-Omni</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fish-audio-s2-pro">Fish Audio S2-Pro</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declarative-config">Declarative Config</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stageconfig-reference"><code class="docutils literal notranslate"><span class="pre">StageConfig</span></code> reference</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelineconfig-reference"><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> reference</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-process-runner">Multi-Process Runner</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stageprocessspec"><code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stagegroup"><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiprocessrunner"><code class="docutils literal notranslate"><span class="pre">MultiProcessRunner</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-parallelism-support">Tensor Parallelism Support</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-pipelines">Supported Pipelines</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qwen3-omni-8-stage-speech">Qwen3-Omni (8-stage speech)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fish-audio-s2-pro-3-stage-tts">Fish Audio S2-Pro (3-stage TTS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mimo-audio-249-planned">MiMo-Audio (#249) — planned</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ming-omni-236-planned">Ming-Omni (#236) — planned</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-new-model">Adding a New Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tp-size">tp_size</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#progress-tracking">Progress Tracking</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SGLang-Omni Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, SGLang-Omni.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on May 26, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
