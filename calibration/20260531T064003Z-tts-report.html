@@ -1,0 +1,1026 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CI Threshold Observation Report &#8212; SGLang</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=ccdb6887"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'calibration/20260531T064003Z-tts-report';</script>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <link rel="icon" href="../_static/logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+    <meta name="docbuild:last-update" content="May 31, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Cookbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/higgs_tts.html">Higgs TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/llada2_uni.html">LLaDA2.0-Uni</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/qwen3_omni.html">Omni Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/tts.html">TTS Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/omni_router.html">Omni Router Usage</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/relay.html">Benchmark Relay</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/main.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/apiserver_design.html">API Server Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/pipeline.html">Pipeline Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/communication.html">Communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/profiler.html">Request-level profiler</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/calibration/20260531T064003Z-tts-report.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/calibration/20260531T064003Z-tts-report.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fcalibration/20260531T064003Z-tts-report.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/calibration/20260531T064003Z-tts-report.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>CI Threshold Observation Report</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-reliability">1. TTS NONSTREAM Reliability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-wer">2. TTS NONSTREAM Wer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-similarity">3. TTS NONSTREAM Similarity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-speed">4. TTS NONSTREAM Speed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-stream-reliability">5. TTS STREAM Reliability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-stream-wer">6. TTS STREAM Wer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-stream-speed">7. TTS STREAM Speed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applied-changes">Applied changes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#provenance">Provenance</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ci-threshold-observation-report">
+<h1>CI Threshold Observation Report<a class="headerlink" href="#ci-threshold-observation-report" title="Link to this heading">#</a></h1>
+<section id="tts-nonstream-reliability">
+<h2>1. TTS NONSTREAM Reliability<a class="headerlink" href="#tts-nonstream-reliability" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, SeedTTS EN 1088 samples, concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Failed requests</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>0</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tts-nonstream-wer">
+<h2>2. TTS NONSTREAM Wer<a class="headerlink" href="#tts-nonstream-wer" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, SeedTTS EN 1088 samples, Whisper-large-v3 DP=2, concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Corpus WER (%)</p></th>
+<th class="head"><p>Max per-sample WER (%)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.88</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>1.04</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.96</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.88</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.85</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>1.04</strong></p></td>
+<td><p><strong>42.86</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tts-nonstream-similarity">
+<h2>3. TTS NONSTREAM Similarity<a class="headerlink" href="#tts-nonstream-similarity" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, 50 samples (TTS_SIMILARITY_MAX_SAMPLES), concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Speaker sim mean</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>50</p></td>
+<td><p>50</p></td>
+<td><p>67.9925</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>50</p></td>
+<td><p>50</p></td>
+<td><p>66.5672</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>50</p></td>
+<td><p>50</p></td>
+<td><p>67.0202</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>50</p></td>
+<td><p>50</p></td>
+<td><p>67.1342</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>50</p></td>
+<td><p>50</p></td>
+<td><p>66.1829</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>66.1829</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tts-nonstream-speed">
+<h2>4. TTS NONSTREAM Speed<a class="headerlink" href="#tts-nonstream-speed" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, SeedTTS EN 1088 samples, concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Throughput (req/s)</p></th>
+<th class="head"><p>Output tok/req-s</p></th>
+<th class="head"><p>Latency mean (s)</p></th>
+<th class="head"><p>RTF mean</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>11.558</p></td>
+<td><p>119.9</p></td>
+<td><p>1.372</p></td>
+<td><p>0.3350</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>12.522</p></td>
+<td><p>127.8</p></td>
+<td><p>1.272</p></td>
+<td><p>0.3049</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>12.363</p></td>
+<td><p>125.7</p></td>
+<td><p>1.287</p></td>
+<td><p>0.3066</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>12.807</p></td>
+<td><p>127.8</p></td>
+<td><p>1.244</p></td>
+<td><p>0.3016</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>12.576</p></td>
+<td><p>126.7</p></td>
+<td><p>1.265</p></td>
+<td><p>0.3069</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>11.558</strong></p></td>
+<td><p><strong>119.9</strong></p></td>
+<td><p><strong>1.372</strong></p></td>
+<td><p><strong>0.3350</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tts-stream-reliability">
+<h2>5. TTS STREAM Reliability<a class="headerlink" href="#tts-stream-reliability" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, SeedTTS EN 1088 samples (streaming), concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Failed requests</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>0</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tts-stream-wer">
+<h2>6. TTS STREAM Wer<a class="headerlink" href="#tts-stream-wer" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, SeedTTS EN 1088 samples (streaming), Whisper-large-v3 DP=2, concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Corpus WER (%)</p></th>
+<th class="head"><p>Max per-sample WER (%)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.93</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.93</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.95</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.98</p></td>
+<td><p>53.85</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>0.90</p></td>
+<td><p>42.86</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>0.98</strong></p></td>
+<td><p><strong>53.85</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tts-stream-speed">
+<h2>7. TTS STREAM Speed<a class="headerlink" href="#tts-stream-speed" title="Link to this heading">#</a></h2>
+<p>— 2× NVIDIA H20 from precheck.json, SeedTTS EN 1088 samples (streaming), concurrency=16, 5 runs</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Run</p></th>
+<th class="head"><p>Samples run</p></th>
+<th class="head"><p>Samples ok</p></th>
+<th class="head"><p>Throughput (req/s)</p></th>
+<th class="head"><p>Output tok/req-s</p></th>
+<th class="head"><p>Latency mean (s)</p></th>
+<th class="head"><p>RTF mean</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>12.101</p></td>
+<td><p>111.3</p></td>
+<td><p>1.316</p></td>
+<td><p>0.3117</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>11.891</p></td>
+<td><p>109.7</p></td>
+<td><p>1.340</p></td>
+<td><p>0.3174</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>11.535</p></td>
+<td><p>111.2</p></td>
+<td><p>1.381</p></td>
+<td><p>0.3152</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>11.980</p></td>
+<td><p>111.6</p></td>
+<td><p>1.330</p></td>
+<td><p>0.3075</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1088</p></td>
+<td><p>1088</p></td>
+<td><p>11.617</p></td>
+<td><p>110.1</p></td>
+<td><p>1.333</p></td>
+<td><p>0.3163</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Worst-of-5</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p><strong>11.535</strong></p></td>
+<td><p><strong>109.7</strong></p></td>
+<td><p><strong>1.381</strong></p></td>
+<td><p><strong>0.3174</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="applied-changes">
+<h2>Applied changes<a class="headerlink" href="#applied-changes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Stage</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Old</p></th>
+<th class="head"><p>New</p></th>
+<th class="head"><p>Direction</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tts_nonstream_reliability</p></td>
+<td><p>TTS_MAX_FAILED_REQUESTS</p></td>
+<td><p>16</p></td>
+<td><p>0</p></td>
+<td><p>tightens (-100.0%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_nonstream_wer</p></td>
+<td><p>VC_WER_MAX_CORPUS</p></td>
+<td><p>0.010638</p></td>
+<td><p>0.0104</p></td>
+<td><p>tightens (-2.2%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_nonstream_wer</p></td>
+<td><p>VC_WER_MAX_PER_SAMPLE</p></td>
+<td><p>0.166667</p></td>
+<td><p>0.4286</p></td>
+<td><p>loosens (+157.2%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_nonstream_similarity</p></td>
+<td><p>VC_SIMILARITY_MEAN_MIN</p></td>
+<td><p>60</p></td>
+<td><p>66.1829</p></td>
+<td><p>tightens (+10.3%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_nonstream_speed</p></td>
+<td><p>_VC_NON_STREAM_P95[16][‘throughput_qps’]</p></td>
+<td><p>1.465</p></td>
+<td><p>11.558</p></td>
+<td><p>loosens (+688.9%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_nonstream_speed</p></td>
+<td><p>_VC_NON_STREAM_P95[16][‘output_tok_per_req_s’]</p></td>
+<td><p>67.5</p></td>
+<td><p>119.9</p></td>
+<td><p>loosens (+77.6%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_nonstream_speed</p></td>
+<td><p>_VC_NON_STREAM_P95[16][‘latency_mean_s’]</p></td>
+<td><p>9.757</p></td>
+<td><p>1.372</p></td>
+<td><p>tightens (-85.9%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_nonstream_speed</p></td>
+<td><p>_VC_NON_STREAM_P95[16][‘rtf_mean’]</p></td>
+<td><p>3.0009</p></td>
+<td><p>0.335</p></td>
+<td><p>tightens (-88.8%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_stream_reliability</p></td>
+<td><p>TTS_MAX_FAILED_REQUESTS</p></td>
+<td><p>16</p></td>
+<td><p>0</p></td>
+<td><p>tightens (-100.0%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_stream_wer</p></td>
+<td><p>VC_STREAM_WER_MAX_CORPUS</p></td>
+<td><p>0.013263</p></td>
+<td><p>0.0098</p></td>
+<td><p>tightens (-26.1%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_stream_wer</p></td>
+<td><p>VC_STREAM_WER_MAX_PER_SAMPLE</p></td>
+<td><p>0.166667</p></td>
+<td><p>0.5385</p></td>
+<td><p>loosens (+223.1%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_stream_speed</p></td>
+<td><p>_VC_STREAM_P95[16][‘throughput_qps’]</p></td>
+<td><p>1.287</p></td>
+<td><p>11.535</p></td>
+<td><p>loosens (+796.3%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_stream_speed</p></td>
+<td><p>_VC_STREAM_P95[16][‘output_tok_per_req_s’]</p></td>
+<td><p>60.8</p></td>
+<td><p>109.7</p></td>
+<td><p>loosens (+80.4%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>tts_stream_speed</p></td>
+<td><p>_VC_STREAM_P95[16][‘latency_mean_s’]</p></td>
+<td><p>10.229</p></td>
+<td><p>1.381</p></td>
+<td><p>tightens (-86.5%)</p></td>
+</tr>
+<tr class="row-even"><td><p>tts_stream_speed</p></td>
+<td><p>_VC_STREAM_P95[16][‘rtf_mean’]</p></td>
+<td><p>2.8508</p></td>
+<td><p>0.3174</p></td>
+<td><p>tightens (-88.9%)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="provenance">
+<h2>Provenance<a class="headerlink" href="#provenance" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Model: tts</p></li>
+<li><p>Branch: calbritae_05_30 &#64; 1baadbe1</p></li>
+<li><p>Venv Python: /sgl-workspace/sglang-omni/omni/bin/python (flag)</p></li>
+<li><p>sglang 0.5.8 · torch 2.9.1+cu128</p></li>
+<li><p>GPU: 2× NVIDIA H20</p></li>
+<li><p>tune-ci-thresholds v0.4.3</p></li>
+<li><p>Ran 2026-05-31T06:40:24Z – 2026-05-31T07:41:48Z</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-reliability">1. TTS NONSTREAM Reliability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-wer">2. TTS NONSTREAM Wer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-similarity">3. TTS NONSTREAM Similarity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-nonstream-speed">4. TTS NONSTREAM Speed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-stream-reliability">5. TTS STREAM Reliability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-stream-wer">6. TTS STREAM Wer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tts-stream-speed">7. TTS STREAM Speed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applied-changes">Applied changes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#provenance">Provenance</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SGLang-Omni Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, SGLang-Omni.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on May 31, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

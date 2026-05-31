@@ -450,7 +450,7 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="higgs-tts">
 <h1>Higgs TTS<a class="headerlink" href="#higgs-tts" title="Link to this heading">#</a></h1>
-<p><a class="reference external" href="https://huggingface.co/boson-sglang/higgs-audio-v3-tts-4b-base">Higgs Audio v3 TTS</a>
+<p><a class="reference external" href="https://huggingface.co/boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999">Higgs Audio v3 TTS</a>
 is a chat-native text-to-speech model from Boson AI built on a Qwen3-4B backbone. It generates
 24 kHz speech through 8 discrete codebooks and supports 100+ languages, voice cloning from a
 reference clip, and fine-grained inline control over emotion, style, sound effects, and prosody.</p>
@@ -505,7 +505,6 @@ hf<span class="w"> </span>download<span class="w"> </span>bosonai/higgs-audio-v2
 <p>The pipeline is <code class="docutils literal notranslate"><span class="pre">preprocessing</span> <span class="pre">→</span> <span class="pre">audio_encoder</span> <span class="pre">→</span> <span class="pre">tts_engine</span> <span class="pre">→</span> <span class="pre">vocoder</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgl-omni<span class="w"> </span>serve<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--model-path<span class="w"> </span>boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--config<span class="w"> </span>examples/configs/higgs_tts.yaml<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span>
 </pre></div>
 </div>
