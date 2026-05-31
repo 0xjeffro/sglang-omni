@@ -50,7 +50,8 @@
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'basic_usage/tts';</script>
-    <link rel="icon" href="https://docs.sglang.io/_static/logo.ico"/>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Omni Router Usage" href="omni_router.html" />
@@ -58,7 +59,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="May 26, 2026"/>
+    <meta name="docbuild:last-update" content="May 31, 2026"/>
   </head>
   
   
@@ -137,8 +138,8 @@
       
     
     
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-light" alt="SGLang - Home"/>
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
   
   
 </a></div>
@@ -153,7 +154,15 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Cookbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/higgs_tts.html">Higgs TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/llada2_uni.html">LLaDA2.0-Uni</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
 <ul class="current nav bd-sidenav">
@@ -232,7 +241,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -249,7 +258,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/blob/main/basic_usage/tts.md?plain=1" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/basic_usage/tts.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -266,7 +275,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/edit/main/basic_usage/tts.md" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/basic_usage/tts.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -283,7 +292,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/issues/new?title=Issue%20on%20page%20%2Fbasic_usage/tts.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fbasic_usage/tts.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -427,21 +436,14 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="tts-model-usage">
 <h1>TTS Model Usage<a class="headerlink" href="#tts-model-usage" title="Link to this heading">#</a></h1>
-<p>This guide uses <a class="reference external" href="https://huggingface.co/fishaudio/s2-pro">Fish Speech S2-Pro</a> as an example TTS (text-to-speech) model with SGLang-Omni and the OpenAI-compatible API. The same <code class="docutils literal notranslate"><span class="pre">/v1/audio/speech</span></code> endpoint also supports Voxtral TTS and Qwen3-TTS Base.</p>
+<p>This guide uses <a class="reference external" href="https://huggingface.co/fishaudio/s2-pro">Fish Speech S2-Pro</a> as an example TTS (text-to-speech) model with SGLang-Omni and the OpenAI-compatible API. The same <code class="docutils literal notranslate"><span class="pre">/v1/audio/speech</span></code> endpoint also supports Voxtral TTS and Qwen3-TTS.</p>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>frankleeeee/sglang-omni:dev
-docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--shm-size<span class="w"> </span>32g<span class="w"> </span>--gpus<span class="w"> </span>all<span class="w"> </span>frankleeeee/sglang-omni:dev<span class="w"> </span>/bin/zsh
+<p>Install <code class="docutils literal notranslate"><span class="pre">sglang-omni</span></code> by following <a class="reference internal" href="../get_started/installation.html"><span class="std std-doc">Installation</span></a>, then download the model:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hf<span class="w"> </span>download<span class="w"> </span>fishaudio/s2-pro
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sgl-project/sglang-omni.git
-<span class="nb">cd</span><span class="w"> </span>sglang-omni
-uv<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span>-p<span class="w"> </span><span class="m">3</span>.12<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>.
-hf<span class="w"> </span>download<span class="w"> </span>fishaudio/s2-pro
-</pre></div>
-</div>
-<p>Qwen3-TTS Base uses the upstream <code class="docutils literal notranslate"><span class="pre">qwen-tts</span></code> package, which currently requires
+<p>Qwen3-TTS uses the upstream <code class="docutils literal notranslate"><span class="pre">qwen-tts</span></code> package, which currently requires
 Transformers 4.57.3. Install it only in environments that serve Qwen3-TTS:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="nv">transformers</span><span class="o">==</span><span class="m">4</span>.57.3<span class="w"> </span><span class="nv">accelerate</span><span class="o">==</span><span class="m">1</span>.12.0<span class="w"> </span>sox<span class="w"> </span>einops
 uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--no-deps<span class="w"> </span>qwen-tts<span class="o">==</span><span class="m">0</span>.1.1
@@ -462,13 +464,21 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <td><p><code class="docutils literal notranslate"><span class="pre">examples/configs/s2pro_tts.yaml</span></code></p></td>
 <td><p>Supports plain TTS and voice cloning with <code class="docutils literal notranslate"><span class="pre">references</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Voxtral TTS</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../cookbook/voxtral_tts.html"><span class="std std-doc">Voxtral TTS</span></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">examples/configs/voxtral_tts.yaml</span></code></p></td>
 <td><p>Uses <code class="docutils literal notranslate"><span class="pre">input</span></code>, <code class="docutils literal notranslate"><span class="pre">voice</span></code>, <code class="docutils literal notranslate"><span class="pre">response_format</span></code>, and <code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code>; use <code class="docutils literal notranslate"><span class="pre">--no-ref-audio</span></code> for SeedTTS benchmarking</p></td>
 </tr>
-<tr class="row-even"><td><p>Qwen3-TTS Base</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../cookbook/qwen3_tts.html"><span class="std std-doc">Qwen3-TTS Base</span></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">examples/configs/qwen3_tts_0_6b.yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">examples/configs/qwen3_tts_1_7b.yaml</span></code></p></td>
 <td><p>Requires reference audio through <code class="docutils literal notranslate"><span class="pre">ref_audio</span></code> or <code class="docutils literal notranslate"><span class="pre">references[0].audio_path</span></code>; <code class="docutils literal notranslate"><span class="pre">language</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Qwen3-TTS CustomVoice</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">examples/configs/qwen3_tts_0_6b_customvoice.yaml</span></code></p></td>
+<td><p>Text-only requests use the checkpoint speaker table; missing <code class="docutils literal notranslate"><span class="pre">voice</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">Vivian</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Qwen3-TTS VoiceDesign</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">examples/configs/qwen3_tts_1_7b_voicedesign.yaml</span></code></p></td>
+<td><p>Requires <code class="docutils literal notranslate"><span class="pre">task_type=&quot;VoiceDesign&quot;</span></code> and non-empty <code class="docutils literal notranslate"><span class="pre">instructions</span></code>; no reference audio is required</p></td>
 </tr>
 </tbody>
 </table>
@@ -496,17 +506,54 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span>
 </pre></div>
 </div>
+<p>For Qwen3-TTS CustomVoice:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgl-omni<span class="w"> </span>serve<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--model-path<span class="w"> </span>Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>examples/configs/qwen3_tts_0_6b_customvoice.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span>
+</pre></div>
+</div>
+<p>For Qwen3-TTS VoiceDesign:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgl-omni<span class="w"> </span>serve<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--model-path<span class="w"> </span>Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>examples/configs/qwen3_tts_1_7b_voicedesign.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span>
+</pre></div>
+</div>
 </section>
 <section id="use-curl">
 <h2>Use Curl<a class="headerlink" href="#use-curl" title="Link to this heading">#</a></h2>
-<p>Generate speech from text without any reference audio:</p>
+<p>Generate speech from text without any reference audio. This is valid for
+Qwen3-TTS CustomVoice, Voxtral, and S2-Pro. It is not valid for Qwen3-TTS Base.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;input&quot;: &quot;Hello, how are you?&quot;}&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--output<span class="w"> </span>output.wav
 </pre></div>
 </div>
-<p>Note that without reference audio, the generated voice will sound robotic. For natural-sounding results, use Voice Cloning with a reference audio clip.</p>
+<p>Qwen3-TTS Base requires reference audio:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;Get the trust fund to the bank early.&quot;,</span>
+<span class="s1">    &quot;ref_audio&quot;: &quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_10119832.wav&quot;,</span>
+<span class="s1">    &quot;ref_text&quot;: &quot;We asked over twenty different people, and they all said it was his.&quot;</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output.wav
+</pre></div>
+</div>
+<p>Qwen3-TTS VoiceDesign uses text plus voice instructions:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">      &quot;input&quot;: &quot;Hello, how are you?&quot;,</span>
+<span class="s1">      &quot;task_type&quot;: &quot;VoiceDesign&quot;,</span>
+<span class="s1">      &quot;instructions&quot;: &quot;A warm, natural young adult voice.&quot;</span>
+<span class="s1">    }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>output.wav
+</pre></div>
+</div>
+<p>For natural-sounding Fish Speech S2-Pro results, use Voice Cloning with a reference audio clip.</p>
 <section id="voice-cloning">
 <h3>Voice Cloning<a class="headerlink" href="#voice-cloning" title="Link to this heading">#</a></h3>
 <p>The examples below use a sample clip from <a class="reference external" href="https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini"><code class="docutils literal notranslate"><span class="pre">seed-tts-eval-mini</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">references</span></code> field accepts <code class="docutils literal notranslate"><span class="pre">audio_path</span></code> (a local path or HTTP URL) and <code class="docutils literal notranslate"><span class="pre">text</span></code> (transcript of that audio).</p>
@@ -548,6 +595,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <h2>Use Python<a class="headerlink" href="#use-python" title="Link to this heading">#</a></h2>
 <section id="basic-tts">
 <h3>Basic TTS<a class="headerlink" href="#basic-tts" title="Link to this heading">#</a></h3>
+<p>This no-reference request applies to Fish Speech S2-Pro and Voxtral TTS.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
@@ -689,6 +737,16 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
 <td><p>Model-specific language hint; Qwen3-TTS Base defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Qwen3-TTS task type: <code class="docutils literal notranslate"><span class="pre">Base</span></code>, <code class="docutils literal notranslate"><span class="pre">CustomVoice</span></code>, or <code class="docutils literal notranslate"><span class="pre">VoiceDesign</span></code>; inferred as <code class="docutils literal notranslate"><span class="pre">Base</span></code> when reference audio/text is present, otherwise <code class="docutils literal notranslate"><span class="pre">CustomVoice</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Qwen3-TTS style or VoiceDesign instructions</p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code></p></td>
 <td><p>int</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
@@ -717,7 +775,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
 <td><p>int</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
-<td><p>Random seed for reproducibility</p></td>
+<td><p>Model-specific; Qwen3-TTS Base accepts request-scoped seed, Voxtral TTS currently rejects seed</p></td>
 </tr>
 </tbody>
 </table>
@@ -801,7 +859,7 @@ python<span class="w"> </span>-m<span class="w"> </span>benchmarks.eval.benchmar
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>playground.tts.app<span class="w"> </span>--api-base<span class="w"> </span>http://localhost:8000
 </pre></div>
 </div>
-<p>A demo play video is available <a class="reference external" href="https://x.com/lmsysorg/status/2031412267213008984/video/1">here</a>. We highly recommend using playground since audio data is hard to intertact with by CLI.</p>
+<p>A demo play video is available <a class="reference external" href="https://x.com/lmsysorg/status/2031412267213008984/video/1">here</a>. We highly recommend using playground since audio data is hard to interact with by CLI.</p>
 </section>
 </section>
 
@@ -900,7 +958,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 26, 2026.
+  Last updated on May 31, 2026.
   <br/>
 </p>
   </div>

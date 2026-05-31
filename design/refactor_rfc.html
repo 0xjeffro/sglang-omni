@@ -50,13 +50,14 @@
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'design/refactor_rfc';</script>
-    <link rel="icon" href="https://docs.sglang.io/_static/logo.ico"/>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="May 26, 2026"/>
+    <meta name="docbuild:last-update" content="May 31, 2026"/>
   </head>
   
   
@@ -137,8 +138,8 @@
       
     
     
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-light" alt="SGLang - Home"/>
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
   
   
 </a></div>
@@ -153,7 +154,15 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Cookbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/higgs_tts.html">Higgs TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/llada2_uni.html">LLaDA2.0-Uni</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
 <ul class="nav bd-sidenav">
@@ -232,7 +241,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -249,7 +258,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/blob/main/design/refactor_rfc.md?plain=1" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/design/refactor_rfc.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -266,7 +275,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/edit/main/design/refactor_rfc.md" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/design/refactor_rfc.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -283,7 +292,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/issues/new?title=Issue%20on%20page%20%2Fdesign/refactor_rfc.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fdesign/refactor_rfc.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -496,7 +505,7 @@
 <td><p>No</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Stage</strong></p></td>
-<td><p>IO shell — ZMQ control plane, relay data plane, fan-in aggregation, stream routing</p></td>
+<td><p>IO shell — ZMQ control plane, transport data plane, fan-in aggregation, stream routing</p></td>
 <td><p>No</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Scheduler</strong></p></td>
@@ -668,14 +677,16 @@
 <p>IO shell. Every stage has one scheduler (no branching). Handles all inter-stage communication.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Stage</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">control_plane</span><span class="p">,</span> <span class="n">relay</span><span class="p">,</span> <span class="n">route_fn</span><span class="p">,</span>
-                 <span class="n">input_handler</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">stream_targets</span><span class="p">,</span> <span class="n">same_gpu_targets</span><span class="p">):</span>
+                 <span class="n">input_handler</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">stream_targets</span><span class="p">,</span>
+                 <span class="n">same_gpu_targets</span><span class="p">,</span> <span class="n">same_process_targets</span><span class="p">,</span> <span class="n">local_dispatcher</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>  <span class="c1"># always present</span>
 </pre></div>
 </div>
 <p>Responsibilities:</p>
 <ul class="simple">
 <li><p><strong>Control plane (ZMQ):</strong> receive <code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">AbortMessage</span></code></p></li>
-<li><p><strong>Data plane (Relay):</strong> read/write tensors between stages via SHM/NCCL/NixL</p></li>
+<li><p><strong>Data plane:</strong> read/write tensors via relay, CUDA IPC stream fast path, or
+same-process LOCAL_OBJECT dispatch</p></li>
 <li><p><strong>Input aggregation:</strong> wait for multiple upstream stages before dispatching (<code class="docutils literal notranslate"><span class="pre">AggregatedInput</span></code>)</p></li>
 <li><p><strong>Stream routing:</strong> receive/send streaming chunks (hidden states, codec codes)</p></li>
 <li><p><strong>Dispatch:</strong> push all messages into <code class="docutils literal notranslate"><span class="pre">scheduler.inbox</span></code>, drain <code class="docutils literal notranslate"><span class="pre">scheduler.outbox</span></code></p></li>
@@ -686,20 +697,27 @@
 <h3>Inter-Stage Communication<a class="headerlink" href="#inter-stage-communication" title="Link to this heading">#</a></h3>
 <div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>sequenceDiagram
    participant A as Stage A
-   participant Relay as Relay (SHM/NCCL/NixL)
+   participant Relay as Relay / Local Dispatcher
    participant ZMQ as Control Plane (ZMQ)
    participant B as Stage B
-   A-&gt;&gt;Relay: write(tensors)
-   A-&gt;&gt;ZMQ: send(DataReadyMessage)
+   A-&gt;&gt;Relay: write(tensors) or send Python reference
+   A-&gt;&gt;ZMQ: send(DataReadyMessage) for relay/IPC
    ZMQ-&gt;&gt;B: recv(DataReadyMessage)
-   B-&gt;&gt;Relay: read(tensors)
+   B-&gt;&gt;Relay: read(tensors) or receive local object
 </pre></div>
 </div>
 <ul class="simple">
 <li><p><strong>Control plane (ZMQ):</strong> small messages — Submit, DataReady, Abort, Shutdown. PUB/SUB for abort broadcast, PUSH/PULL for point-to-point.</p></li>
-<li><p><strong>Data plane (Relay):</strong> large tensors. Pluggable backends: SHM (single machine), NCCL (multi-GPU), NixL (RDMA multi-node), Mooncake. Same-GPU stages use CUDA IPC zero-copy automatically.</p></li>
+<li><p><strong>Data plane:</strong> large tensors normally go through relay. Pluggable backends: SHM (single machine), NCCL (multi-GPU), NixL (RDMA multi-node), Mooncake. Same-GPU stream edges use CUDA IPC automatically. Same-process safe edges may use LOCAL_OBJECT and pass the original Python object by reference.</p></li>
 <li><p><strong>Streaming:</strong> hidden states / codec codes flow via <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code> with <code class="docutils literal notranslate"><span class="pre">chunk_id</span></code> and <code class="docutils literal notranslate"><span class="pre">is_done</span></code> fields, parallel to normal result routing.</p></li>
 </ul>
+<p>LOCAL_OBJECT is a Stage-level fast path, not a relay backend. It is used only
+when runtime prep knows sender and receiver live in the same OS process. Full
+payload dispatch can use it for single-target routes; projected fan-out can use
+it only when each projector returns a <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> with an isolated <code class="docutils literal notranslate"><span class="pre">data</span></code>
+container. The receiver sees the same Python object references, including nested
+tensors and metadata, so downstream code must treat them as read-only until the
+receiver has finished with the request.</p>
 <blockquote>
 <div><p><strong>Note (Chenyang):</strong> The split between control and data planes is core: ZMQ carries small coordination messages (<code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>, <code class="docutils literal notranslate"><span class="pre">AbortMessage</span></code>), while the relay (SHM/NCCL/NIXL/Mooncake) carries the actual tensors.</p>
 </div></blockquote>
@@ -715,6 +733,12 @@
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">write_payload</span></code> / <code class="docutils literal notranslate"><span class="pre">read_payload</span></code> — full <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> serialization via relay</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">send_stream_chunk</span></code> — handles same-GPU IPC vs cross-GPU relay, NIXL credit deadlock avoidance</p></li>
+</ul>
+</li>
+<li><p><strong>Same-process dispatch</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">LocalStageDispatcher</span></code> — directly calls target stage receive methods with
+Python object references for LOCAL_OBJECT payloads and stream chunks</p></li>
 </ul>
 </li>
 <li><p><strong>Internal facing-API</strong></p>
@@ -1456,7 +1480,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 26, 2026.
+  Last updated on May 31, 2026.
   <br/>
 </p>
   </div>

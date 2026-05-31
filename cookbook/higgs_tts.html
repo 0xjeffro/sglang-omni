@@ -1,0 +1,1413 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Higgs TTS &#8212; SGLang</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=ccdb6887"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cookbook/higgs_tts';</script>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <link rel="icon" href="../_static/logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Voxtral TTS" href="voxtral_tts.html" />
+    <link rel="prev" title="🚀 Installation" href="../get_started/installation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+    <meta name="docbuild:last-update" content="May 31, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Cookbook</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Higgs TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llada2_uni.html">LLaDA2.0-Uni</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/qwen3_omni.html">Omni Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/tts.html">TTS Model Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/omni_router.html">Omni Router Usage</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/relay.html">Benchmark Relay</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/main.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/apiserver_design.html">API Server Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/pipeline.html">Pipeline Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/communication.html">Communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/profiler.html">Request-level profiler</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/cookbook/higgs_tts.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/cookbook/higgs_tts.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fcookbook/higgs_tts.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/cookbook/higgs_tts.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Higgs TTS</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#server-configuration">Server Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesizing-speech">Synthesizing Speech</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-shot">Zero-shot</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#voice-cloning">Voice Cloning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming">Streaming</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-sse-response-looks-like">What the SSE response looks like</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inline-control-tokens">Inline Control Tokens</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#emotion">Emotion</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#style">Style</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sound-effects">Sound Effects</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prosody">Prosody</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-encoded-reference-codes">Pre-encoded reference codes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#request-parameters">Request parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput">Throughput</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-benchmarks">Evaluation Benchmarks</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seed-tts">Seed-TTS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cv3-9-langs">CV3 (9 langs)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimax-multilingual-23-langs">MiniMax-Multilingual (23 langs)</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="higgs-tts">
+<h1>Higgs TTS<a class="headerlink" href="#higgs-tts" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://huggingface.co/boson-sglang/higgs-audio-v3-tts-4b-base">Higgs Audio v3 TTS</a>
+is a chat-native text-to-speech model from Boson AI built on a Qwen3-4B backbone. It generates
+24 kHz speech through 8 discrete codebooks and supports 100+ languages, voice cloning from a
+reference clip, and fine-grained inline control over emotion, style, sound effects, and prosody.</p>
+<section id="highlights">
+<h2>Highlights<a class="headerlink" href="#highlights" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Chat-native, low-latency</strong> streaming multi-turn speech generation</p></li>
+<li><p><strong>Multilingual</strong> — 100+ languages and dialects, 90+ with single-digit WER/CER</p></li>
+<li><p><strong>Voice clone accuracy</strong> — high-fidelity zero-shot speaker cloning from reference clips</p></li>
+<li><p><strong>Inline control</strong> via <code class="docutils literal notranslate"><span class="pre">&lt;|emotion:…|&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;|style:…|&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;|sfx:…|&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;|prosody:…|&gt;</span></code> tags</p></li>
+</ul>
+</section>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<p><img alt="Higgs Audio v3 Generation Architecture" src="../_images/higgs-architecture.png" /></p>
+<p>Higgs autoregressive decoder consumes interleaved text and audio tokens. Audio is encoded by the <strong>Higgs Tokenizer</strong> into 8 codebooks at 25 fps, staggered via a <strong>delay pattern</strong>, then mapped to backbone hidden states through a <strong>multi-codebook fused embedding</strong>. Output codes pass through a <strong>multi-codebook fused head</strong>, are de-delayed, and decoded back to waveform. Multi-turn generation interleaves <code class="docutils literal notranslate"><span class="pre">&lt;|text|&gt;…&lt;|audio|&gt;…</span></code> chunks so each new chunk is grounded on reference + prior chunks.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Spec</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Backbone</p></td>
+<td><p>~4B autoregressive decoder (36 L, hidden=2560, GQA 32/8)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Audio tokens</p></td>
+<td><p>8 codebooks × 1026 vocab, delay pattern</p></td>
+</tr>
+<tr class="row-even"><td><p>Multi-codebook embedding / head</p></td>
+<td><p>Fused single-tensor, tied with text embedding</p></td>
+</tr>
+<tr class="row-odd"><td><p>Context length</p></td>
+<td><p>8,192 tokens (training sequence length)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>Install <code class="docutils literal notranslate"><span class="pre">sglang-omni</span></code> by following <a class="reference internal" href="../get_started/installation.html"><span class="std std-doc">Installation</span></a>, then download the model:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Higgs TTS model is private; export your HF token before downloading.</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">HF_TOKEN</span><span class="o">=</span>hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+hf<span class="w"> </span>download<span class="w"> </span>boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999
+hf<span class="w"> </span>download<span class="w"> </span>bosonai/higgs-audio-v2-tokenizer
+</pre></div>
+</div>
+</section>
+<section id="server-configuration">
+<h2>Server Configuration<a class="headerlink" href="#server-configuration" title="Link to this heading">#</a></h2>
+<p>The pipeline is <code class="docutils literal notranslate"><span class="pre">preprocessing</span> <span class="pre">→</span> <span class="pre">audio_encoder</span> <span class="pre">→</span> <span class="pre">tts_engine</span> <span class="pre">→</span> <span class="pre">vocoder</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgl-omni<span class="w"> </span>serve<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--model-path<span class="w"> </span>boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>examples/configs/higgs_tts.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span>
+</pre></div>
+</div>
+</section>
+<section id="synthesizing-speech">
+<h2>Synthesizing Speech<a class="headerlink" href="#synthesizing-speech" title="Link to this heading">#</a></h2>
+<section id="zero-shot">
+<h3>Zero-shot<a class="headerlink" href="#zero-shot" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Use curl</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;input&quot;: &quot;Hello, how are you?&quot;}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output.wav
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Use Python</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;http://localhost:8000/v1/audio/speech&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello, how are you?&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output.wav&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Reference output:</p>
+<audio controls>
+  <source src="../_static/audio/higgs-1.wav" type="audio/wav">
+</audio>
+</section>
+<section id="voice-cloning">
+<h3>Voice Cloning<a class="headerlink" href="#voice-cloning" title="Link to this heading">#</a></h3>
+<p>Supplying the reference transcript (<code class="docutils literal notranslate"><span class="pre">text</span></code>) materially improves cloning quality.</p>
+<ol class="arabic simple">
+<li><p>Use curl</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;Have a nice day and enjoy south california sunshine.&quot;,</span>
+<span class="s1">    &quot;references&quot;: [{</span>
+<span class="s1">      &quot;audio_path&quot;: &quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_10119832.wav&quot;,</span>
+<span class="s1">      &quot;text&quot;: &quot;We asked over twenty different people, and they all said it was his.&quot;</span>
+<span class="s1">    }],</span>
+<span class="s1">    &quot;temperature&quot;: 0.8,</span>
+<span class="s1">    &quot;top_k&quot;: 50,</span>
+<span class="s1">    &quot;max_new_tokens&quot;: 1024</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output.wav
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Use Python</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;http://localhost:8000/v1/audio/speech&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Have a nice day and enjoy south california sunshine.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s2">&quot;audio_path&quot;</span><span class="p">:</span> <span class="s2">&quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_10119832.wav&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;We asked over twenty different people, and they all said it was his.&quot;</span><span class="p">,</span>
+        <span class="p">}],</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="s2">&quot;top_k&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="s2">&quot;max_new_tokens&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+<span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output.wav&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Reference input:</p>
+<audio controls>
+  <source src="../_static/audio/higgs-3.wav" type="audio/wav">
+</audio>
+<p>Reference output:</p>
+<audio controls>
+  <source src="../_static/audio/higgs-2.wav" type="audio/wav">
+</audio>
+</section>
+<section id="streaming">
+<h3>Streaming<a class="headerlink" href="#streaming" title="Link to this heading">#</a></h3>
+<p>Unlike a standard request where you wait for the full audio to be generated before receiving anything, streaming lets you start receiving and playing audio <strong>while generation is still in progress</strong>. This significantly reduces time-to-first-audio, which matters for real-time or interactive use cases.</p>
+<p>Higgs TTS implements streaming via <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events">Server-Sent Events (SSE)</a>. Each SSE event carries a base64-encoded WAV chunk. Your client can decode and play each chunk as it arrives, rather than buffering the entire response.</p>
+<p>Enable streaming by setting <code class="docutils literal notranslate"><span class="pre">&quot;stream&quot;:</span> <span class="pre">true</span></code> in the request body. During generation, the vocoder emits incremental audio chunks; the terminal event is intentionally slim and carries metadata such as <code class="docutils literal notranslate"><span class="pre">sample_rate</span></code> and <code class="docutils literal notranslate"><span class="pre">usage</span></code> instead of repeating the full waveform. Inside the pipeline, audio chunks use the compact <code class="docutils literal notranslate"><span class="pre">audio_waveform</span></code> payload (<code class="docutils literal notranslate"><span class="pre">bytes</span></code> plus <code class="docutils literal notranslate"><span class="pre">audio_waveform_shape</span></code>, <code class="docutils literal notranslate"><span class="pre">audio_waveform_dtype</span></code>, and <code class="docutils literal notranslate"><span class="pre">sample_rate</span></code>), which the HTTP layer encodes into the SSE <code class="docutils literal notranslate"><span class="pre">audio.data</span></code> field.</p>
+<ol class="arabic simple">
+<li><p>Use curl</p></li>
+</ol>
+<p>Set <code class="docutils literal notranslate"><span class="pre">&quot;stream&quot;:</span> <span class="pre">true</span></code> in your request body:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-N<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;Get the trust fund to the bank early.&quot;,</span>
+<span class="s1">    &quot;references&quot;: [{</span>
+<span class="s1">      &quot;audio_path&quot;: &quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_10119832.wav&quot;,</span>
+<span class="s1">      &quot;text&quot;: &quot;We asked over twenty different people, and they all said it was his.&quot;</span>
+<span class="s1">    }],</span>
+<span class="s1">    &quot;stream&quot;: true</span>
+<span class="s1">  }&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">-N</span></code> flag disables curl’s output buffering so SSE events are printed as they arrive.</p>
+<ol class="arabic simple" start="2">
+<li><p>Use Python</p></li>
+</ol>
+<p>This example decodes each chunk and writes it to a WAV file incrementally. In a real application, you would pipe the decoded bytes directly to an audio player (e.g., via <code class="docutils literal notranslate"><span class="pre">pyaudio</span></code> or <code class="docutils literal notranslate"><span class="pre">sounddevice</span></code>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">REFERENCE_AUDIO</span> <span class="o">=</span> <span class="s2">&quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_10119832.wav&quot;</span>
+<span class="n">REFERENCE_TEXT</span> <span class="o">=</span> <span class="s2">&quot;We asked over twenty different people, and they all said it was his.&quot;</span>
+<span class="n">SPEECH_INPUT</span> <span class="o">=</span> <span class="s2">&quot;Get the trust fund to the bank early.&quot;</span>
+
+<span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;http://localhost:8000/v1/audio/speech&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">SPEECH_INPUT</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;audio_path&quot;</span><span class="p">:</span> <span class="n">REFERENCE_AUDIO</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">REFERENCE_TEXT</span><span class="p">}],</span>
+        <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output_streaming.wav&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">resp</span><span class="o">.</span><span class="n">iter_lines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;data: [DONE]&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;data: &quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">event</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;data: &quot;</span><span class="p">):])</span>
+
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;finish_reason&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">audio_data</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">audio_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">):</span>
+                <span class="n">chunk</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">audio_data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="c1"># In a real app: feed `chunk` to your audio player here</span>
+</pre></div>
+</div>
+<p>Reference output:</p>
+<audio controls>
+  <source src="../_static/audio/higgs-4.wav" type="audio/wav">
+</audio>
+<section id="what-the-sse-response-looks-like">
+<h4>What the SSE response looks like<a class="headerlink" href="#what-the-sse-response-looks-like" title="Link to this heading">#</a></h4>
+<p>Each event follows the standard SSE format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;speech-...&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;audio.speech.chunk&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;base64-encoded WAV bytes&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;wav&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span> <span class="s2">&quot;finish_reason&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">}</span>
+<span class="n">data</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;speech-...&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;audio.speech.chunk&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span> <span class="s2">&quot;finish_reason&quot;</span><span class="p">:</span> <span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="s2">&quot;usage&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">}}</span>
+<span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="n">DONE</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Audio chunks have <code class="docutils literal notranslate"><span class="pre">&quot;finish_reason&quot;:</span> <span class="pre">null</span></code> and carry audio data in <code class="docutils literal notranslate"><span class="pre">audio.data</span></code>. The final metadata event has <code class="docutils literal notranslate"><span class="pre">&quot;finish_reason&quot;:</span> <span class="pre">&quot;stop&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;:</span> <span class="pre">null</span></code>, followed by a <code class="docutils literal notranslate"><span class="pre">[DONE]</span></code> sentinel.</p>
+</section>
+</section>
+<section id="inline-control-tokens">
+<h3>Inline Control Tokens<a class="headerlink" href="#inline-control-tokens" title="Link to this heading">#</a></h3>
+<p>Embed control tokens directly in the <code class="docutils literal notranslate"><span class="pre">input</span></code> field. Tokens from different
+categories can be combined:</p>
+<p><strong>Demo</strong></p>
+<ol class="arabic simple">
+<li><p>Emotion: surprise</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;I cant believe it! &lt;|emotion:surprise|&gt; &lt;|prosody:pause|&gt; &lt;|style:whispering|&gt; Higgs Model and SGLang are absolutely incredible.&quot;</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output.wav
+</pre></div>
+</div>
+<p>Reference output:</p>
+<audio controls>
+  <source src="../_static/audio/control-tokens-test1.wav" type="audio/wav">
+</audio>
+<ol class="arabic simple" start="2">
+<li><p>Prosody: speed_slow</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;&lt;|emotion:enthusiasm|&gt; Welcome to the show! &lt;|prosody:pause|&gt; &lt;|prosody:speed_slow|&gt; Today we have something truly special for you.&quot;</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output.wav
+</pre></div>
+</div>
+<p>Reference output:</p>
+<audio controls>
+  <source src="../_static/audio/control-tokens-test2.wav" type="audio/wav">
+</audio>
+<ol class="arabic simple" start="3">
+<li><p>Combine them together:</p></li>
+</ol>
+<p>Here is an example of combining emotion, prosody and style tokens together:</p>
+<details>
+<summary>Commands</summary>
+<p>Part 1 — female asks:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;&lt;|prosody:pitch_high|&gt; &lt;|prosody:speed_slow|&gt; Excuse me. Can you tell me how much the shirt is?&quot;,</span>
+<span class="s1">    &quot;references&quot;: [{</span>
+<span class="s1">      &quot;audio_path&quot;: &quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_103675.wav&quot;,</span>
+<span class="s1">      &quot;text&quot;: &quot;Excuse me. Can you tell me how much the shirt is?&quot;</span>
+<span class="s1">    }],</span>
+<span class="s1">    &quot;temperature&quot;: 0.5,</span>
+<span class="s1">    &quot;top_k&quot;: 30,</span>
+<span class="s1">    &quot;seed&quot;: 404</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>part1.wav
+</pre></div>
+</div>
+<p>Part 2 — male answers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;&lt;|prosody:speed_very_slow|&gt; &lt;|prosody:expressive_low|&gt; Yes, it is nine fifteen.&quot;,</span>
+<span class="s1">    &quot;references&quot;: [{</span>
+<span class="s1">      &quot;audio_path&quot;: &quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_10119832.wav&quot;,</span>
+<span class="s1">      &quot;text&quot;: &quot;We asked over twenty different people, and they all said it was his.&quot;</span>
+<span class="s1">    }],</span>
+<span class="s1">    &quot;temperature&quot;: 0.5,</span>
+<span class="s1">    &quot;top_k&quot;: 30,</span>
+<span class="s1">    &quot;seed&quot;: 43</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>part2.wav
+</pre></div>
+</div>
+<p>Part 3 — female reads the question:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/speech<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;input&quot;: &quot;&lt;|prosody:speed_slow|&gt; &lt;|prosody:expressive_low|&gt; Question: How much is the shirt?&quot;,</span>
+<span class="s1">    &quot;references&quot;: [{</span>
+<span class="s1">      &quot;audio_path&quot;: &quot;https://huggingface.co/datasets/zhaochenyang20/seed-tts-eval-mini/resolve/main/en/prompt-wavs/common_voice_en_103675.wav&quot;,</span>
+<span class="s1">      &quot;text&quot;: &quot;We asked over twenty different people, and they all said it was his.&quot;</span>
+<span class="s1">    }],</span>
+<span class="s1">    &quot;temperature&quot;: 0.5,</span>
+<span class="s1">    &quot;top_k&quot;: 30,</span>
+<span class="s1">    &quot;seed&quot;: 44</span>
+<span class="s1">  }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>part3.wav
+</pre></div>
+</div>
+<p>Concatenate (~0.6 s gap between lines):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ffmpeg<span class="w"> </span>-y<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>part1.wav<span class="w"> </span>-f<span class="w"> </span>lavfi<span class="w"> </span>-t<span class="w"> </span><span class="m">0</span>.6<span class="w"> </span>-i<span class="w"> </span><span class="nv">anullsrc</span><span class="o">=</span><span class="nv">r</span><span class="o">=</span><span class="m">24000</span>:cl<span class="o">=</span>mono<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>part2.wav<span class="w"> </span>-f<span class="w"> </span>lavfi<span class="w"> </span>-t<span class="w"> </span><span class="m">0</span>.6<span class="w"> </span>-i<span class="w"> </span><span class="nv">anullsrc</span><span class="o">=</span><span class="nv">r</span><span class="o">=</span><span class="m">24000</span>:cl<span class="o">=</span>mono<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>part3.wav<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-filter_complex<span class="w"> </span><span class="s2">&quot;[0:a][1:a][2:a][3:a][4:a]concat=n=5:v=0:a=1&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>gaokao_listening.wav
+</pre></div>
+</div>
+</details>
+<p>Reference output:</p>
+<audio controls>
+  <source src="../_static/audio/gaokao-listening.wav" type="audio/wav">
+</audio>
+<section id="emotion">
+<h4>Emotion<a class="headerlink" href="#emotion" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:elation|&gt;</span></code></p></td>
+<td><p>Elation / joy</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:amusement|&gt;</span></code></p></td>
+<td><p>Amusement / playful laughter</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:enthusiasm|&gt;</span></code></p></td>
+<td><p>Enthusiasm / excitement</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:determination|&gt;</span></code></p></td>
+<td><p>Determination / firmness</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:pride|&gt;</span></code></p></td>
+<td><p>Pride / confidence</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:contentment|&gt;</span></code></p></td>
+<td><p>Calm satisfaction</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:affection|&gt;</span></code></p></td>
+<td><p>Warmth / affection</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:relief|&gt;</span></code></p></td>
+<td><p>Relief</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:contemplation|&gt;</span></code></p></td>
+<td><p>Thoughtful / reflective</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:confusion|&gt;</span></code></p></td>
+<td><p>Confused</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:surprise|&gt;</span></code></p></td>
+<td><p>Surprised</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:awe|&gt;</span></code></p></td>
+<td><p>Awe / wonder</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:longing|&gt;</span></code></p></td>
+<td><p>Longing / yearning</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:arousal|&gt;</span></code></p></td>
+<td><p>Heightened desire</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:anger|&gt;</span></code></p></td>
+<td><p>Anger</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:fear|&gt;</span></code></p></td>
+<td><p>Fear</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:disgust|&gt;</span></code></p></td>
+<td><p>Disgust</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:bitterness|&gt;</span></code></p></td>
+<td><p>Bitterness</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:sadness|&gt;</span></code></p></td>
+<td><p>Sadness</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:shame|&gt;</span></code></p></td>
+<td><p>Shame</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|emotion:helplessness|&gt;</span></code></p></td>
+<td><p>Helplessness</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="style">
+<h4>Style<a class="headerlink" href="#style" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|style:singing|&gt;</span></code></p></td>
+<td><p>Singing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|style:shouting|&gt;</span></code></p></td>
+<td><p>Shouting / projected voice</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|style:whispering|&gt;</span></code></p></td>
+<td><p>Whisper</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="sound-effects">
+<h4>Sound Effects<a class="headerlink" href="#sound-effects" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:cough|&gt;</span></code></p></td>
+<td><p>Cough</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:laughter|&gt;</span></code></p></td>
+<td><p>Laughter</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:crying|&gt;</span></code></p></td>
+<td><p>Crying</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:screaming|&gt;</span></code></p></td>
+<td><p>Screaming</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:burping|&gt;</span></code></p></td>
+<td><p>Burping</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:humming|&gt;</span></code></p></td>
+<td><p>Humming</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:sigh|&gt;</span></code></p></td>
+<td><p>Sigh</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:sniff|&gt;</span></code></p></td>
+<td><p>Sniff</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|sfx:sneeze|&gt;</span></code></p></td>
+<td><p>Sneeze</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="prosody">
+<h4>Prosody<a class="headerlink" href="#prosody" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:speed_very_slow|&gt;</span></code></p></td>
+<td><p>~0.65× speed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:speed_slow|&gt;</span></code></p></td>
+<td><p>~0.85× speed</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:speed_fast|&gt;</span></code></p></td>
+<td><p>~1.2× speed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:speed_very_fast|&gt;</span></code></p></td>
+<td><p>~1.4× speed</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:pitch_low|&gt;</span></code></p></td>
+<td><p>~−3 semitones</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:pitch_high|&gt;</span></code></p></td>
+<td><p>~+2.5 semitones</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:pause|&gt;</span></code></p></td>
+<td><p>~400–700 ms pause</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:long_pause|&gt;</span></code></p></td>
+<td><p>~700–1500 ms pause</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:expressive_high|&gt;</span></code></p></td>
+<td><p>More expressive delivery</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;|prosody:expressive_low|&gt;</span></code></p></td>
+<td><p>Flatter delivery</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="pre-encoded-reference-codes">
+<h3>Pre-encoded reference codes<a class="headerlink" href="#pre-encoded-reference-codes" title="Link to this heading">#</a></h3>
+<p>For high-throughput pipelines (e.g. RL rollout) where the same reference audio is reused across many requests, you can encode the reference audio offline and pass the discrete codes directly via <code class="docutils literal notranslate"><span class="pre">reference_codes</span></code> — this skips the server-side codec encode step. Shape must be <code class="docutils literal notranslate"><span class="pre">[T,</span> <span class="pre">num_codebooks=8]</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># python</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;http://localhost:8000/v1/audio/speech&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">SPEECH_INPUT</span><span class="p">,</span>
+        <span class="s2">&quot;reference_codes&quot;</span><span class="p">:</span> <span class="n">codes_TN</span><span class="p">,</span>   <span class="c1"># [T, 8] int list, pre-delay-pattern</span>
+        <span class="s2">&quot;reference_text&quot;</span><span class="p">:</span> <span class="n">REFERENCE_TEXT</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="request-parameters">
+<h3>Request parameters<a class="headerlink" href="#request-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input</span></code></p></td>
+<td><p>string</p></td>
+<td><p>(required)</p></td>
+<td><p>Text to synthesize</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voice</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code></p></td>
+<td><p>Voice identifier (ignored when <code class="docutils literal notranslate"><span class="pre">references</span></code> is set)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">response_format</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;wav&quot;</span></code></p></td>
+<td><p>Output audio format</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stream</span></code></p></td>
+<td><p>bool</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>Enable streaming via SSE</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">references</span></code></p></td>
+<td><p>list</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Reference audio for voice cloning; each item has <code class="docutils literal notranslate"><span class="pre">audio_path</span></code> (local path or HTTP URL) and <code class="docutils literal notranslate"><span class="pre">text</span></code> (transcript)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reference_codes</span></code></p></td>
+<td><p>list[list[int]]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Pre-encoded discrete codes, shape <code class="docutils literal notranslate"><span class="pre">[T,</span> <span class="pre">8]</span></code> — alternative to <code class="docutils literal notranslate"><span class="pre">references[0].audio_path</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reference_text</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Transcript of reference audio when supplying <code class="docutils literal notranslate"><span class="pre">reference_codes</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code></p></td>
+<td><p>int</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2048</span></code></p></td>
+<td><p>Maximum number of generated multi-codebook steps</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>float</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+<td><p>Sampling temperature</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">top_p</span></code></p></td>
+<td><p>float</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Top-p sampling</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">top_k</span></code></p></td>
+<td><p>int</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Top-k sampling</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p>int</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p>Random seed for reproducibility</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="throughput">
+<h3>Throughput<a class="headerlink" href="#throughput" title="Link to this heading">#</a></h3>
+<p>[TODO (yichi, Huapeng): This should be updated in the last minute.]</p>
+<p>Throughput on seed-tts en (N=50 per concurrency, sequential thread pool, A100 40GB, bf16):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Concurrency</p></th>
+<th class="head text-right"><p>Mean latency</p></th>
+<th class="head text-right"><p>RTF (per-req)</p></th>
+<th class="head text-right"><p>audio_s/s</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>4637 ms</p></td>
+<td class="text-right"><p>0.526</p></td>
+<td class="text-right"><p>1.90</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>16</p></td>
+<td class="text-right"><p>7138 ms</p></td>
+<td class="text-right"><p>0.747</p></td>
+<td class="text-right"><p>12.88</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>32</p></td>
+<td class="text-right"><p>10188 ms</p></td>
+<td class="text-right"><p>0.865</p></td>
+<td class="text-right"><p>16.94</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="evaluation-benchmarks">
+<h2>Evaluation Benchmarks<a class="headerlink" href="#evaluation-benchmarks" title="Link to this heading">#</a></h2>
+<p>We report <strong>WER / CER</strong> (↓, %) and <strong>WavLM speaker similarity</strong> (↑, ×100) on three zero-shot voice-cloning benchmarks.</p>
+<section id="seed-tts">
+<h3>Seed-TTS<a class="headerlink" href="#seed-tts" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Lang</p></th>
+<th class="head"><p>WER ↓</p></th>
+<th class="head"><p>SIM ↑</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>en</p></td>
+<td><p>2.05</p></td>
+<td><p>64.86</p></td>
+</tr>
+<tr class="row-odd"><td><p>zh</p></td>
+<td><p>2.00</p></td>
+<td><p>70.96</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>macro</strong></p></td>
+<td><p><strong>2.02</strong></p></td>
+<td><p><strong>67.91</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="cv3-9-langs">
+<h3>CV3 (9 langs)<a class="headerlink" href="#cv3-9-langs" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Lang</p></th>
+<th class="head"><p>WER ↓</p></th>
+<th class="head"><p>SIM ↑</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>de</p></td>
+<td><p>8.62</p></td>
+<td><p>65.43</p></td>
+</tr>
+<tr class="row-odd"><td><p>en</p></td>
+<td><p>6.73</p></td>
+<td><p>60.37</p></td>
+</tr>
+<tr class="row-even"><td><p>es</p></td>
+<td><p>5.03</p></td>
+<td><p>68.18</p></td>
+</tr>
+<tr class="row-odd"><td><p>fr</p></td>
+<td><p>14.50</p></td>
+<td><p>62.34</p></td>
+</tr>
+<tr class="row-even"><td><p>it</p></td>
+<td><p>8.55</p></td>
+<td><p>67.34</p></td>
+</tr>
+<tr class="row-odd"><td><p>ja</p></td>
+<td><p>7.96</p></td>
+<td><p>67.91</p></td>
+</tr>
+<tr class="row-even"><td><p>ko</p></td>
+<td><p>4.38</p></td>
+<td><p>68.40</p></td>
+</tr>
+<tr class="row-odd"><td><p>ru</p></td>
+<td><p>9.38</p></td>
+<td><p>66.77</p></td>
+</tr>
+<tr class="row-even"><td><p>zh</p></td>
+<td><p>5.19</p></td>
+<td><p>69.71</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>macro</strong></p></td>
+<td><p><strong>7.82</strong></p></td>
+<td><p><strong>66.27</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="minimax-multilingual-23-langs">
+<h3>MiniMax-Multilingual (23 langs)<a class="headerlink" href="#minimax-multilingual-23-langs" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Lang</p></th>
+<th class="head"><p>WER ↓</p></th>
+<th class="head"><p>SIM ↑</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ar</p></td>
+<td><p>2.59</p></td>
+<td><p>74.77</p></td>
+</tr>
+<tr class="row-odd"><td><p>cs</p></td>
+<td><p>4.62</p></td>
+<td><p>78.80</p></td>
+</tr>
+<tr class="row-even"><td><p>de</p></td>
+<td><p>0.74</p></td>
+<td><p>70.65</p></td>
+</tr>
+<tr class="row-odd"><td><p>el</p></td>
+<td><p>1.81</p></td>
+<td><p>78.02</p></td>
+</tr>
+<tr class="row-even"><td><p>en</p></td>
+<td><p>1.87</p></td>
+<td><p>81.32</p></td>
+</tr>
+<tr class="row-odd"><td><p>es</p></td>
+<td><p>3.06</p></td>
+<td><p>72.78</p></td>
+</tr>
+<tr class="row-even"><td><p>fi</p></td>
+<td><p>4.62</p></td>
+<td><p>82.69</p></td>
+</tr>
+<tr class="row-odd"><td><p>fr</p></td>
+<td><p>4.70</p></td>
+<td><p>70.27</p></td>
+</tr>
+<tr class="row-even"><td><p>hi</p></td>
+<td><p>6.81</p></td>
+<td><p>80.94</p></td>
+</tr>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>2.38</p></td>
+<td><p>72.42</p></td>
+</tr>
+<tr class="row-even"><td><p>it</p></td>
+<td><p>2.07</p></td>
+<td><p>74.56</p></td>
+</tr>
+<tr class="row-odd"><td><p>ja</p></td>
+<td><p>3.74</p></td>
+<td><p>74.23</p></td>
+</tr>
+<tr class="row-even"><td><p>ko</p></td>
+<td><p>3.57</p></td>
+<td><p>74.86</p></td>
+</tr>
+<tr class="row-odd"><td><p>nl</p></td>
+<td><p>2.10</p></td>
+<td><p>73.02</p></td>
+</tr>
+<tr class="row-even"><td><p>pl</p></td>
+<td><p>2.08</p></td>
+<td><p>83.16</p></td>
+</tr>
+<tr class="row-odd"><td><p>pt</p></td>
+<td><p>2.59</p></td>
+<td><p>76.52</p></td>
+</tr>
+<tr class="row-even"><td><p>ro</p></td>
+<td><p>3.64</p></td>
+<td><p>77.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>ru</p></td>
+<td><p>4.66</p></td>
+<td><p>74.48</p></td>
+</tr>
+<tr class="row-even"><td><p>th</p></td>
+<td><p>7.59</p></td>
+<td><p>77.64</p></td>
+</tr>
+<tr class="row-odd"><td><p>tr</p></td>
+<td><p>2.09</p></td>
+<td><p>77.72</p></td>
+</tr>
+<tr class="row-even"><td><p>uk</p></td>
+<td><p>2.69</p></td>
+<td><p>71.79</p></td>
+</tr>
+<tr class="row-odd"><td><p>vi</p></td>
+<td><p>1.18</p></td>
+<td><p>73.46</p></td>
+</tr>
+<tr class="row-even"><td><p>zh</p></td>
+<td><p>1.65</p></td>
+<td><p>74.85</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>macro</strong></p></td>
+<td><p><strong>3.17</strong></p></td>
+<td><p><strong>75.92</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../get_started/installation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">🚀 Installation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="voxtral_tts.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Voxtral TTS</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#server-configuration">Server Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesizing-speech">Synthesizing Speech</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-shot">Zero-shot</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#voice-cloning">Voice Cloning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming">Streaming</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-sse-response-looks-like">What the SSE response looks like</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inline-control-tokens">Inline Control Tokens</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#emotion">Emotion</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#style">Style</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sound-effects">Sound Effects</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prosody">Prosody</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-encoded-reference-codes">Pre-encoded reference codes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#request-parameters">Request parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput">Throughput</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-benchmarks">Evaluation Benchmarks</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seed-tts">Seed-TTS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cv3-9-langs">CV3 (9 langs)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimax-multilingual-23-langs">MiniMax-Multilingual (23 langs)</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SGLang-Omni Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, SGLang-Omni.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on May 31, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

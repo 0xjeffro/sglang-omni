@@ -50,7 +50,8 @@
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'developer_reference/config';</script>
-    <link rel="icon" href="https://docs.sglang.io/_static/logo.ico"/>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Communication" href="communication.html" />
@@ -58,7 +59,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="May 26, 2026"/>
+    <meta name="docbuild:last-update" content="May 31, 2026"/>
   </head>
   
   
@@ -137,8 +138,8 @@
       
     
     
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-light" alt="SGLang - Home"/>
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
   
   
 </a></div>
@@ -153,7 +154,15 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Cookbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/higgs_tts.html">Higgs TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/llada2_uni.html">LLaDA2.0-Uni</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
 <ul class="nav bd-sidenav">
@@ -232,7 +241,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -249,7 +258,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/blob/main/developer_reference/config.md?plain=1" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/developer_reference/config.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -266,7 +275,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/edit/main/developer_reference/config.md" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/developer_reference/config.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -283,7 +292,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/issues/new?title=Issue%20on%20page%20%2Fdeveloper_reference/config.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fdeveloper_reference/config.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -401,7 +410,10 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declarative-config">Declarative Config</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stageconfig-reference"><code class="docutils literal notranslate"><span class="pre">StageConfig</span></code> Reference</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelineconfig-reference"><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> Reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelineconfig-reference"><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> Reference</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-fusion">Stage Fusion</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-prep-and-runner">Runtime Prep and Runner</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-parallelism">Tensor Parallelism</a></li>
 </ul>
@@ -634,7 +646,7 @@ inferred by runtime prep from <code class="docutils literal notranslate"><span c
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fused_stages</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">list[list[str]]</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">[]</span></code></p></td>
-<td><p>Validated as adjacent stage groups, but fusion is not implemented yet.</p></td>
+<td><p>Adjacent linear stage groups to colocate in one runtime process, enabling Stage-level local dispatch while preserving normal Stage ownership.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">runtime_overrides</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">dict[str,</span> <span class="pre">Any]]</span></code></p></td>
@@ -672,6 +684,23 @@ inferred by runtime prep from <code class="docutils literal notranslate"><span c
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">RelayConfig</span></code> is the per-stage data-transfer override. It currently contains
 <code class="docutils literal notranslate"><span class="pre">slot_size_mb</span></code>, <code class="docutils literal notranslate"><span class="pre">credits</span></code>, <code class="docutils literal notranslate"><span class="pre">rank</span></code>, <code class="docutils literal notranslate"><span class="pre">world_size</span></code>, and <code class="docutils literal notranslate"><span class="pre">device</span></code>.</p>
+<section id="stage-fusion">
+<h3>Stage Fusion<a class="headerlink" href="#stage-fusion" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">fused_stages</span></code> is a framework-level colocation hint. It keeps every listed
+logical stage as a normal <code class="docutils literal notranslate"><span class="pre">Stage</span></code>; it does not create a synthetic scheduler or
+move routing, relay, fan-in, streaming, abort, or terminal completion into the
+scheduler layer.</p>
+<p>At runtime prep, each fused group adds a process-colocation constraint. The
+process topology planner merges the process groups that contain those stages.
+Once colocated, ordinary Stage routing can use process-local object dispatch for
+eligible full-payload hops and process-local stream dispatch for same-process
+stream edges. Cross-process or unsafe fan-out edges still use the relay/control
+plane path.</p>
+<p>The first supported fusion form is conservative: a group must be adjacent,
+linear, non-TP, and fit on at most one GPU. Internal stages must route only to
+the next stage in the group. Existing explicit <code class="docutils literal notranslate"><span class="pre">process</span></code> groups are not split;
+if fusion connects two process groups, those groups are merged.</p>
+</section>
 </section>
 <section id="runtime-prep-and-runner">
 <h2>Runtime Prep and Runner<a class="headerlink" href="#runtime-prep-and-runner" title="Link to this heading">#</a></h2>
@@ -794,7 +823,10 @@ inside one pipeline.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declarative-config">Declarative Config</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stageconfig-reference"><code class="docutils literal notranslate"><span class="pre">StageConfig</span></code> Reference</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelineconfig-reference"><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> Reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelineconfig-reference"><code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> Reference</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-fusion">Stage Fusion</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-prep-and-runner">Runtime Prep and Runner</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-parallelism">Tensor Parallelism</a></li>
 </ul>
@@ -830,7 +862,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 26, 2026.
+  Last updated on May 31, 2026.
   <br/>
 </p>
   </div>

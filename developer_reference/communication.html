@@ -50,7 +50,8 @@
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'developer_reference/communication';</script>
-    <link rel="icon" href="https://docs.sglang.io/_static/logo.ico"/>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Request-level profiler" href="profiler.html" />
@@ -58,7 +59,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="May 26, 2026"/>
+    <meta name="docbuild:last-update" content="May 31, 2026"/>
   </head>
   
   
@@ -137,8 +138,8 @@
       
     
     
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-light" alt="SGLang - Home"/>
-    <img src="https://docs.sglang.io/_static/logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
   
   
 </a></div>
@@ -153,7 +154,15 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/installation.html">🚀 Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Cookbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/higgs_tts.html">Higgs TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/llada2_uni.html">LLaDA2.0-Uni</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
 <ul class="nav bd-sidenav">
@@ -232,7 +241,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -249,7 +258,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/blob/main/developer_reference/communication.md?plain=1" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/developer_reference/communication.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -266,7 +275,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/edit/main/developer_reference/communication.md" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/developer_reference/communication.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -283,7 +292,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sgl-project.github.io/issues/new?title=Issue%20on%20page%20%2Fdeveloper_reference/communication.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fdeveloper_reference/communication.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -419,8 +428,9 @@
   <section class="tex2jax_ignore mathjax_ignore" id="communication">
 <h1>Communication<a class="headerlink" href="#communication" title="Link to this heading">#</a></h1>
 <p>For the communication among stages in sglang-omni, the control plane moves small
-coordination messages over ZMQ; data plane, which is relay moves tensors and tensor-like blobs between
-stage processes.</p>
+coordination messages over ZMQ; the data plane uses relay for cross-process
+tensors and tensor-like blobs, with process-local shortcuts for selected
+same-process edges.</p>
 <p>The main implementation entry points are:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -435,13 +445,16 @@ stage processes.</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/pipeline/relay_io.py</span></code></p></td>
 <td><p>Stage-facing payload and stream transfer helpers</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/relay/base.py</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/pipeline/local_dispatch.py</span></code></p></td>
+<td><p>Same-process Python object dispatch between colocated stages</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/relay/base.py</span></code></p></td>
 <td><p>Backend interface and backend registry</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/relay/{shm,nccl,nixl,mooncake}.py</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/relay/{shm,nccl,nixl,mooncake}.py</span></code></p></td>
 <td><p>Concrete relay backends</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/proto/messages.py</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sglang_omni/proto/messages.py</span></code></p></td>
 <td><p>Control-plane message types</p></td>
 </tr>
 </tbody>
@@ -481,7 +494,11 @@ stage processes.</p>
 <td><p>Relay backend</p></td>
 <td><p>Full<code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> tensor buffers and cross-GPU stream blobs</p></td>
 </tr>
-<tr class="row-odd"><td><p>Same-GPU stream fast path</p></td>
+<tr class="row-odd"><td><p>Same-process fast path</p></td>
+<td><p>LOCAL_OBJECT</p></td>
+<td><p>Full<code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> objects and stream chunks passed by Python reference within one OS process</p></td>
+</tr>
+<tr class="row-even"><td><p>Same-GPU stream fast path</p></td>
 <td><p>CUDA IPC via<code class="docutils literal notranslate"><span class="pre">ForkingPickler</span></code></p></td>
 <td><p>Stream chunks and stream metadata tensors when sender and receiver share the same primary GPU</p></td>
 </tr>
@@ -496,7 +513,9 @@ metadata. The message itself may also carry stream fields such as <code class="d
 <section id="normal-payload-flow">
 <h2>Normal Payload Flow<a class="headerlink" href="#normal-payload-flow" title="Link to this heading">#</a></h2>
 <p>The coordinator submits the first <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> directly to the entry stage in a
-<code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>. After that, stage-to-stage payloads use relay.</p>
+<code class="docutils literal notranslate"><span class="pre">SubmitMessage</span></code>. After that, stage-to-stage payloads normally use relay. A
+same-process edge may use LOCAL_OBJECT instead when the runtime has registered
+the target in the same OS process and the route is safe for reference passing.</p>
 <ol class="arabic simple">
 <li><p>The sender calls <code class="docutils literal notranslate"><span class="pre">relay_io.write_payload(relay,</span> <span class="pre">request_id,</span> <span class="pre">payload)</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">write_payload()</span></code> recursively extracts tensors from <code class="docutils literal notranslate"><span class="pre">payload.data</span></code>, replaces
@@ -519,6 +538,18 @@ and passes the payload through the stage input handler.</p></li>
 <p>The payload relay format is intentionally backend-neutral. Backends only need to
 move a flat tensor buffer and return metadata that another backend instance can
 use for <code class="docutils literal notranslate"><span class="pre">get_async()</span></code>.</p>
+<p>LOCAL_OBJECT bypasses relay and the ZMQ <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code>: the sender calls the
+process-local dispatcher, which invokes <code class="docutils literal notranslate"><span class="pre">receive_local_payload()</span></code> on the target
+stage with the projected <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code> object itself. This is a direct Python
+reference transfer, not serialization. Receivers must treat the payload, nested
+data containers, tensors, stream chunks, and metadata as read-only. The object
+must also stay valid for the receiver’s scheduler queue lifetime; senders and
+projection functions must not mutate or recycle objects after dispatch.</p>
+<p>For full payloads, LOCAL_OBJECT is allowed for single-target same-process routes.
+For fan-out, it is allowed only when each projected payload is a <code class="docutils literal notranslate"><span class="pre">StagePayload</span></code>
+with its own <code class="docutils literal notranslate"><span class="pre">data</span></code> container, so downstream stages do not share mutable payload
+state. Tensor leaves may still be shared intentionally and must be treated as
+read-only.</p>
 </section>
 <section id="streaming-flow">
 <h2>Streaming Flow<a class="headerlink" href="#streaming-flow" title="Link to this heading">#</a></h2>
@@ -533,6 +564,12 @@ primary GPU</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">send_stream_chunk()</span></code> serializes the chunk with <code class="docutils literal notranslate"><span class="pre">ForkingPickler</span></code></p></li>
 <li><p>CUDA tensors are shared through CUDA IPC instead of copied through relay</p></li>
 <li><p>the <code class="docutils literal notranslate"><span class="pre">DataReadyMessage</span></code> carries <code class="docutils literal notranslate"><span class="pre">_ipc=True</span></code> metadata and a <code class="docutils literal notranslate"><span class="pre">chunk_id</span></code></p></li>
+</ul>
+<p>For same-process stream targets:</p>
+<ul class="simple">
+<li><p>the stage sends the chunk through <code class="docutils literal notranslate"><span class="pre">LocalStageDispatcher.send_stream_chunk()</span></code></p></li>
+<li><p>the receiver gets the original Python object and metadata by reference</p></li>
+<li><p>the same read-only and lifetime caveats as payload LOCAL_OBJECT apply</p></li>
 </ul>
 <p>For cross-GPU stream targets:</p>
 <ul class="simple">
@@ -609,6 +646,8 @@ fan-in, choose downstream stages, or interpret model payloads.</p>
 when required by the backend</p></li>
 <li><p>receiver allocates the destination buffer, waits for the get operation,
 restores the payload, and calls <code class="docutils literal notranslate"><span class="pre">relay.cleanup(request_id)</span></code></p></li>
+<li><p>LOCAL_OBJECT has no backend cleanup; sender and receiver share Python object
+references, so correctness depends on read-only use until the receiver is done</p></li>
 <li><p>aborts call <code class="docutils literal notranslate"><span class="pre">relay.cleanup(request_id)</span></code> from the stage abort path</p></li>
 <li><p>stage shutdown calls <code class="docutils literal notranslate"><span class="pre">relay.close()</span></code></p></li>
 </ul>
@@ -704,7 +743,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 26, 2026.
+  Last updated on May 31, 2026.
   <br/>
 </p>
   </div>
