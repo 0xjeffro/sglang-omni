@@ -289,17 +289,34 @@ def transcribe(asr: dict, wav_path: str, lang: str, device: str) -> str:
     else:
         raise ValueError(f"Unknown ASR type: {asr['type']}")
 
-def transcribe_batch_whisper(asr: dict, wav_paths: list[str], batch_size: int = 16) -> list[str]:
-    """Batchly transcribe a group of wav files, returning a text list of the same length and same order as the input."""
+
+def transcribe_batch_whisper(asr: dict, wav_paths: list[str], batch_size: int = 16):
+    """Yield transcribed text per wav, in input order, with background I/O prefetch.
+
+    Feeds the pipeline a generator + num_workers=1 so the DataLoader decodes the
+    next batch's wav while the GPU transcribes the current one, filling the per-batch I/O gap.
+    num_workers stays at 1 because the ASR ChunkPipeline clamps anything >1 back to 1 anyway
+    (it logs "For ChunkPipeline using num_workers>0 is likely to result in errors ... setting num_workers=1");
+    A single prefetch worker is already enough to hide the audio I/O.
+    """
+
+    def _gen():
+        for p in wav_paths:
+            yield p
+
     results = asr["pipeline"](
-        wav_paths,
+        _gen(),
         generate_kwargs={"language": "english", "task": "transcribe"},
         batch_size=batch_size,
+        num_workers=1,
     )
-    return [r["text"] for r in results]
+    for r in results:
+        yield r["text"]
 
 
-def compute_wer_from_hyp(output: SampleOutput, hyp_text: str, lang: str) -> SampleOutput:
+def compute_wer_from_hyp(
+    output: SampleOutput, hyp_text: str, lang: str
+) -> SampleOutput:
     """Compute per-sample WER metrics from an already-transcribed hyp text."""
     output.whisper_text = hyp_text
     output.ref_norm = normalize_text(output.target_text, lang)
@@ -710,6 +727,7 @@ def _transcribe_one_entry(
     output.asr_latency_s = time.perf_counter() - asr_t0
     return output
 
+
 def _transcribe_batched_whisper(
     entries: list[dict],
     asr: dict,
@@ -718,7 +736,8 @@ def _transcribe_batched_whisper(
     """Batched counterpart of the per-entry transcribe loop. (whisper/EN only)."""
 
     outputs: list[SampleOutput] = []
-    queue: list[tuple[int, str]] = []  # [(index into outputs, wav_path), ...]
+    # [(index into outputs, wav_path, audio_duration_s), ...]
+    queue: list[tuple[int, str, float]] = []
 
     # Build every SampleOutput; mark failed-generation entries, queue the rest.
     for entry in entries:
@@ -731,21 +750,33 @@ def _transcribe_batched_whisper(
         else:
             output.latency_s = entry.get("latency_s", 0.0)
             output.audio_duration_s = entry.get("audio_duration_s", 0.0)
-            queue.append((len(outputs), entry["wav_path"]))
+            queue.append((len(outputs), entry["wav_path"], output.audio_duration_s))
         outputs.append(output)
 
-    # Transcribe the queued wavs in batches and compute WER one by one.
-    for beg in tqdm(range(0, len(queue), batch_size), desc="WER transcribe (batched)"):
-        chunk = queue[beg : beg + batch_size]
-        paths = [p for _, p in chunk]
-        t0 = time.perf_counter()
-        hyps = transcribe_batch_whisper(asr, paths, batch_size=batch_size)
-        per_sample_latency = (time.perf_counter() - t0) / len(chunk)
-        for (out_idx, _), hyp in zip(chunk, hyps):
-            compute_wer_from_hyp(outputs[out_idx], hyp, "en")
-            outputs[out_idx].asr_latency_s = per_sample_latency
+    # Transcribe longest-audio samples first. Whisper decodes each 30 s chunk
+    # autoregressively up to the token cap, and a batch only finishes when its
+    # slowest member does -- so a long (often runaway) sample mixed into a batch
+    # of short ones drags the whole batch to max decode length. Grouping long
+    # samples together confines that cost to a few batches instead of dragging
+    # many. Duration is a cheap proxy for decode length; out_idx keeps results
+    # mapped back to the right SampleOutput, so WER is unchanged by the reorder.
+    queue.sort(key=lambda item: item[2], reverse=True)
+
+    # Transcribe all queued wavs in one streaming pass (batching + I/O prefetch),
+    # computing WER per sample as each transcription arrives in input order.
+    paths = [p for _, p, _ in queue]
+    out_indices = [out_idx for out_idx, _, _ in queue]
+    t0 = time.perf_counter()
+    hyps = transcribe_batch_whisper(asr, paths, batch_size=batch_size)
+    for out_idx, hyp in tqdm(
+        zip(out_indices, hyps), total=len(paths), desc="WER transcribe (batched)"
+    ):
+        compute_wer_from_hyp(outputs[out_idx], hyp, "en")
+    per_sample_latency = (time.perf_counter() - t0) / max(len(paths), 1)
+    for out_idx in out_indices:
+        outputs[out_idx].asr_latency_s = per_sample_latency
     return outputs
-    
+
 
 def _log_transcribe_result(
     *,
@@ -820,7 +851,7 @@ def run_seedtts_transcribe(
             f"--asr-batch-size>1 only supported for whisper/EN; falling back to "
             f"per-sample transcription for asr type {asr['type']!r}"
         )
-    
+
     outputs: list[SampleOutput] = []
 
     if asr_batch_size > 1 and asr["type"] == "whisper":
@@ -844,7 +875,7 @@ def run_seedtts_transcribe(
                 output=output,
                 log_per_sample=log_per_sample,
             )
-    
+
     wer_metrics = calculate_wer_metrics(outputs, config.lang)
     asr_metrics = calculate_asr_speed_metrics(outputs)
 
