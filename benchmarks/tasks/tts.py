@@ -289,22 +289,18 @@ def transcribe(asr: dict, wav_path: str, lang: str, device: str) -> str:
     else:
         raise ValueError(f"Unknown ASR type: {asr['type']}")
 
+def transcribe_batch_whisper(asr: dict, wav_paths: list[str], batch_size: int = 16) -> list[str]:
+    """Batchly transcribe a group of wav files, returning a text list of the same length and same order as the input."""
+    results = asr["pipeline"](
+        wav_paths,
+        generate_kwargs={"language": "english", "task": "transcribe"},
+        batch_size=batch_size,
+    )
+    return [r["text"] for r in results]
 
-def transcribe_and_compute_wer(
-    output: SampleOutput,
-    wav_path: str,
-    asr: dict,
-    lang: str,
-    device: str,
-) -> SampleOutput:
-    """Transcribe audio and compute per-sample WER metrics."""
-    try:
-        hyp_text = transcribe(asr, wav_path, lang, device)
-    except Exception as exc:
-        output.error = f"Transcription failed: {exc}"
-        logger.error(f"[{output.sample_id}] {output.error}")
-        return output
 
+def compute_wer_from_hyp(output: SampleOutput, hyp_text: str, lang: str) -> SampleOutput:
+    """Compute per-sample WER metrics from an already-transcribed hyp text."""
     output.whisper_text = hyp_text
     output.ref_norm = normalize_text(output.target_text, lang)
     output.hyp_norm = normalize_text(hyp_text, lang)
@@ -321,6 +317,24 @@ def transcribe_and_compute_wer(
     output.hits = measures.hits
     output.is_success = True
     return output
+
+
+def transcribe_and_compute_wer(
+    output: SampleOutput,
+    wav_path: str,
+    asr: dict,
+    lang: str,
+    device: str,
+) -> SampleOutput:
+    """Transcribe audio and compute per-sample WER metrics."""
+    try:
+        hyp_text = transcribe(asr, wav_path, lang, device)
+    except Exception as exc:
+        output.error = f"Transcription failed: {exc}"
+        logger.error(f"[{output.sample_id}] {output.error}")
+        return output
+
+    return compute_wer_from_hyp(output, hyp_text, lang)
 
 
 def compute_text_audio_consistency(
@@ -696,6 +710,42 @@ def _transcribe_one_entry(
     output.asr_latency_s = time.perf_counter() - asr_t0
     return output
 
+def _transcribe_batched_whisper(
+    entries: list[dict],
+    asr: dict,
+    batch_size: int,
+) -> list[SampleOutput]:
+    """Batched counterpart of the per-entry transcribe loop. (whisper/EN only)."""
+
+    outputs: list[SampleOutput] = []
+    queue: list[tuple[int, str]] = []  # [(index into outputs, wav_path), ...]
+
+    # Build every SampleOutput; mark failed-generation entries, queue the rest.
+    for entry in entries:
+        output = SampleOutput(
+            sample_id=entry["sample_id"],
+            target_text=entry["target_text"],
+        )
+        if not entry.get("is_success", False):
+            output.error = f"Generation failed: {entry.get('error', 'unknown')}"
+        else:
+            output.latency_s = entry.get("latency_s", 0.0)
+            output.audio_duration_s = entry.get("audio_duration_s", 0.0)
+            queue.append((len(outputs), entry["wav_path"]))
+        outputs.append(output)
+
+    # Transcribe the queued wavs in batches and compute WER one by one.
+    for beg in tqdm(range(0, len(queue), batch_size), desc="WER transcribe (batched)"):
+        chunk = queue[beg : beg + batch_size]
+        paths = [p for _, p in chunk]
+        t0 = time.perf_counter()
+        hyps = transcribe_batch_whisper(asr, paths, batch_size=batch_size)
+        per_sample_latency = (time.perf_counter() - t0) / len(chunk)
+        for (out_idx, _), hyp in zip(chunk, hyps):
+            compute_wer_from_hyp(outputs[out_idx], hyp, "en")
+            outputs[out_idx].asr_latency_s = per_sample_latency
+    return outputs
+    
 
 def _log_transcribe_result(
     *,
@@ -732,6 +782,7 @@ def run_seedtts_transcribe(
     generation_mode: str | None = None,
     log_per_sample: bool = False,
     whisper_router_port: int | None = None,
+    asr_batch_size: int = 1,
 ) -> dict:
     """Transcribe saved audio, compute WER + ASR-speed metrics, and persist them.
 
@@ -763,18 +814,37 @@ def run_seedtts_transcribe(
     tqdm_desc = (
         f"Transcribing ({config.lang})" if not generation_mode else "WER transcribe"
     )
-    outputs: list[SampleOutput] = []
-    for idx, entry in enumerate(tqdm(generated, desc=tqdm_desc)):
-        output = _transcribe_one_entry(entry, asr, config.lang, config.device)
-        outputs.append(output)
-        _log_transcribe_result(
-            idx=idx,
-            total=len(generated),
-            entry=entry,
-            output=output,
-            log_per_sample=log_per_sample,
-        )
 
+    if asr_batch_size > 1 and asr["type"] != "whisper":
+        logger.warning(
+            f"--asr-batch-size>1 only supported for whisper/EN; falling back to "
+            f"per-sample transcription for asr type {asr['type']!r}"
+        )
+    
+    outputs: list[SampleOutput] = []
+
+    if asr_batch_size > 1 and asr["type"] == "whisper":
+        outputs = _transcribe_batched_whisper(generated, asr, asr_batch_size)
+        for idx, (entry, output) in enumerate(zip(generated, outputs)):
+            _log_transcribe_result(
+                idx=idx,
+                total=len(generated),
+                entry=entry,
+                output=output,
+                log_per_sample=log_per_sample,
+            )
+    else:
+        for idx, entry in enumerate(tqdm(generated, desc=tqdm_desc)):
+            output = _transcribe_one_entry(entry, asr, config.lang, config.device)
+            outputs.append(output)
+            _log_transcribe_result(
+                idx=idx,
+                total=len(generated),
+                entry=entry,
+                output=output,
+                log_per_sample=log_per_sample,
+            )
+    
     wer_metrics = calculate_wer_metrics(outputs, config.lang)
     asr_metrics = calculate_asr_speed_metrics(outputs)
 

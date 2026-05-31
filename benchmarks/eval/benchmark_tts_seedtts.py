@@ -208,6 +208,7 @@ class TtsSeedttsBenchmarkConfig:
     # Transcribe phase
     lang: str = "en"
     device: str = "cuda:0"
+    asr_batch_size: int = 1
     similarity_checkpoint: str | None = None
 
 
@@ -331,6 +332,7 @@ def run_tts_seedtts_transcribe(
         wer_config=wer_config,
         generation_mode=generation_mode,
         whisper_router_port=whisper_router_port,
+        asr_batch_size=config.asr_batch_size,
     )
 
 
@@ -364,6 +366,7 @@ def _config_from_args(args: argparse.Namespace) -> TtsSeedttsBenchmarkConfig:
         disable_tqdm=args.disable_tqdm,
         lang=args.lang,
         device=args.device,
+        asr_batch_size=args.asr_batch_size,
         similarity_checkpoint=args.similarity_checkpoint,
     )
 
@@ -507,6 +510,21 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         type=int,
         default=1200,
         help="Timeout in seconds to wait for server readiness.",
+    )
+    parser.add_argument(
+        "--asr-batch-size",
+        type=int,
+        default=1,
+        help=(
+            "ASR transcription batch size for WER scoring. >1 batches "
+            "transcription for speed (currently the Whisper path; other "
+            "backends fall back to per-sample). Batching uses noticeably more "
+            "GPU memory than per-sample, so run it only when the GPU is free: "
+            "stop the TTS server first and use --transcribe-only. If the TTS "
+            "server is still loaded it holds most of the VRAM, leaving too "
+            "little for a batch, and transcription will OOM. Default 1 "
+            "(per-sample)."
+        ),
     )
 
     mode = parser.add_mutually_exclusive_group()
