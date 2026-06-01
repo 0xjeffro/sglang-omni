@@ -18,6 +18,11 @@ def create_sglang_qwen3_asr_executor(
 ):
     from transformers import AutoProcessor, GenerationConfig
 
+    # Import the config module first: its module-level AutoConfig.register(...)
+    # calls make transformers recognize model_type "qwen3_asr" before any
+    # ServerArgs/ModelConfig code parses the checkpoint's config.json.
+    # TODO: This is a dirty work, need further polish
+    from sglang_omni.models.qwen3_asr import configuration_qwen3_asr  # noqa: F401
     from sglang_omni.model_runner.base import ModelRunner
     from sglang_omni.models.qwen3_asr.request_builders import (
         make_qwen3_asr_scheduler_adapters,
@@ -30,16 +35,20 @@ def create_sglang_qwen3_asr_executor(
     )
 
     gpu_id = int(device.split(":")[-1]) if ":" in device else 0
+    
     processor = AutoProcessor.from_pretrained(model_path)
     tokenizer = getattr(processor, "tokenizer", processor)
-    generation_config = GenerationConfig.from_pretrained(model_path)
-    feature_extractor = getattr(processor, "feature_extractor", None)
-    if feature_extractor is not None and hasattr(feature_extractor, "nb_max_frames"):
-        encoder_token_count = int(feature_extractor.nb_max_frames // 2)
-    else:
-        # Whisper feature extractor packs 30 s @ 100 fps -> 3000 frames -> 1500 after
-        # the encoder's stride-2 conv. Qwen3-ASR uses the same WhisperFeatureExtractor.
-        encoder_token_count = 1500
+    
+    # Qwen3-ASR's HF repo only ships a tokenizer, so AutoProcessor returns no
+    # audio feature_extractor. Build the WhisperFeatureExtractor (128 mel bins, matching num_mel_bins) ourselves
+    from transformers import AutoFeatureExtractor
+
+    feature_extractor = AutoFeatureExtractor.from_pretrained(
+         model_path, trust_remote_code=True
+    )
+    
+    # 30 s @ 100 fps -> 3000 mel frames -> 1500 after the encoder's stride-2 conv
+    encoder_token_count = int(feature_extractor.nb_max_frames // 2)
 
     overrides: dict[str, Any] = {
         "disable_cuda_graph": False,
@@ -85,16 +94,20 @@ def create_sglang_qwen3_asr_executor(
         server_args.disable_cuda_graph = False
         model_worker.model_runner.init_device_graphs()
 
+    # general_mm_embed_routine reads a module-global multimodal embedding cache
+    # that upstream sglang inits in its own model runner; the omni runner does
+    # not, so initialize it here.
+    from sglang.srt.managers.mm_utils import init_mm_embedding_cache
+    init_mm_embedding_cache(256 * 1024 * 1024)
+
     output_proc = SGLangOutputProcessor(
         capture_hidden=False,
         capture_hidden_layers=None,
         model=model_worker.model_runner.model,
     )
     request_builder, result_adapter = make_qwen3_asr_scheduler_adapters(
-        processor=processor,
         tokenizer=tokenizer,
-        generation_config=generation_config,
-        encoder_token_count=encoder_token_count,
+        feature_extractor=feature_extractor,
         max_new_tokens=max_new_tokens,
     )
 
