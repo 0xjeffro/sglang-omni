@@ -223,7 +223,7 @@ def load_omni_whisper_asr(
     }
 
 
-QWEN3_ASR_MODEL_PATH = "Qwen/Qwen3-ASR-1.7B"
+QWEN3_ASR_MODEL_PATH = os.getenv("QWEN3_ASR_MODEL_PATH", "Qwen/Qwen3-ASR-1.7B")
 QWEN3_ASR_REQUEST_TIMEOUT_S = 300
 
 

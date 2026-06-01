@@ -27,6 +27,7 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-/github/home/.cache}"
 export HF_HOME="${HF_HOME:-/github/home/.cache/huggingface}"
 export HF_ENDPOINT="${HF_ENDPOINT:-https://hf-mirror.com}"
 export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
+export HF_HUB_ENABLE_HF_TRANSFER="${HF_HUB_ENABLE_HF_TRANSFER:-0}"
 export MODELSCOPE_CACHE="${MODELSCOPE_CACHE:-/github/home/.cache/modelscope}"
 
 source "${VENV_NAME}/bin/activate"
