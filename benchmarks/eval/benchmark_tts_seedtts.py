@@ -70,7 +70,7 @@ Usage (CI):
         --meta zhaochenyang20/seed-tts-eval-arrow \
         --model fishaudio/s2-pro \
         --output-dir results/s2pro_en \
-        --lang en --device cuda:0
+        --lang en --asr-router-port <router_port>
 
 
 H200 Full-Set Reference Results
@@ -129,7 +129,7 @@ discrete talker LM tokens emitted at audio frame rate. Cross-model comparison of
 this rate is not meaningful; use latency_mean_s / rtf_mean / throughput_qps
 instead when comparing backends.
 
-ASR speed (accuracy.asr_speed) — Whisper-large-v3 for EN, FunASR paraformer-zh for ZH
+ASR speed (accuracy.asr_speed) — Qwen3-ASR-1.7B router DP=2 for EN/ZH
 
 | Model     | Lang | asr_latency_mean_s | asr_rtf_mean | asr_throughput_samples_per_s | Source                                          |
 | --------- | ---- | ------------------ | ------------ | ---------------------------- | ----------------------------------------------- |
@@ -303,8 +303,7 @@ async def run_tts_seedtts_benchmark(
 def run_tts_seedtts_transcribe(
     config: TtsSeedttsBenchmarkConfig,
     *,
-    whisper_router_port: int | None = None,
-    qwen3_asr_port: int | None = None,
+    asr_router_port: int | None = None,
 ) -> dict:
     """Transcribe saved audio and compute WER + ASR speed metrics.
 
@@ -331,8 +330,7 @@ def run_tts_seedtts_transcribe(
         config,
         wer_config=wer_config,
         generation_mode=generation_mode,
-        whisper_router_port=whisper_router_port,
-        qwen3_asr_port=qwen3_asr_port,
+        asr_router_port=asr_router_port,
     )
 
 
@@ -497,13 +495,12 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="Device for ASR model (transcribe phase).",
     )
     parser.add_argument(
-        "--qwen3-asr-port",
+        "--asr-router-port",
         type=int,
         default=None,
-        help="If set, score WER via a Qwen3-ASR sglang-omni server on this "
-        "localhost port (/v1/audio/transcriptions) instead of local Whisper. "
-        "EN only. Start the server separately: `python -m sglang_omni.cli serve "
-        "--model-path Qwen/Qwen3-ASR-1.7B --port <port>`.",
+        help="Qwen3-ASR sglang-omni router port for WER transcription "
+        "(/v1/audio/transcriptions). Required for EN; recommended for ZH. "
+        "Start DP=2 separately via sglang_omni_router.serve.",
     )
     parser.add_argument(
         "--similarity-checkpoint",
@@ -552,7 +549,7 @@ def main() -> None:
         return
 
     if args.transcribe_only:
-        run_tts_seedtts_transcribe(config, qwen3_asr_port=args.qwen3_asr_port)
+        run_tts_seedtts_transcribe(config, asr_router_port=args.asr_router_port)
         return
 
     wait_for_service(build_base_url(config), timeout=args.server_timeout)
@@ -561,7 +558,7 @@ def main() -> None:
     if args.generate_only:
         return
 
-    run_tts_seedtts_transcribe(config, qwen3_asr_port=args.qwen3_asr_port)
+    run_tts_seedtts_transcribe(config, asr_router_port=args.asr_router_port)
 
 
 if __name__ == "__main__":

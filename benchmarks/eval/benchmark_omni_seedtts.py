@@ -359,7 +359,7 @@ async def run_omni_seedtts_benchmark(
 def evaluate_generated_audio(
     config: OmniSeedttsBenchmarkConfig,
     *,
-    whisper_router_port: int | None = None,
+    asr_router_port: int | None = None,
 ) -> dict:
     """Transcribe previously saved audio with ASR and compute WER + ASR speed.
 
@@ -378,7 +378,7 @@ def evaluate_generated_audio(
         config,
         wer_config=wer_config,
         log_per_sample=True,
-        whisper_router_port=whisper_router_port,
+        asr_router_port=asr_router_port,
     )
 
 
@@ -523,6 +523,13 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="Legacy alias for --device (ASR transcription device).",
     )
     parser.add_argument(
+        "--asr-router-port",
+        type=int,
+        default=None,
+        help="Qwen3-ASR sglang-omni router port for WER transcription "
+        "(/v1/audio/transcriptions). Required for EN; recommended for ZH.",
+    )
+    parser.add_argument(
         "--similarity-checkpoint",
         type=str,
         default=None,
@@ -584,7 +591,7 @@ def main() -> None:
         return
 
     if args.transcribe_only:
-        evaluate_generated_audio(config)
+        evaluate_generated_audio(config, asr_router_port=args.asr_router_port)
         return
 
     wait_for_service(build_base_url(config), timeout=args.server_timeout)
@@ -593,7 +600,10 @@ def main() -> None:
     if args.generate_only:
         return
 
-    accuracy_results = evaluate_generated_audio(config)
+    accuracy_results = evaluate_generated_audio(
+        config,
+        asr_router_port=args.asr_router_port,
+    )
     similarity_results = None
     if args.with_similarity:
         similarity_results = run_seedtts_similarity(config, log_per_sample=False)

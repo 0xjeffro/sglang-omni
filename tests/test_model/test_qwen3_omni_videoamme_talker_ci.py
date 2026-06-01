@@ -179,7 +179,7 @@ def test_videoamme_talker_wer(
         wer_eval_artifacts.lang,
         ASR_DEVICE,
         audio_dir=wer_eval_artifacts.audio_dir,
-        whisper_router_port=omni_whisper_wer_router.port,
+        asr_router_port=omni_whisper_wer_router.port,
     )
     print_wer_summary(wer["summary"], "qwen3-omni")
     checks = MetricCheckCollector("Video-AMME Talker WER")

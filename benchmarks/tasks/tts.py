@@ -226,14 +226,14 @@ QWEN3_ASR_REQUEST_TIMEOUT_S = 300
 
 
 def load_qwen3_asr(
-    port: int,
+    router_port: int,
     *,
     model_path: str = QWEN3_ASR_MODEL_PATH,
 ) -> dict:
-    """Return an ASR handle that transcribes via a Qwen3-ASR sglang-omni server."""
+    """Return an ASR handle that transcribes via a Qwen3-ASR sglang-omni router."""
     return {
         "type": "qwen3_asr",
-        "port": port,
+        "router_port": router_port,
         "model_path": model_path,
     }
 
@@ -246,7 +246,7 @@ def _transcribe_qwen3_asr(asr: dict, wav_path: str, lang: str) -> str:
     """
     with open(wav_path, "rb") as audio_file:
         response = requests.post(
-            f"http://127.0.0.1:{asr['port']}/v1/audio/transcriptions",
+            f"http://127.0.0.1:{asr['router_port']}/v1/audio/transcriptions",
             data={
                 "model": asr["model_path"],
                 "language": "en" if lang == "en" else lang,
@@ -264,23 +264,11 @@ def _resolve_asr_backend(
     lang: str,
     asr_device: str,
     *,
-    whisper_router_port: int | None = None,
-    qwen3_asr_port: int | None = None,
+    asr_router_port: int | None = None,
     generation_mode: str | None = None,
 ) -> dict:
-    if qwen3_asr_port is not None:
-        if lang != "en":
-            raise ValueError(
-                "Qwen3-ASR benchmark backend currently supports lang='en'; "
-                f"got {lang!r}"
-            )
-        return load_qwen3_asr(qwen3_asr_port)
-    if whisper_router_port is not None:
-        if lang != "en":
-            raise ValueError(
-                "Omni Whisper router ASR only supports lang='en'; " f"got {lang!r}"
-            )
-        return load_omni_whisper_asr(whisper_router_port)
+    if asr_router_port is not None:
+        return load_qwen3_asr(asr_router_port)
     return load_asr_model(lang, asr_device, generation_mode)
 
 
@@ -288,21 +276,10 @@ def load_asr_model(lang: str, device: str, generation_mode: str | None = None):
     """Load ASR model for voice clone WER evaluation."""
     mode_suffix = f" for {generation_mode} generation" if generation_mode else ""
     if lang == "en":
-        from transformers import pipeline
-
-        logger.info(
-            f"Loading Whisper-large-v3 on {device}{mode_suffix} "
-            "(pipeline, chunk_length_s=30)..."
+        raise ValueError(
+            "English WER transcription requires a Qwen3-ASR sglang-omni router "
+            "(DP=2). Start the router separately and pass asr_router_port."
         )
-        t0 = time.perf_counter()
-        pipe = pipeline(
-            "automatic-speech-recognition",
-            model="openai/whisper-large-v3",
-            chunk_length_s=30,
-            device=device,
-        )
-        logger.info(f"Whisper loaded in {time.perf_counter() - t0:.1f}s{mode_suffix}")
-        return {"type": "whisper", "pipeline": pipe}
     elif lang == "zh":
         from funasr import AutoModel
 
@@ -377,13 +354,13 @@ def compute_text_audio_consistency(
     lang: str,
     asr_device: str,
     *,
-    whisper_router_port: int | None = None,
+    asr_router_port: int | None = None,
 ) -> dict:
     """WER between each request's text output (ref) and ASR-transcribed audio (hyp)."""
     asr = _resolve_asr_backend(
         lang,
         asr_device,
-        whisper_router_port=whisper_router_port,
+        asr_router_port=asr_router_port,
     )
 
     outputs: list[SampleOutput] = []
@@ -428,7 +405,7 @@ def compute_text_audio_consistency_from_records(
     audio_dir: str | None = None,
     sample_id_key: str = "sample_id",
     text_key: str = "raw_response",
-    whisper_router_port: int | None = None,
+    asr_router_port: int | None = None,
 ) -> dict:
     """Compute WER from saved eval records after the inference server is stopped."""
     request_results: list[RequestResult] = []
@@ -452,7 +429,7 @@ def compute_text_audio_consistency_from_records(
         request_results,
         lang,
         asr_device,
-        whisper_router_port=whisper_router_port,
+        asr_router_port=asr_router_port,
     )
 
 
@@ -780,8 +757,7 @@ def run_seedtts_transcribe(
     wer_config: dict,
     generation_mode: str | None = None,
     log_per_sample: bool = False,
-    whisper_router_port: int | None = None,
-    qwen3_asr_port: int | None = None,
+    asr_router_port: int | None = None,
 ) -> dict:
     """Transcribe saved audio, compute WER + ASR-speed metrics, and persist them.
 
@@ -794,7 +770,7 @@ def run_seedtts_transcribe(
         - ``asr_speed``:   ASR transcription latency/throughput metrics
         - ``per_sample``:  list[SampleOutput] with per-sample details
     """
-    uses_router = whisper_router_port is not None or qwen3_asr_port is not None
+    uses_router = asr_router_port is not None
     if not uses_router and "cuda" in config.device:
         torch.cuda.set_device(config.device)
         logger.info(f"Set ASR CUDA device to {config.device}")
@@ -807,8 +783,7 @@ def run_seedtts_transcribe(
     asr = _resolve_asr_backend(
         config.lang,
         config.device,
-        whisper_router_port=whisper_router_port,
-        qwen3_asr_port=qwen3_asr_port,
+        asr_router_port=asr_router_port,
         generation_mode=generation_mode,
     )
 

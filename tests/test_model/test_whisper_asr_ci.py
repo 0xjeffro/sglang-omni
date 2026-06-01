@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Whisper ASR correctness CI for SGLang Omni.
+"""Qwen3-ASR correctness CI for SGLang Omni.
 
 The test uses the first 20 English SeedTTS samples as a lightweight speech
-corpus. It compares normalized transcriptions from the SGLang Omni Whisper
-server against the dataset reference text.
+corpus. It compares normalized transcriptions from the SGLang Omni Qwen3-ASR
+router against the dataset reference text.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from jiwer import process_words
 from benchmarks.benchmarker.utils import get_wav_duration
 from benchmarks.dataset.prepare import DATASETS
 from benchmarks.dataset.seedtts import SampleInput, load_seedtts_samples
-from benchmarks.tasks.tts import normalize_text
+from benchmarks.tasks.tts import QWEN3_ASR_MODEL_PATH, normalize_text
 from tests.test_model.omni_router_utils import (
     ManagedRouterHandle,
     launch_managed_router,
@@ -29,7 +29,7 @@ from tests.test_model.omni_router_utils import (
 )
 from tests.utils import MetricCheckCollector, disable_proxy
 
-WHISPER_MODEL_PATH = "openai/whisper-large-v3"
+WHISPER_MODEL_PATH = QWEN3_ASR_MODEL_PATH
 WHISPER_ASR_WORKER_ARGS = "--stages.0.factory-args.max-running-requests 1"
 WHISPER_ASR_CONCURRENCY = 2
 SEEDTTS_ASR_CORRECTNESS_SAMPLES = 20
@@ -51,7 +51,7 @@ def _require_cuda() -> None:
     import torch
 
     if not torch.cuda.is_available():
-        pytest.skip("CUDA is required for Whisper ASR correctness CI")
+        pytest.skip("CUDA is required for Qwen3-ASR correctness CI")
 
 
 @pytest.fixture(scope="module")
@@ -73,7 +73,7 @@ def whisper_asr_router_server(
         model_name=WHISPER_MODEL_PATH,
         worker_extra_args=WHISPER_ASR_WORKER_ARGS,
         wait_timeout=STARTUP_TIMEOUT,
-        log_prefix="whisper_asr_router_logs",
+        log_prefix="qwen3_asr_router_logs",
     ) as router:
         yield router
 
@@ -89,7 +89,7 @@ def _transcribe_with_omni(port: int, sample: SampleInput) -> tuple[str, float, f
             data={
                 "model": WHISPER_MODEL_PATH,
                 "language": "en",
-                "temperature": "0",
+                "response_format": "json",
             },
             files={
                 "file": (
