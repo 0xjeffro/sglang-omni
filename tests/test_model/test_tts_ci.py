@@ -34,7 +34,7 @@ from typing import Literal
 
 import pytest
 
-pytest_plugins = ["tests.test_model.omni_whisper_wer_utils"]
+pytest_plugins = ["tests.test_model.qwen3_asr_wer_utils"]
 
 from benchmarks.dataset.prepare import DATASETS, download_dataset
 from benchmarks.eval.benchmark_tts_seedtts import (
@@ -900,7 +900,7 @@ def test_voice_cloning_wer(
     wer_input_dirs: dict[str, dict[int, str]],
     dataset_repo: str,
     selected_tts_concurrencies: tuple[int, ...],
-    omni_whisper_wer_router: ManagedRouterHandle,
+    qwen3_asr_wer_router: ManagedRouterHandle,
 ) -> None:
     checks = MetricCheckCollector("TTS non-streaming WER")
     for concurrency in selected_tts_concurrencies:
@@ -919,7 +919,7 @@ def test_voice_cloning_wer(
         results = _run_wer_transcribe(
             dataset_repo,
             output_dir,
-            asr_router_port=omni_whisper_wer_router.port,
+            asr_router_port=qwen3_asr_wer_router.port,
         )
         _assert_full_seedtts_en_wer_results(
             results,
@@ -980,7 +980,7 @@ def test_voice_cloning_streaming_wer(
     wer_input_dirs: dict[str, dict[int, str]],
     dataset_repo: str,
     selected_tts_concurrencies: tuple[int, ...],
-    omni_whisper_wer_router: ManagedRouterHandle,
+    qwen3_asr_wer_router: ManagedRouterHandle,
 ) -> None:
     checks = MetricCheckCollector("TTS streaming WER")
     for concurrency in selected_tts_concurrencies:
@@ -1001,7 +1001,7 @@ def test_voice_cloning_streaming_wer(
             dataset_repo,
             output_dir,
             stream=True,
-            asr_router_port=omni_whisper_wer_router.port,
+            asr_router_port=qwen3_asr_wer_router.port,
         )
         _assert_full_seedtts_en_wer_results(
             results,

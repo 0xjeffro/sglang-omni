@@ -106,18 +106,7 @@ class Qwen3ASRForConditionalGeneration(nn.Module):
             input_features,
             feature_lens=audio_feature_lengths,
         )
-        emb = audio_outputs.last_hidden_state
-        logger.info(
-            "[qwen3-asr] audio_feat shape=%s lens=%s emb_shape=%s "
-            "mean=%.4f std=%.4f nan=%s",
-            tuple(input_features.shape),
-            audio_feature_lengths.tolist(),
-            tuple(emb.shape),
-            float(emb.float().mean()),
-            float(emb.float().std()),
-            bool(torch.isnan(emb).any()),
-        )
-        return emb
+        return audio_outputs.last_hidden_state
 
     def forward(
         self,

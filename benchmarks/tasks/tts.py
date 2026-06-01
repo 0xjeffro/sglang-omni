@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import binascii
+import concurrent.futures
 import csv
 import functools
 import io
@@ -225,6 +226,8 @@ def load_omni_whisper_asr(
 
 QWEN3_ASR_MODEL_PATH = os.getenv("QWEN3_ASR_MODEL_PATH", "Qwen/Qwen3-ASR-1.7B")
 QWEN3_ASR_REQUEST_TIMEOUT_S = 300
+QWEN3_ASR_MAX_NEW_TOKENS = int(os.getenv("QWEN3_ASR_MAX_NEW_TOKENS", "128"))
+DEFAULT_ASR_TRANSCRIBE_CONCURRENCY = int(os.getenv("SEEDTTS_ASR_CONCURRENCY", "2"))
 
 
 def load_qwen3_asr(
@@ -268,6 +271,7 @@ def _transcribe_qwen3_asr(asr: dict, wav_path: str, lang: str) -> str:
                 "model": asr["model_path"],
                 "language": "en" if lang == "en" else lang,
                 "response_format": "json",
+                "max_new_tokens": str(QWEN3_ASR_MAX_NEW_TOKENS),
             },
             files={"file": (os.path.basename(wav_path), audio_file, "audio/wav")},
             timeout=QWEN3_ASR_REQUEST_TIMEOUT_S,
@@ -357,6 +361,7 @@ def compute_text_audio_consistency(
     *,
     asr_router_port: int | None = None,
     asr_model_path: str = QWEN3_ASR_MODEL_PATH,
+    asr_concurrency: int = DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
 ) -> dict:
     """WER between each request's text output (ref) and ASR-transcribed audio (hyp)."""
     asr = _resolve_asr_backend(
@@ -366,8 +371,9 @@ def compute_text_audio_consistency(
         asr_model_path=asr_model_path,
     )
 
-    outputs: list[SampleOutput] = []
-    for result in request_results:
+    outputs_by_idx: list[SampleOutput | None] = [None] * len(request_results)
+    pending: list[tuple[int, RequestResult, SampleOutput]] = []
+    for idx, result in enumerate(request_results):
         ref_text = " ".join(result.text.split())
         out = SampleOutput(
             sample_id=result.request_id,
@@ -377,11 +383,41 @@ def compute_text_audio_consistency(
         )
         if not result.is_success or not result.wav_path:
             out.error = result.error or "No audio in response"
-            outputs.append(out)
+            outputs_by_idx[idx] = out
             continue
-        outputs.append(
-            transcribe_and_compute_wer(out, result.wav_path, asr, lang, asr_device)
+        pending.append((idx, result, out))
+
+    def _transcribe_pending(
+        result: RequestResult,
+        output: SampleOutput,
+    ) -> SampleOutput:
+        asr_t0 = time.perf_counter()
+        output = transcribe_and_compute_wer(
+            output,
+            result.wav_path,
+            asr,
+            lang,
+            asr_device,
         )
+        output.asr_latency_s = time.perf_counter() - asr_t0
+        return output
+
+    asr_concurrency = max(1, int(asr_concurrency))
+    if asr_concurrency == 1:
+        for idx, result, output in pending:
+            outputs_by_idx[idx] = _transcribe_pending(result, output)
+    else:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=asr_concurrency,
+        ) as executor:
+            future_to_idx = {
+                executor.submit(_transcribe_pending, result, output): idx
+                for idx, result, output in pending
+            }
+            for future in concurrent.futures.as_completed(future_to_idx):
+                outputs_by_idx[future_to_idx[future]] = future.result()
+
+    outputs = [output for output in outputs_by_idx if output is not None]
 
     per_sample = [
         {
@@ -410,6 +446,7 @@ def compute_text_audio_consistency_from_records(
     text_key: str = "raw_response",
     asr_router_port: int | None = None,
     asr_model_path: str = QWEN3_ASR_MODEL_PATH,
+    asr_concurrency: int = DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
 ) -> dict:
     """Compute WER from saved eval records after the inference server is stopped."""
     request_results: list[RequestResult] = []
@@ -435,6 +472,7 @@ def compute_text_audio_consistency_from_records(
         asr_device,
         asr_router_port=asr_router_port,
         asr_model_path=asr_model_path,
+        asr_concurrency=asr_concurrency,
     )
 
 
@@ -833,6 +871,7 @@ class SeedttsTranscribeConfig(Protocol):
     output_dir: str
     lang: str
     device: str
+    asr_concurrency: int
 
 
 def build_base_url(config: ServerEndpointConfig) -> str:
@@ -861,6 +900,13 @@ def _transcribe_one_entry(
     output = transcribe_and_compute_wer(output, entry["wav_path"], asr, lang, device)
     output.asr_latency_s = time.perf_counter() - asr_t0
     return output
+
+
+def _resolve_asr_concurrency(config: SeedttsTranscribeConfig) -> int:
+    value = getattr(config, "asr_concurrency", DEFAULT_ASR_TRANSCRIBE_CONCURRENCY)
+    if value is None:
+        value = 1
+    return max(1, int(value))
 
 
 def _log_transcribe_result(
@@ -926,20 +972,55 @@ def run_seedtts_transcribe(
     tqdm_desc = (
         f"Transcribing ({config.lang})" if not generation_mode else "WER transcribe"
     )
-    outputs: list[SampleOutput] = []
-    for idx, entry in enumerate(tqdm(generated, desc=tqdm_desc)):
-        output = _transcribe_one_entry(entry, asr, config.lang, config.device)
-        outputs.append(output)
-        _log_transcribe_result(
-            idx=idx,
-            total=len(generated),
-            entry=entry,
-            output=output,
-            log_per_sample=log_per_sample,
-        )
+    asr_concurrency = _resolve_asr_concurrency(config)
+    outputs_by_idx: list[SampleOutput | None] = [None] * len(generated)
+    asr_wall_start_s = time.perf_counter()
+    if asr_concurrency == 1:
+        for idx, entry in enumerate(tqdm(generated, desc=tqdm_desc)):
+            output = _transcribe_one_entry(entry, asr, config.lang, config.device)
+            outputs_by_idx[idx] = output
+            _log_transcribe_result(
+                idx=idx,
+                total=len(generated),
+                entry=entry,
+                output=output,
+                log_per_sample=log_per_sample,
+            )
+    else:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=asr_concurrency,
+        ) as executor:
+            future_to_idx = {
+                executor.submit(
+                    _transcribe_one_entry,
+                    entry,
+                    asr,
+                    config.lang,
+                    config.device,
+                ): idx
+                for idx, entry in enumerate(generated)
+            }
+            with tqdm(total=len(generated), desc=tqdm_desc) as progress:
+                for future in concurrent.futures.as_completed(future_to_idx):
+                    idx = future_to_idx[future]
+                    entry = generated[idx]
+                    output = future.result()
+                    outputs_by_idx[idx] = output
+                    _log_transcribe_result(
+                        idx=idx,
+                        total=len(generated),
+                        entry=entry,
+                        output=output,
+                        log_per_sample=log_per_sample,
+                    )
+                    progress.update(1)
+
+    asr_wall_time_s = time.perf_counter() - asr_wall_start_s
+    outputs = [output for output in outputs_by_idx if output is not None]
 
     wer_metrics = calculate_wer_metrics(outputs, config.lang)
-    asr_metrics = calculate_asr_speed_metrics(outputs)
+    asr_metrics = calculate_asr_speed_metrics(outputs, wall_time_s=asr_wall_time_s)
+    asr_metrics["asr_concurrency"] = asr_concurrency
 
     print_asr_speed_summary(asr_metrics, config.model)
     print_wer_summary(wer_metrics, config.model, generation_mode)

@@ -143,7 +143,11 @@ def print_wer_summary(
     print(f"{'=' * w}\n")
 
 
-def calculate_asr_speed_metrics(outputs: list["SampleOutput"]) -> dict:
+def calculate_asr_speed_metrics(
+    outputs: list["SampleOutput"],
+    *,
+    wall_time_s: float | None = None,
+) -> dict:
     """Compute speed metrics for the ASR transcription phase."""
     successes = [o for o in outputs if o.is_success and o.asr_latency_s > 0]
     if not successes:
@@ -156,6 +160,7 @@ def calculate_asr_speed_metrics(outputs: list["SampleOutput"]) -> dict:
             "asr_latency_p95_s": 0.0,
             "asr_latency_p99_s": 0.0,
             "asr_total_time_s": 0.0,
+            "asr_latency_sum_s": 0.0,
             "asr_throughput_samples_per_s": 0.0,
             "asr_rtf_mean": 0.0,
             "asr_rtf_median": 0.0,
@@ -163,7 +168,12 @@ def calculate_asr_speed_metrics(outputs: list["SampleOutput"]) -> dict:
         }
 
     latencies = np.array([o.asr_latency_s for o in successes])
-    total_asr_time = float(np.sum(latencies))
+    latency_sum_s = float(np.sum(latencies))
+    total_asr_time = (
+        float(wall_time_s)
+        if wall_time_s is not None and wall_time_s > 0
+        else latency_sum_s
+    )
 
     audio_durations = [o.audio_duration_s for o in successes if o.audio_duration_s > 0]
     rtfs = np.array(
@@ -183,6 +193,7 @@ def calculate_asr_speed_metrics(outputs: list["SampleOutput"]) -> dict:
         "asr_latency_p95_s": float(np.percentile(latencies, 95)),
         "asr_latency_p99_s": float(np.percentile(latencies, 99)),
         "asr_total_time_s": total_asr_time,
+        "asr_latency_sum_s": latency_sum_s,
         "asr_throughput_samples_per_s": (
             float(len(successes) / total_asr_time) if total_asr_time > 0 else 0.0
         ),
@@ -206,6 +217,8 @@ def print_asr_speed_summary(metrics: dict, model_name: str) -> None:
         f"  {'Evaluated / Total:':<{lw}} "
         f"{metrics.get('evaluated', 0)}/{metrics.get('total_samples', 0)}"
     )
+    if metrics.get("asr_concurrency"):
+        print(f"  {'ASR concurrency:':<{lw}} {metrics['asr_concurrency']}")
     print(f"  {'Skipped:':<{lw}} {metrics.get('skipped', 0)}")
     print(f"{'-' * w}")
     print(
@@ -229,6 +242,13 @@ def print_asr_speed_summary(metrics: dict, model_name: str) -> None:
     print(
         f"  {'ASR total time (s):':<{lw}} " f"{metrics.get('asr_total_time_s', 'N/A')}"
     )
+    if metrics.get("asr_latency_sum_s") and (
+        metrics.get("asr_latency_sum_s") != metrics.get("asr_total_time_s")
+    ):
+        print(
+            f"  {'ASR latency sum (s):':<{lw}} "
+            f"{metrics.get('asr_latency_sum_s', 'N/A')}"
+        )
     print(
         f"  {'ASR throughput (samples/s):':<{lw}} "
         f"{metrics.get('asr_throughput_samples_per_s', 'N/A')}"
