@@ -1,10 +1,11 @@
 # Model-specific config for the TTS CI threshold skill.
 #
 # Notes:
-# - Stage 1 (Whisper ASR): test_whisper_asr_ci.py — runs in parallel with Higgs
-#   stages in CI DAG; calibrate via `--model tts --stages whisper_asr` or full
-#   `--stages ALL`. tune.py writes P95 reference constants; CI asserts via
-#   derived *_THRESHOLD values with 10% slack (0.9 / 1.1).
+# - Stage 1 (Qwen3-ASR): test_whisper_asr_ci.py — runs in parallel with Higgs
+#   stages in CI DAG. The file/stage/constant names still use the legacy
+#   `whisper_asr` prefix; calibrate via `--model tts --stages whisper_asr` or
+#   full `--stages ALL`. tune.py writes P95 reference constants; CI asserts
+#   via derived *_THRESHOLD values with 10% slack (0.9 / 1.1).
 # - test_tts_ci.py runs stages 2–4 internal stages (nonstream / stream /
 #   consistency) controlled by --tts-stage. tune.py runs the full file once
 #   per repeat (all pytest functions that match the selected stage filter).
@@ -30,7 +31,7 @@ description: "TTS CI (Higgs / SeedTTS EN)"
 hf_model_id: "boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999"
 hf_model_ids_by_test:
   test_whisper_asr_ci.py:
-    - "openai/whisper-large-v3"
+    - "Qwen/Qwen3-ASR-1.7B"
 hf_datasets:
   - "zhaochenyang20/seed-tts-eval-arrow"
 omni_ci_home: "/github/home/calibration"
@@ -52,7 +53,7 @@ auto_env:
   TORCHINDUCTOR_CACHE_DIR: "/github/home/calibration/.torchinductor"
   FLASHINFER_DISABLE_VERSION_CHECK: "1"
   SEEDTTS_SIM_CACHE_DIR: "/github/home/seedtts-wavlm-sim"
-# TTS CI stage 1 (Whisper ASR) + stages 2–3 (Higgs voice clone) share omni venv.
+# TTS CI stage 1 (Qwen3-ASR) + stages 2–4 (Higgs voice clone) share omni venv.
 gpus_per_test:
   test_whisper_asr_ci.py: 2
   test_tts_ci.py: 2

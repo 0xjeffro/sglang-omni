@@ -1,9 +1,9 @@
-# Whisper ASR CI threshold calibration (shared omni venv).
-name: whisper-asr-v1
-description: "Whisper large-v3 ASR via SGLang Omni"
-hf_model_id: "openai/whisper-large-v3"
+# Qwen3-ASR CI threshold calibration (shared omni venv).
+name: qwen3-asr-v1
+description: "Qwen3-ASR via SGLang Omni"
+hf_model_id: "Qwen/Qwen3-ASR-1.7B"
 hf_datasets:
-  - "zhaochenyang20/seed-tts-eval-50-arrow"
+  - "zhaochenyang20/seed-tts-eval-arrow"
 omni_ci_home: "/github/home/calibration"
 default_venv_python:
   - "/sgl-workspace/sglang-omni/omni/bin/python"

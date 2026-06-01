@@ -41,6 +41,7 @@ from benchmarks.eval.benchmark_tts_seedtts import (
     TtsSeedttsBenchmarkConfig,
     run_tts_seedtts_benchmark,
 )
+from benchmarks.metrics.performance import print_speed_summary
 from tests.test_model.conftest import (
     TTS_STAGE_CONSISTENCY,
     TTS_STAGE_NONSTREAM,
@@ -153,6 +154,26 @@ def _validate_speed_results_keys(speed_results: dict) -> None:
     ), f"Missing 'per_request' key in results. Keys: {list(speed_results.keys())}"
 
 
+def _print_saved_tts_speed_summary(
+    output_dir: str,
+    *,
+    concurrency: int | None = None,
+    stream: bool = False,
+) -> None:
+    results_path = Path(output_dir) / "speed_results.json"
+    assert results_path.exists(), f"TTS speed results file not found: {results_path}"
+    with open(results_path) as f:
+        speed_results = json.load(f)
+    _validate_speed_results_keys(speed_results)
+    mode = "streaming" if stream else "non-streaming"
+    print_speed_summary(
+        speed_results["summary"],
+        TTS_MODEL_PATH,
+        concurrency=concurrency,
+        title=f"TTS Speed Benchmark Result ({mode})",
+    )
+
+
 def _run_benchmark(
     port: int,
     testset: str,
@@ -173,6 +194,11 @@ def _run_benchmark(
     )
     speed_results = asyncio.run(run_tts_seedtts_benchmark(benchmark_config))
     _validate_speed_results_keys(speed_results)
+    _print_saved_tts_speed_summary(
+        output_dir,
+        concurrency=concurrency,
+        stream=stream,
+    )
     return speed_results
 
 
@@ -884,9 +910,15 @@ def test_voice_cloning_wer(
             concurrency,
             "transcribe speed-stage WAVs",
         )
+        output_dir = wer_input_dirs["non_stream"][concurrency]
+        _print_saved_tts_speed_summary(
+            output_dir,
+            concurrency=concurrency,
+            stream=False,
+        )
         results = _run_wer_transcribe(
             dataset_repo,
-            wer_input_dirs["non_stream"][concurrency],
+            output_dir,
             asr_router_port=omni_whisper_wer_router.port,
         )
         _assert_full_seedtts_en_wer_results(
@@ -959,9 +991,15 @@ def test_voice_cloning_streaming_wer(
             f"transcribe {_sample_scope_label(STREAMING_BENCHMARK_MAX_SAMPLES)} "
             "speed-stage WAVs",
         )
+        output_dir = wer_input_dirs["stream"][concurrency]
+        _print_saved_tts_speed_summary(
+            output_dir,
+            concurrency=concurrency,
+            stream=True,
+        )
         results = _run_wer_transcribe(
             dataset_repo,
-            wer_input_dirs["stream"][concurrency],
+            output_dir,
             stream=True,
             asr_router_port=omni_whisper_wer_router.port,
         )

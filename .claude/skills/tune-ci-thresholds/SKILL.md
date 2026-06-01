@@ -1,6 +1,6 @@
 ---
 name: tune-ci-thresholds
-description: Run CI tests N times per stage on the H20 CI-reproduction host, produce a per-metric strict worst-of-N observation report (every stage must have N full-sample repeats), and (on user confirmation) write the worst-of-N values back into the test files as new baselines. Use when recalibrating CI thresholds after an engine update. Currently supports qwen3-omni-v1 and tts; extensible via models/<name>/config.yaml.
+description: Run CI tests N times per stage on the H20 CI-reproduction host, produce a per-metric strict worst-of-N observation report (every stage must have N full-sample repeats), and (on user confirmation) write the worst-of-N values back into the test files as new baselines. Use when recalibrating CI thresholds after an engine update. Currently supports qwen3-omni-v1, qwen3-asr-v1, and tts; extensible via models/<name>/config.yaml.
 ---
 
 # tune-ci-thresholds
@@ -316,7 +316,7 @@ List what's configured:
 ```
 python .claude/skills/tune-ci-thresholds/tune.py models-list
 ```
-Today: `qwen3-omni-v1`, `tts`. To add another model,
+Today: `qwen3-omni-v1`, `qwen3-asr-v1`, `tts`. To add another model,
 drop in a new `models/<name>/config.yaml` and run `tune.py discover
 --model <name>`. No Python code changes needed unless the new model
 emits metrics with a
@@ -350,19 +350,20 @@ test) explicitly marks as missing or misaligned.
 | Action | Why forbidden by default |
 |--------|--------------------------|
 | `prepare_omni_venv.sh` | Fresh path does `rm -rf $OMNI_CI_HOME` — wipes slice caches and forces a full PyPI/CUDA re-download. |
-| `install_flashinfer_jit_cache.sh` | Only when precheck reports `flashinfer-jit-cache` missing from venv. Use host wheel cache first (seconds); network only on cache miss or corrupt wheel. **Every CI venv gets it via `omni-setup`**, including Whisper / TTS slices — calibration must match. |
+| `install_flashinfer_jit_cache.sh` | Only when precheck reports `flashinfer-jit-cache` missing from venv. Use host wheel cache first (seconds); network only on cache miss or corrupt wheel. **Every CI venv gets it via `omni-setup`**, including Qwen3-ASR / TTS slices — calibration must match. |
 | `ensure_hf_models.sh` (bulk) | Download only the model id(s) precheck marks `✗`, not the whole CI model list. |
 | Ad-hoc `uv pip install torch` / wheel URLs | Pins must match CI; precheck reports pin drift. |
 
 ### Stage-specific shortcuts (still check-first)
 
-- **Whisper ASR (TTS CI stage 1 / `--model tts`)**: uses `omni`, **2 GPU / router DP=2**.
+- **Qwen3-ASR (TTS CI stage 1 / `--model tts`)**: uses `omni`, **2 GPU / router DP=2**.
   Included in `--model tts --stages ALL`; calibrate alone with
-  `--stages whisper_asr`. Venv must pass full precheck including
-  `flashinfer-jit-cache` (same as CI `omni-setup`). If missing, run
+  `--stages whisper_asr` (legacy stage key from the test filename). Venv must
+  pass full precheck including `flashinfer-jit-cache` (same as CI
+  `omni-setup`). If missing, run
   `install_flashinfer_jit_cache.sh omni` from host cache — do **not** use
   `--skip-precheck`. Source `.github/scripts/ci_env.sh` before pytest/calibration.
-- **Whisper ASR (legacy `--model whisper-asr-v1`)**: same runtime as above;
+- **Qwen3-ASR (standalone `--model qwen3-asr-v1`)**: same runtime as above;
   use only for isolated ASR calibration — **TTS PRs should use `--model tts`**.
 - **Qwen3 MoE stages**: if smoke test shows
   `gen_cutlass_fused_moe_sm90_module` + router timeout, **then** run
@@ -431,21 +432,21 @@ python .claude/skills/tune-ci-thresholds/tune.py --model qwen3-omni-v1 run \
 
 Common TTS preset:
 ```
-# Full TTS CI pipeline (stage 1 Whisper ASR + stages 2–4 Higgs voice clone), 5 repeats.
+# Full TTS CI pipeline (stage 1 Qwen3-ASR + stages 2–4 Higgs voice clone), 5 repeats.
 python .claude/skills/tune-ci-thresholds/tune.py --model tts run \
   --stages ALL --repeats 5 --output-dir .tune-runs/<timestamp>_tts_all_r5
 
-# Stage 1 only (Whisper ASR on SeedTTS EN 20-sample correctness subset):
+# Stage 1 only (Qwen3-ASR on SeedTTS EN 20-sample correctness subset):
 python .claude/skills/tune-ci-thresholds/tune.py --model tts run \
-  --stages whisper_asr --repeats 5 --output-dir .tune-runs/<timestamp>_tts_whisper_asr_r5
+  --stages whisper_asr --repeats 5 --output-dir .tune-runs/<timestamp>_tts_qwen3_asr_r5
 ```
 
-### TTS CI stage 1 — Whisper ASR (mandatory in full TTS calibration)
+### TTS CI stage 1 — Qwen3-ASR (mandatory in full TTS calibration)
 
 TTS GitHub Actions runs **`test_whisper_asr_ci.py` in parallel with Higgs stages**
 (CI stage 1 in the DAG; no longer blocks non-streaming/streaming). Full
 `--model tts --stages ALL` calibration **must** include these stages — never
-calibrate Higgs thresholds alone while leaving Whisper ASR on stale literals.
+calibrate Higgs thresholds alone while leaving Qwen3-ASR on stale literals.
 
 | Stage key | Group | What gets written | Test constant(s) |
 |-----------|-------|-------------------|------------------|
@@ -453,7 +454,7 @@ calibrate Higgs thresholds alone while leaving Whisper ASR on stale literals.
 | `whisper_asr_speed` | speed | throughput + latency + RTF P95 refs | `WHISPER_ASR_THROUGHPUT_MIN`, `WHISPER_ASR_LATENCY_*`, `WHISPER_ASR_RTF_*` |
 
 Notes:
-- Uses **`openai/whisper-large-v3`** via `hf_model_ids_by_test` (not the Higgs
+- Uses **`Qwen/Qwen3-ASR-1.7B`** via `hf_model_ids_by_test` (not the Higgs
   checkpoint). Same **`omni`** venv and 2-GPU router DP=2 as TTS stages.
 - Sample count for strict audit: **`SEEDTTS_ASR_CORRECTNESS_SAMPLES`** (=20),
   JSON `summary.evaluated` / `summary.total_samples`.
@@ -461,10 +462,10 @@ Notes:
   derived `*_THRESHOLD` values with **10% slack** (`THRESHOLD_SLACK_HIGHER=0.9`,
   `THRESHOLD_SLACK_LOWER=1.1` via `apply_wer_slack()` for WER). Do **not**
   bake slack into calibrated literals.
-- Shortcuts: `whisper_asr`, `@wer`, `@speed` (scoped to whisper stages when
-  combined with `whisper_asr` base).
-- Legacy standalone model **`whisper-asr-v1`** remains for isolated ASR runs;
-  **TTS pipeline calibration uses `--model tts`** so Whisper and Higgs stages
+- Shortcuts: `whisper_asr`, `@wer`, `@speed` (`whisper_asr` is the legacy
+  stage key for the Qwen3-ASR test file).
+- Standalone model **`qwen3-asr-v1`** remains for isolated ASR runs;
+  **TTS pipeline calibration uses `--model tts`** so Qwen3-ASR and Higgs stages
   share one run directory and provenance.
 
 ### TTS (Higgs) calibration targets (stages 2–4)
@@ -655,7 +656,7 @@ All CI workflows, calibration models, and WER sweeps use the same venv name
 
 | Workload | CI workflow | venv | `OMNI_CI_HOME` (calibration host) | Source env script |
 |----------|-------------|------|-----------------------------------|-------------------|
-| All benchmarks (unit, Qwen3, TTS, Whisper) | `omni-ci.yaml` (one shared setup) → sequential `test-tts-ci.yaml` → `test-qwen3-omni-ci.yaml` → `test.yaml` (later suites still run if an earlier one fails) | **`omni`** | `/github/home/calibration` | `source .github/scripts/ci_env.sh` |
+| All benchmarks (unit, Qwen3, TTS, Qwen3-ASR) | `omni-ci.yaml` (one shared setup) → sequential `test-tts-ci.yaml` → `test-qwen3-omni-ci.yaml` → `test.yaml` (later suites still run if an earlier one fails) | **`omni`** | `/github/home/calibration` | `source .github/scripts/ci_env.sh` |
 
 **Omni CI suite order:** after the shared `setup` job, GitHub Actions runs
 `test-tts-ci.yaml`, then `test-qwen3-omni-ci.yaml`, then `test.yaml` (unit /
@@ -685,16 +686,16 @@ cd /sgl-workspace/sglang-omni
 source omni/bin/activate
 source .github/scripts/ci_env.sh
 python -c "import os; assert os.environ['TORCHINDUCTOR_CACHE_DIR'].startswith(os.environ['OMNI_CI_HOME'])"
-python .claude/skills/tune-ci-thresholds/tune.py --model qwen3-omni-v1 precheck   # or whisper-asr-v1 / tts
+python .claude/skills/tune-ci-thresholds/tune.py --model qwen3-omni-v1 precheck   # or qwen3-asr-v1 / tts
 ```
 
 Aligned env → Qwen3 colocated router CUDA graph capture ~5–10 s on warm
 `${OMNI_CI_HOME}/.torchinductor`. Cold or wrong slice → multi-minute startup;
 do **not** treat that as a threshold or code regression.
 
-**WER CI with Omni Whisper router (DP=2):** still uses the **parent model’s**
-venv/slice for the benchmark fixture (Qwen3 → qwen3 env; TTS → tts env; Whisper → tts env).
-Only the Whisper router stage needs 2 free GPUs after `delete_gpu_process.sh`.
+**WER CI with Qwen3-ASR router (DP=2):** still uses the **parent model’s**
+venv/slice for the benchmark fixture (Qwen3 → qwen3 env; TTS → tts env; standalone ASR → tts env).
+Only the Qwen3-ASR router stage needs 2 free GPUs after `delete_gpu_process.sh`.
 
 ### Agent operational rules (mandatory)
 
@@ -1125,7 +1126,7 @@ Two gates — **both** required before apply:
   venv is missing/corrupt — then follow **Environment policy — check first**.
 - Install flashinfer-jit-cache only when precheck reports it missing — use
   host wheel cache first (`install_flashinfer_jit_cache.sh`; network only on
-  cache miss). Every CI venv slice gets it via `omni-setup`, including Whisper.
+  cache miss). Every CI venv slice gets it via `omni-setup`, including Qwen3-ASR.
 - Run `apply_slack` or generate patch files
 - Commit or push without explicit user authorization
 - Edit test files outside of the explicit apply prompt (step 9)
@@ -1148,10 +1149,10 @@ Two gates — **both** required before apply:
     ├── qwen3-omni-v1/                   # v1 pipeline (qwen3-omni)
     │   ├── config.yaml
     │   └── stages.yaml
-    ├── tts/                             # TTS CI pipeline (stage 1 Whisper + Higgs)
-    │   ├── config.yaml                  #   whisper + test_tts_ci.py; variants for Higgs
+    ├── tts/                             # TTS CI pipeline (stage 1 Qwen3-ASR + Higgs)
+    │   ├── config.yaml                  #   qwen3-asr + test_tts_ci.py; variants for Higgs
     │   └── stages.yaml
-    └── whisper-asr-v1/                  # Legacy: isolated Whisper ASR only
+    └── qwen3-asr-v1/                    # Isolated Qwen3-ASR only
         ├── config.yaml
         └── stages.yaml
 ```
