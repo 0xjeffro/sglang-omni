@@ -304,6 +304,7 @@ def run_tts_seedtts_transcribe(
     config: TtsSeedttsBenchmarkConfig,
     *,
     whisper_router_port: int | None = None,
+    qwen3_asr_port: int | None = None,
 ) -> dict:
     """Transcribe saved audio and compute WER + ASR speed metrics.
 
@@ -331,6 +332,7 @@ def run_tts_seedtts_transcribe(
         wer_config=wer_config,
         generation_mode=generation_mode,
         whisper_router_port=whisper_router_port,
+        qwen3_asr_port=qwen3_asr_port,
     )
 
 
@@ -495,6 +497,15 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="Device for ASR model (transcribe phase).",
     )
     parser.add_argument(
+        "--qwen3-asr-port",
+        type=int,
+        default=None,
+        help="If set, score WER via a Qwen3-ASR sglang-omni server on this "
+        "localhost port (/v1/audio/transcriptions) instead of local Whisper. "
+        "EN only. Start the server separately: `python -m sglang_omni.cli serve "
+        "--model-path Qwen/Qwen3-ASR-1.7B --port <port>`.",
+    )
+    parser.add_argument(
         "--similarity-checkpoint",
         type=str,
         default=None,
@@ -541,7 +552,7 @@ def main() -> None:
         return
 
     if args.transcribe_only:
-        run_tts_seedtts_transcribe(config)
+        run_tts_seedtts_transcribe(config, qwen3_asr_port=args.qwen3_asr_port)
         return
 
     wait_for_service(build_base_url(config), timeout=args.server_timeout)
@@ -550,7 +561,7 @@ def main() -> None:
     if args.generate_only:
         return
 
-    run_tts_seedtts_transcribe(config)
+    run_tts_seedtts_transcribe(config, qwen3_asr_port=args.qwen3_asr_port)
 
 
 if __name__ == "__main__":

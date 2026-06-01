@@ -91,6 +91,9 @@ class SGLModelRunner(ModelRunner):
             register_ming_hf_config,
             register_ming_model_registry,
         )
+        from sglang_omni.models.qwen3_asr.sglang_model import (
+            Qwen3ASRForConditionalGeneration,
+        )
         from sglang_omni.models.qwen3_omni.components.sglang_thinker import (
             Qwen3OmniThinkerForCausalLM,
         )
@@ -99,9 +102,6 @@ class SGLModelRunner(ModelRunner):
         from sglang_omni.models.voxtral_tts.sglang_model import VoxtralSGLangTTSModel
         from sglang_omni.models.whisper_asr.sglang_model import (
             WhisperForConditionalGeneration,
-        )
-        from sglang_omni.models.qwen3_asr.sglang_model import (
-            Qwen3ASRForConditionalGeneration,
         )
 
         register_ming_hf_config()

@@ -13,17 +13,20 @@ def create_sglang_qwen3_asr_executor(
     dtype: str = "float16",
     max_running_requests: int = 16,
     max_new_tokens: int = 256,
-    mem_fraction_static: float = 0.85,
+    # 0.6B/1.7B are tiny; a large static KV-cache pool wastes VRAM and OOMs
+    # under load. 0.3 leaves ample headroom on an H200.
+    mem_fraction_static: float = 0.3,
     server_args_overrides: dict[str, Any] | None = None,
 ):
-    from transformers import AutoProcessor, GenerationConfig
+    from transformers import AutoProcessor
+
+    from sglang_omni.model_runner.base import ModelRunner
 
     # Import the config module first: its module-level AutoConfig.register(...)
     # calls make transformers recognize model_type "qwen3_asr" before any
     # ServerArgs/ModelConfig code parses the checkpoint's config.json.
     # TODO: This is a dirty work, need further polish
     from sglang_omni.models.qwen3_asr import configuration_qwen3_asr  # noqa: F401
-    from sglang_omni.model_runner.base import ModelRunner
     from sglang_omni.models.qwen3_asr.request_builders import (
         make_qwen3_asr_scheduler_adapters,
     )
@@ -35,18 +38,18 @@ def create_sglang_qwen3_asr_executor(
     )
 
     gpu_id = int(device.split(":")[-1]) if ":" in device else 0
-    
+
     processor = AutoProcessor.from_pretrained(model_path)
     tokenizer = getattr(processor, "tokenizer", processor)
-    
+
     # Qwen3-ASR's HF repo only ships a tokenizer, so AutoProcessor returns no
     # audio feature_extractor. Build the WhisperFeatureExtractor (128 mel bins, matching num_mel_bins) ourselves
     from transformers import AutoFeatureExtractor
 
     feature_extractor = AutoFeatureExtractor.from_pretrained(
-         model_path, trust_remote_code=True
+        model_path, trust_remote_code=True
     )
-    
+
     # 30 s @ 100 fps -> 3000 mel frames -> 1500 after the encoder's stride-2 conv
     encoder_token_count = int(feature_extractor.nb_max_frames // 2)
 
@@ -98,6 +101,7 @@ def create_sglang_qwen3_asr_executor(
     # that upstream sglang inits in its own model runner; the omni runner does
     # not, so initialize it here.
     from sglang.srt.managers.mm_utils import init_mm_embedding_cache
+
     init_mm_embedding_cache(256 * 1024 * 1024)
 
     output_proc = SGLangOutputProcessor(

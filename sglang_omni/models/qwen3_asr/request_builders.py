@@ -31,7 +31,6 @@ from sglang.srt.managers.schedule_batch import (
     Req,
 )
 from sglang.srt.sampling.sampling_params import SamplingParams
-from transformers import GenerationConfig
 
 from sglang_omni.proto import StagePayload
 from sglang_omni.scheduling.sglang_backend import SGLangARRequestData
@@ -85,9 +84,7 @@ def load_audio(source: Any) -> np.ndarray:
     elif isinstance(source, str):
         audio, sample_rate = torchaudio.load(source)
     else:
-        raise ValueError(
-            f"Unsupported Qwen3-ASR audio input: {type(source).__name__}"
-        )
+        raise ValueError(f"Unsupported Qwen3-ASR audio input: {type(source).__name__}")
 
     if audio.ndim == 2 and audio.shape[0] > 1:
         audio = audio.mean(dim=0, keepdim=True)
@@ -158,7 +155,7 @@ def make_qwen3_asr_scheduler_adapters(
             return_tensors="pt",
             return_attention_mask=True,
         )
-        features = extracted.input_features # 128, 3000
+        features = extracted.input_features  # 128, 3000
         feature_attention_mask = getattr(extracted, "attention_mask", None)
         if feature_attention_mask is None:
             # WhisperFeatureExtractor normally returns one; fall back to all-valid.
@@ -266,8 +263,7 @@ def make_qwen3_asr_scheduler_adapters(
         # lead-in up to and including <asr_text>, then drop any remaining specials.
         raw = tokenizer.decode(output_ids, skip_special_tokens=False)
         logger.info(
-            f"[qwen3-asr] n_out={len(output_ids)} ids={output_ids[:40]} "
-            f"raw={raw!r}"
+            f"[qwen3-asr] n_out={len(output_ids)} ids={output_ids[:40]} " f"raw={raw!r}"
         )
         if "<asr_text>" in raw:
             text = raw.split("<asr_text>", 1)[1]

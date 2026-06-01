@@ -1,4 +1,9 @@
 import torch
+from sglang.srt.configs.qwen3_omni import Qwen3OmniMoeAudioEncoderConfig
+from sglang.srt.multimodal.customized_mm_processor_utils import (
+    register_customized_processor,
+)
+from sglang.utils import logger
 from transformers import (
     AutoConfig,
     AutoFeatureExtractor,
@@ -6,12 +11,6 @@ from transformers import (
     PretrainedConfig,
     ProcessorMixin,
 )
-
-from sglang.srt.configs.qwen3_omni import Qwen3OmniMoeAudioEncoderConfig
-from sglang.srt.multimodal.customized_mm_processor_utils import (
-    register_customized_processor,
-)
-from sglang.utils import logger
 
 
 class Qwen3ASRProcessor(ProcessorMixin):

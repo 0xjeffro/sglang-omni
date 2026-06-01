@@ -5,8 +5,6 @@ from typing import Any, Iterable, List, Optional, Tuple
 
 import torch
 import torch.nn as nn
-
-from .configuration_qwen3_asr import Qwen3ASRConfig
 from sglang.srt.configs.qwen3_omni import Qwen3OmniMoeAudioEncoderConfig
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
 from sglang.srt.managers.mm_utils import (
@@ -23,6 +21,8 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen3 import Qwen3ForCausalLM
 from sglang.srt.models.qwen3_omni_moe import Qwen3OmniMoeAudioEncoder
 from sglang.srt.utils import add_prefix
+
+from .configuration_qwen3_asr import Qwen3ASRConfig
 
 logger = logging.getLogger(__name__)
 
