@@ -12,8 +12,9 @@ tests/
 │   ├── test_qwen3_omni_*_ci.py
 │   ├── test_qwen3_omni_videoamme_talker_tp2_ci.py
 │   ├── test_tts_ci.py
-│   ├── test_whisper_asr_ci.py
-│   └── omni_whisper_wer_utils.py
+│   ├── test_qwen3_asr_ci.py
+│   ├── test_whisper_asr_ci.py  # legacy workflow wrapper
+│   └── qwen3_asr_wer_utils.py
 └── unit_test/
     ├── fixtures/
     │   ├── fish_fakes.py
@@ -156,11 +157,13 @@ Relevant model CI ownership:
   router-backed Qwen3-Omni endpoint from `conftest.py`.
 - `test_qwen3_omni_tts_ci.py`: gates the SeedTTS speed/WER path through the
   router and verifies both colocated workers receive traffic.
-- `test_whisper_asr_ci.py`: Qwen3-ASR correctness + speed via SGLang Omni
+- `test_qwen3_asr_ci.py`: Qwen3-ASR correctness + speed via SGLang Omni
   router (`/v1/audio/transcriptions`). Uses the first 20 English SeedTTS
-  clips; writes `whisper_asr_results.json` for threshold calibration
+  clips; writes `qwen3_asr_results.json` for threshold calibration
   (`qwen3-asr-v1` in `tune-ci-thresholds`).
-- `omni_whisper_wer_utils.py`: shared fixture/helpers for talker/TTS WER CI —
+- `test_whisper_asr_ci.py`: compatibility wrapper for the existing GitHub
+  Actions command; keep new Qwen3-ASR test logic in `test_qwen3_asr_ci.py`.
+- `qwen3_asr_wer_utils.py`: shared fixture/helpers for talker/TTS WER CI —
   stops the upstream model server, runs `ensure_gpus_idle.sh`, then launches
   a Qwen3-ASR router. Used by Qwen3 talker WER tests and TTS WER tests instead
   of the in-process transformers Whisper pipeline.

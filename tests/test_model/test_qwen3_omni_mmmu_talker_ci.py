@@ -26,7 +26,7 @@ from pathlib import Path
 
 import pytest
 
-pytest_plugins = ["tests.test_model.omni_whisper_wer_utils"]
+pytest_plugins = ["tests.test_model.qwen3_asr_wer_utils"]
 
 from benchmarks.dataset.prepare import DATASETS
 from benchmarks.eval.benchmark_omni_mmmu import MMMUEvalConfig, run_mmmu_eval
@@ -179,7 +179,7 @@ def test_mmmu_talker_accuracy_and_speed(
 @pytest.mark.benchmark
 def test_mmmu_talker_wer(
     wer_eval_artifacts: _TalkerEvalArtifacts,
-    omni_whisper_wer_router: ManagedRouterHandle,
+    qwen3_asr_wer_router: ManagedRouterHandle,
 ) -> None:
     """Transcribe saved talker audio after the inference server is stopped."""
     wer = compute_text_audio_consistency_from_records(
@@ -187,7 +187,7 @@ def test_mmmu_talker_wer(
         wer_eval_artifacts.lang,
         ASR_DEVICE,
         audio_dir=wer_eval_artifacts.audio_dir,
-        asr_router_port=omni_whisper_wer_router.port,
+        asr_router_port=qwen3_asr_wer_router.port,
     )
     print_wer_summary(wer["summary"], "qwen3-omni")
     persist_wer_in_benchmark_results(
