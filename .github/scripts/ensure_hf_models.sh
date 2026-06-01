@@ -34,6 +34,7 @@ source "${VENV_NAME}/bin/activate"
 
 python - "$@" <<'PY'
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -110,6 +111,8 @@ def seed_hf_cache_from_local(repo_id: str, local_dir: Path) -> Path:
     repo_cache = hf_hub_dir() / f"models--{repo_id.replace('/', '--')}"
     snapshot_dir = repo_cache / "snapshots" / commit
     refs_dir = repo_cache / "refs"
+    if snapshot_dir.exists() and not weights_ready(snapshot_dir):
+        shutil.rmtree(snapshot_dir)
     snapshot_dir.mkdir(parents=True, exist_ok=True)
     refs_dir.mkdir(parents=True, exist_ok=True)
     (refs_dir / "main").write_text(f"{commit}\n")
@@ -120,7 +123,7 @@ def seed_hf_cache_from_local(repo_id: str, local_dir: Path) -> Path:
         dest = snapshot_dir / src.relative_to(local_dir)
         dest.parent.mkdir(parents=True, exist_ok=True)
         if dest.exists() or dest.is_symlink():
-            continue
+            dest.unlink()
         dest.symlink_to(src.resolve())
 
     return snapshot_dir
@@ -162,7 +165,10 @@ def download_via_modelscope(repo_id: str) -> Path:
     return cached
 
 
-def verify_hf_cache(repo_id: str) -> Path:
+def verify_hf_cache(repo_id: str, expected_snapshot: Path | None = None) -> Path:
+    if expected_snapshot is not None and weights_ready(expected_snapshot):
+        print(f"Verified HF cache: {repo_id} -> {expected_snapshot}")
+        return expected_snapshot
     cached = hf_cache_snapshot(repo_id)
     if cached is None:
         raise SystemExit(
@@ -253,7 +259,7 @@ def ensure_model(repo_id: str) -> Path:
     if ms_dir is not None:
         seeded = seed_hf_cache_from_local(repo_id, ms_dir)
         print(f"Seeded HF cache from ModelScope: {repo_id} -> {seeded}")
-        return verify_hf_cache(repo_id)
+        return verify_hf_cache(repo_id, expected_snapshot=seeded)
 
     return download_via_hf_hub(repo_id)
 
