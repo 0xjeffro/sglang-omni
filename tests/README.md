@@ -240,12 +240,7 @@ that happened to contain an older version of the test.
   - tokenizer and preprocessing fallback behavior
   - memory flag contracts
   - colocation config and SGLang AR budget contracts
-  - `PipelineState` request builders, including projected payload container
-    isolation for mutable streaming state
-  - talker behavior, including projected prefill tensor storage/slicing, decode
-    feedback/text FIFO consumption, and replay of generated-token input embeds
-    after decode retract
-  - `PipelineState` request builders, including projected payload container
+  - `Qwen3OmniPipelineState` request builders, including projected payload container
     isolation for mutable streaming state
   - talker behavior, including partial-prefix startup gate, the real
     `_build_talker_request_data` propagation contract (input_ids,
