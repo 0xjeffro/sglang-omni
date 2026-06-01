@@ -30,7 +30,6 @@ from tests.test_model.omni_router_utils import (
 from tests.utils import MetricCheckCollector, apply_wer_slack, disable_proxy
 
 WHISPER_MODEL_PATH = QWEN3_ASR_MODEL_PATH
-WHISPER_ASR_WORKER_ARGS = "--stages.0.factory-args.max-running-requests 1"
 WHISPER_ASR_CONCURRENCY = 2
 SEEDTTS_ASR_CORRECTNESS_SAMPLES = 20
 
@@ -95,7 +94,7 @@ def whisper_asr_router_server(
         tmp_path_factory=tmp_path_factory,
         model_path=WHISPER_MODEL_PATH,
         model_name=WHISPER_MODEL_PATH,
-        worker_extra_args=WHISPER_ASR_WORKER_ARGS,
+        worker_extra_args="",
         wait_timeout=STARTUP_TIMEOUT,
         log_prefix="qwen3_asr_router_logs",
     ) as router:

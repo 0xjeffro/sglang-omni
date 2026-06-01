@@ -37,12 +37,12 @@ CI Usage:
         --max-concurrency 16 \
         --model qwen3-omni --port 8000 --max-samples 50
 
-    # Transcribe + WER only (server not needed)
+    # Transcribe + WER only (ASR server must be running on --port)
     python -m benchmarks.eval.benchmark_omni_seedtts \
         --transcribe-only \
         --meta zhaochenyang20/seed-tts-eval-arrow \
         --output-dir results/qwen3_omni_en \
-        --model qwen3-omni --lang en --device cuda:0
+        --model qwen3-omni --lang en --port 8000
 
 
 H200 Full-Set Reference Results
@@ -96,7 +96,7 @@ are not comparable to codec-token TTS models (e.g. S2-Pro in
 benchmark_tts_seedtts.py); the two backends emit token streams with different
 semantics and rates.
 
-ASR speed (accuracy.asr_speed) — Whisper-large-v3 for EN, FunASR paraformer-zh for ZH
+ASR speed (accuracy.asr_speed) — historical baseline
 
 | Lang | asr_latency_mean_s | asr_rtf_mean | asr_throughput_samples_per_s | Source                                      |
 | ---- | ------------------ | ------------ | ---------------------------- | ------------------------------------------- |
@@ -155,6 +155,7 @@ from benchmarks.metrics.performance import (
     print_speed_summary,
 )
 from benchmarks.tasks.tts import (
+    QWEN3_ASR_MODEL_PATH,
     VoiceCloneOmni,
     build_base_url,
     run_seedtts_similarity,
@@ -194,6 +195,7 @@ class OmniSeedttsBenchmarkConfig:
     disable_tqdm: bool = False
     # Transcribe phase
     device: str = "cuda:0"
+    asr_model_path: str = QWEN3_ASR_MODEL_PATH
     similarity_checkpoint: str | None = None
     # Optional system prompt prepended to chat messages. Default ``None``
     # preserves the legacy Qwen3-Omni behavior (no system role). Pass a
@@ -359,12 +361,10 @@ async def run_omni_seedtts_benchmark(
 
 def evaluate_generated_audio(
     config: OmniSeedttsBenchmarkConfig,
-    *,
-    asr_router_port: int | None = None,
 ) -> dict:
     """Transcribe previously saved audio with ASR and compute WER + ASR speed.
 
-    note (Chenyang): Server need not be running.
+    note (Chenyang): The ASR server is expected on ``config.port``.
 
     Returns a dict with keys: wer_summary, asr_speed, per_sample.
     """
@@ -379,7 +379,7 @@ def evaluate_generated_audio(
         config,
         wer_config=wer_config,
         log_per_sample=True,
-        asr_router_port=asr_router_port,
+        asr_router_port=config.port,
     )
 
 
@@ -409,6 +409,7 @@ def _config_from_args(args: argparse.Namespace) -> OmniSeedttsBenchmarkConfig:
         request_rate=args.request_rate,
         disable_tqdm=args.disable_tqdm,
         device=device,
+        asr_model_path=args.asr_model_path,
         similarity_checkpoint=args.similarity_checkpoint,
         system_prompt=args.system_prompt,
     )
@@ -524,11 +525,12 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="Legacy alias for --device (ASR transcription device).",
     )
     parser.add_argument(
-        "--asr-router-port",
-        type=int,
-        default=None,
-        help="Qwen3-ASR sglang-omni router port for WER transcription "
-        "(/v1/audio/transcriptions). Required for EN; recommended for ZH.",
+        "--asr-model-path",
+        type=str,
+        default=QWEN3_ASR_MODEL_PATH,
+        help="HuggingFace model id served by the ASR endpoint on --port. "
+        f"Defaults to {QWEN3_ASR_MODEL_PATH}; openai/whisper-large-v3 "
+        "can also be used.",
     )
     parser.add_argument(
         "--similarity-checkpoint",
@@ -601,7 +603,7 @@ def main() -> None:
         return
 
     if args.transcribe_only:
-        evaluate_generated_audio(config, asr_router_port=args.asr_router_port)
+        evaluate_generated_audio(config)
         return
 
     wait_for_service(build_base_url(config), timeout=args.server_timeout)
@@ -610,10 +612,7 @@ def main() -> None:
     if args.generate_only:
         return
 
-    accuracy_results = evaluate_generated_audio(
-        config,
-        asr_router_port=args.asr_router_port,
-    )
+    accuracy_results = evaluate_generated_audio(config)
     similarity_results = None
     if args.with_similarity:
         similarity_results = run_seedtts_similarity(config, log_per_sample=False)

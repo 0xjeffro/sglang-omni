@@ -156,19 +156,19 @@ Relevant model CI ownership:
   router-backed Qwen3-Omni endpoint from `conftest.py`.
 - `test_qwen3_omni_tts_ci.py`: gates the SeedTTS speed/WER path through the
   router and verifies both colocated workers receive traffic.
-- `test_whisper_asr_ci.py`: Whisper large-v3 ASR correctness + speed via
-  SGLang Omni router (DP=2, `/v1/audio/transcriptions`). Uses the first 20
-  English SeedTTS clips; writes `whisper_asr_results.json` for threshold
-  calibration (`whisper-asr-v1` in `tune-ci-thresholds`).
+- `test_whisper_asr_ci.py`: Qwen3-ASR correctness + speed via SGLang Omni
+  router (`/v1/audio/transcriptions`). Uses the first 20 English SeedTTS
+  clips; writes `whisper_asr_results.json` for threshold calibration
+  (`whisper-asr-v1` in `tune-ci-thresholds`).
 - `omni_whisper_wer_utils.py`: shared fixture/helpers for talker/TTS WER CI —
   stops the upstream model server, runs `ensure_gpus_idle.sh`, then launches
-  a DP=2 Whisper router for ASR. Used by Qwen3 talker WER tests and TTS
-  WER tests instead of the in-process transformers Whisper pipeline.
+  a Qwen3-ASR router. Used by Qwen3 talker WER tests and TTS WER tests instead
+  of the in-process transformers Whisper pipeline.
 - Talker / video WER CI (`test_qwen3_omni_*_talker_ci.py`, `test_tts_ci.py`):
   generate audio with the model router first, tear down that server, free both
-  GPUs, then transcribe saved WAVs through the Omni Whisper router. Long talker
+  GPUs, then transcribe saved WAVs through the ASR router. Long Whisper-ASR
   clips (>30 s) are chunked client-side in `benchmarks/tasks/tts.py` to match
-  the transformers `chunk_length_s=30` behavior.
+  Whisper's 30 s encoder limit.
 - CI env alignment on the H20 repro host: `source .github/scripts/ci_env.sh`
   then `source omni/bin/activate`.
   Omni CI (`omni-ci.yaml`) runs benchmark suites sequentially after one shared

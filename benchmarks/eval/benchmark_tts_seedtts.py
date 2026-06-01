@@ -14,6 +14,22 @@ Usage:
     # Download the test set:
     python -m benchmarks.dataset.prepare --dataset seedtts
 
+    # Launch the server:
+    1. For S2-Pro:
+    python -m sglang_omni.cli serve \
+        --model-path fishaudio/s2-pro \
+        --port 8000
+
+    2. For Voxtral-4B-TTS-2603:
+    python -m sglang_omni.cli serve \
+        --model-path mistralai/Voxtral-4B-TTS-2603 \
+        --port 8000
+
+    3. For Higgs TTS:
+    python -m sglang_omni.cli serve \
+        --model-path boson-sglang/higgs-audio-v3-tts-4b-base \
+        --port 8000
+
     # Full pipeline (auto start TTS → generate → stop TTS → start ASR → WER)
     # Single GPU: TTS and ASR reuse the same --port sequentially.
     python -m benchmarks.eval.benchmark_tts_seedtts \
@@ -115,7 +131,7 @@ discrete talker LM tokens emitted at audio frame rate. Cross-model comparison of
 this rate is not meaningful; use latency_mean_s / rtf_mean / throughput_qps
 instead when comparing backends.
 
-ASR speed (accuracy.asr_speed) — Qwen3-ASR-1.7B router DP=2 for EN/ZH
+ASR speed (accuracy.asr_speed) — Qwen3-ASR-1.7B server for EN/ZH
 
 | Model     | Lang | asr_latency_mean_s | asr_rtf_mean | asr_throughput_samples_per_s | Source                                          |
 | --------- | ---- | ------------------ | ------------ | ---------------------------- | ----------------------------------------------- |
@@ -131,8 +147,6 @@ import argparse
 import asyncio
 import logging
 import os
-import signal
-import subprocess
 import sys
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -140,7 +154,6 @@ from pathlib import Path
 from typing import Iterator
 
 from benchmarks.benchmarker.runner import BenchmarkRunner, RunConfig
-from benchmarks.benchmarker.utils import wait_for_service
 from benchmarks.dataset.seedtts import load_seedtts_samples
 from benchmarks.metrics.performance import (
     build_speed_results,
@@ -157,18 +170,13 @@ from benchmarks.tasks.tts import (
     save_generated_audio_metadata,
     save_speed_results,
 )
+from tests.utils import start_server_from_cmd, stop_server, wait_for_gpu_memory_release
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
 )
 logger = logging.getLogger(__name__)
-
-REPO_ROOT = Path(__file__).resolve().parents[2]
-GPU_CLEANUP_SCRIPT = REPO_ROOT / ".github/scripts/ensure_gpus_idle.sh"
-GPU_IDLE_THRESHOLD_MB = 2048
-GPU_IDLE_WAIT_SECONDS = 600
-GPU_IDLE_POLL_SECONDS = 5
 
 
 @dataclass
@@ -212,92 +220,6 @@ class TtsSeedttsBenchmarkConfig:
     asr_model_path: str = QWEN3_ASR_MODEL_PATH
 
 
-def _server_log_path(output_dir: str, name: str) -> Path:
-    log_dir = Path(output_dir) / "server_logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    return log_dir / name
-
-
-def _stop_server(proc: subprocess.Popen) -> None:
-    try:
-        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-        proc.wait(timeout=30)
-    except (ProcessLookupError, ChildProcessError):
-        return
-    except subprocess.TimeoutExpired:
-        try:
-            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-            proc.wait(timeout=10)
-        except (ProcessLookupError, ChildProcessError):
-            return
-
-
-def _wait_for_gpu_idle() -> None:
-    if not GPU_CLEANUP_SCRIPT.exists():
-        logger.warning("GPU cleanup script missing, skipping idle wait")
-        return
-
-    env = os.environ.copy()
-    env["OMNI_CI_GPU_MEMORY_CLEAN_THRESHOLD_MB"] = str(GPU_IDLE_THRESHOLD_MB)
-    env["OMNI_CI_GPU_CLEAN_WAIT_SECONDS"] = str(GPU_IDLE_WAIT_SECONDS)
-    env["OMNI_CI_GPU_CLEAN_POLL_SECONDS"] = str(GPU_IDLE_POLL_SECONDS)
-    logger.info("Waiting for GPU memory to be released before starting next server...")
-    result = subprocess.run(
-        ["bash", str(GPU_CLEANUP_SCRIPT)],
-        env=env,
-        check=False,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(
-            "GPU memory was not released after stopping the server. "
-            f"ensure_gpus_idle.sh exit={result.returncode}"
-        )
-
-
-def _build_serve_cmd(
-    *,
-    model_path: str,
-    port: int,
-    host: str,
-) -> list[str]:
-    return [
-        sys.executable,
-        "-m",
-        "sglang_omni.cli",
-        "serve",
-        "--model-path",
-        model_path,
-        "--port",
-        str(port),
-        "--host",
-        host,
-    ]
-
-
-def _start_managed_server(
-    *,
-    cmd: list[str],
-    base_url: str,
-    log_path: Path,
-    server_timeout: int,
-) -> subprocess.Popen:
-    logger.info(f"Starting server: {' '.join(cmd)}")
-    with log_path.open("w") as log_handle:
-        proc = subprocess.Popen(
-            cmd,
-            stdout=log_handle,
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
-        )
-    wait_for_service(
-        base_url,
-        timeout=server_timeout,
-        server_process=proc,
-        server_log_file=log_path,
-    )
-    return proc
-
-
 @contextmanager
 def _managed_omni_server(
     config: TtsSeedttsBenchmarkConfig,
@@ -306,25 +228,34 @@ def _managed_omni_server(
     log_name: str,
     server_timeout: int,
 ) -> Iterator[None]:
-    base_url = build_base_url(config)
-    log_path = _server_log_path(config.output_dir, log_name)
-    cmd = _build_serve_cmd(
-        model_path=model_path,
-        port=config.port,
-        host=config.host,
-    )
-    proc = _start_managed_server(
-        cmd=cmd,
-        base_url=base_url,
-        log_path=log_path,
-        server_timeout=server_timeout,
+    log_dir = Path(config.output_dir) / "server_logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_path = log_dir / log_name
+    cmd = [
+        sys.executable,
+        "-m",
+        "sglang_omni.cli",
+        "serve",
+        "--model-path",
+        model_path,
+        "--port",
+        str(config.port),
+        "--host",
+        config.host,
+    ]
+    logger.info(f"Starting server: {' '.join(cmd)}")
+    proc = start_server_from_cmd(
+        cmd,
+        log_path,
+        config.port,
+        timeout=server_timeout,
     )
     try:
         yield
     finally:
         logger.info(f"Stopping server ({model_path})")
-        _stop_server(proc)
-        _wait_for_gpu_idle()
+        stop_server(proc)
+        wait_for_gpu_memory_release()
 
 
 def _build_generation_kwargs(config: TtsSeedttsBenchmarkConfig) -> dict:
@@ -615,8 +546,9 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "--asr-model-path",
         type=str,
         default=QWEN3_ASR_MODEL_PATH,
-        help="HuggingFace model id for the Qwen3-ASR server started in the "
-        "transcribe phase.",
+        help="HuggingFace model id for the ASR server started in the "
+        f"transcribe phase. Defaults to {QWEN3_ASR_MODEL_PATH}; "
+        "openai/whisper-large-v3 can also be used.",
     )
     parser.add_argument(
         "--similarity-checkpoint",

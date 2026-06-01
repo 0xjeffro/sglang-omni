@@ -149,11 +149,9 @@ def _run_wer_transcribe(
         output_dir=output_dir,
         lang=lang,
         device=device,
+        port=asr_router_port,
     )
-    evaluate_generated_audio(
-        config,
-        asr_router_port=asr_router_port,
-    )
+    evaluate_generated_audio(config)
 
     results_path = Path(output_dir) / "wer_results.json"
     assert results_path.exists(), f"WER results file not found: {results_path}"
