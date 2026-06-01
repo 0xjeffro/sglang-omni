@@ -17,7 +17,6 @@ from __future__ import annotations
 import hashlib
 import io
 import logging
-import re
 import time
 from dataclasses import dataclass
 from typing import Any, Callable
@@ -42,10 +41,6 @@ _SAMPLE_RATE = 16000
 _AUDIO_START = "<|audio_start|>"
 _AUDIO_PAD = "<|audio_pad|>"
 _AUDIO_END = "<|audio_end|>"
-
-# Qwen3-ASR emits "language English<asr_text>...". Strip that lead-in so the
-# returned text is just the transcription (mirrors upstream serving_transcription).
-_ASR_TEXT_RE = re.compile(r"^.*?<asr_text>", re.DOTALL)
 
 
 @dataclass
