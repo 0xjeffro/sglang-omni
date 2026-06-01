@@ -1,4 +1,3 @@
-import torch
 from sglang.srt.configs.qwen3_omni import Qwen3OmniMoeAudioEncoderConfig
 from sglang.srt.multimodal.customized_mm_processor_utils import (
     register_customized_processor,
@@ -11,6 +10,8 @@ from transformers import (
     PretrainedConfig,
     ProcessorMixin,
 )
+
+from .audio_lengths import qwen3_asr_audio_token_lengths
 
 
 class Qwen3ASRProcessor(ProcessorMixin):
@@ -41,11 +42,7 @@ class Qwen3ASRProcessor(ProcessorMixin):
         return cls(feature_extractor=feature_extractor, tokenizer=tokenizer)
 
     def _get_feat_extract_output_lengths(self, input_lengths):
-        if not isinstance(input_lengths, torch.Tensor):
-            input_lengths = torch.tensor(input_lengths)
-        input_lengths_leave = input_lengths % 100
-        feat_lengths = (input_lengths_leave - 1) // 2 + 1
-        return ((feat_lengths - 1) // 2 + 1 - 1) // 2 + 1 + (input_lengths // 100) * 13
+        return qwen3_asr_audio_token_lengths(input_lengths)
 
     def __call__(self, text=None, audio=None, audio_kwargs=None, **kwargs):
         inputs = {}

@@ -31,7 +31,7 @@ description: "TTS CI (Higgs / SeedTTS EN)"
 hf_model_id: "boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999"
 hf_model_ids_by_test:
   test_whisper_asr_ci.py:
-    - "Qwen/Qwen3-ASR-0.6B"
+    - "Qwen/Qwen3-ASR-1.7B"
 hf_datasets:
   - "zhaochenyang20/seed-tts-eval-arrow"
 omni_ci_home: "/github/home/calibration"
