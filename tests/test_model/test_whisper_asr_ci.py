@@ -29,7 +29,10 @@ from tests.test_model.omni_router_utils import (
 )
 from tests.utils import MetricCheckCollector, apply_wer_slack, disable_proxy
 
-WHISPER_MODEL_PATH = "openai/whisper-large-v3"
+# Switched the WER scorer from Whisper to Qwen3-ASR-1.7B.
+# NOTE: the thresholds below are still the Whisper worst-of-5 baselines and
+# have NOT been recalibrated for Qwen3-ASR yet.
+WHISPER_MODEL_PATH = "Qwen/Qwen3-ASR-1.7B"
 WHISPER_ASR_WORKER_ARGS = "--stages.0.factory-args.max-running-requests 1"
 WHISPER_ASR_CONCURRENCY = 2
 SEEDTTS_ASR_CORRECTNESS_SAMPLES = 20
@@ -113,7 +116,8 @@ def _transcribe_with_omni(port: int, sample: SampleInput) -> tuple[str, float, f
             data={
                 "model": WHISPER_MODEL_PATH,
                 "language": "en",
-                "temperature": "0",
+                # No temperature=0: Qwen3-ASR degenerates under pure greedy
+                # (emits only the language tag); the server applies 0.01.
             },
             files={
                 "file": (
