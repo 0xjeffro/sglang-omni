@@ -272,9 +272,9 @@ def classify(p):
     has_all = bool(metrics) and all(v is not None for v in metrics.values())
     if not has_all:
         return "✗"
-    if tot is not None and ok is not None and ok >= tot:
+    if tot is not None and ok is not None and ok == tot:
         return "✓"
-    if tot is not None and ok is not None and ok < tot:
+    if tot is not None and ok is not None and ok != tot:
         return "△"
     return "✗"
 
@@ -357,8 +357,9 @@ test) explicitly marks as missing or misaligned.
 ### Stage-specific shortcuts (still check-first)
 
 - **Qwen3-ASR (TTS CI stage 1 / `--model tts`)**: uses `omni`, **2 GPU / router DP=2**.
-  Qwen3-ASR concurrency is **32** at DP=2; Higgs/TTS generation stages use
-  **16**.
+  TTS stage-1 Qwen3-ASR correctness runs with ASR request concurrency **2**.
+  Standalone `qwen3-asr-v1` calibration keeps ASR request concurrency **32**,
+  and Higgs/TTS generation stages use **16**.
   Included in `--model tts --stages ALL`; calibrate alone with
   `--stages qwen3_asr`. Venv must pass full precheck including
   `flashinfer-jit-cache` (same as CI `omni-setup`). If missing, run
@@ -457,7 +458,9 @@ calibrate Higgs thresholds alone while leaving Qwen3-ASR on stale literals.
 Notes:
 - Uses **`Qwen/Qwen3-ASR-1.7B`** via `hf_model_ids_by_test` (not the Higgs
   checkpoint). Same **`omni`** venv and 2-GPU router DP=2 as TTS stages.
-  ASR concurrency is **32** at DP=2.
+  In `--model tts`, this correctness gate sets `QWEN3_ASR_CI_CONCURRENCY=2`
+  to match the stable TTS stage-1 baseline. Standalone `--model qwen3-asr-v1`
+  leaves the test default at **32**.
 - Sample count for strict audit: **`SEEDTTS_ASR_CORRECTNESS_SAMPLES`** (=20),
   JSON `summary.evaluated` / `summary.total_samples`.
 - **CI slack:** tune.py writes P95 reference constants only; assertions use
@@ -488,16 +491,19 @@ the Qwen3-ASR WER transcribe phase remains **32**.
 | `tts_nonstream_wer` | wer | corpus WER ref | `VC_WER_MAX_CORPUS` |
 | `tts_stream_wer` | wer | same | `VC_STREAM_WER_MAX_CORPUS` |
 | `tts_nonstream_similarity` | similarity | min mean score (50-sample eval) | `VC_SIMILARITY_MEAN_MIN` |
+| `tts_nonstream_utmos` | utmos | MOS reference score | `VC_UTMOS_MEAN_REFERENCE` |
 
 Notes:
 - **WER** calibrates corpus reference only (`VC_*_WER_MAX_CORPUS`); CI asserts
   via `apply_wer_slack()`. Per-sample WER caps and generation failure budgets
   are not calibrated.
 - **Similarity** calibrates **`VC_SIMILARITY_MEAN_MIN`**, not `TTS_SIMILARITY_MAX_SAMPLES`.
+- **UTMOS** calibrates **`VC_UTMOS_MEAN_REFERENCE`**; CI derives the assertion
+  threshold with `apply_mos_slack()`.
 - **Stage 3 (streaming consistency)** is pass/fail only (`max_failed_requests=0` in
   test code today).
 
-Shortcuts: `@speed`, `@wer`, `@similarity`, `ALL`, or `tts` /
+Shortcuts: `@speed`, `@wer`, `@similarity`, `@utmos`, `ALL`, or `tts` /
 `tts_nonstream` / `tts_stream`.
 
 ## Environment and networking notes
@@ -970,8 +976,8 @@ Two gates — **both** required before apply:
 
    Use AskUserQuestion to ask exactly once which **apply mode** to use:
      - `report` — only the report, no test files touched
-     - `smart` — auto-apply accuracy and WER worst-of-N; auto-tighten
-       speed thresholds; ask only for speed metrics that would loosen
+     - `smart` — auto-apply accuracy, WER, similarity, and UTMOS worst-of-N;
+       auto-tighten speed thresholds; ask only for speed metrics that would loosen
      - `full` — write worst-of-N for every metric, no further prompts
    If the user picks `report`, stop without touching any file.
 
@@ -988,10 +994,10 @@ Two gates — **both** required before apply:
        0.023876404494382022 or 0.0238). Write into `*_MAX` /
        `*_CORPUS_MAX`; CI tests derive the assertion threshold via
        `apply_wer_slack(reference)` (×1.25).
-     - **`accuracy` / `similarity`:** `write_value` = `worst_raw` exactly into
-       `*_MIN_ACCURACY` / `*_SIMILARITY_*_MIN` — no post-calibration slack multiplier.
-       Report percentages use 2 decimal places for readability only; similarity
-       uses raw mean score (not %).
+     - **`accuracy` / `similarity` / `utmos`:** `write_value` = `worst_raw`
+       exactly into `*_MIN_ACCURACY`, `*_SIMILARITY_*_MIN`, or
+       `*_UTMOS_*_REFERENCE`. Report percentages use 2 decimal places for
+       readability only; similarity and UTMOS use raw scores (not %).
      - **`speed`:** use `write_value` from apply-plan (rounded unless that
        would tighten beyond `worst_raw`). Never re-round or multiply by
        `scale`.
@@ -1006,7 +1012,7 @@ Two gates — **both** required before apply:
    test file using the rules in (b) below, no questions asked.
 
    **Mode `smart`**: classify each metric:
-     - **auto-apply** iff `stage_group` in (`accuracy`, `wer`, `similarity`),
+     - **auto-apply** iff `stage_group` in (`accuracy`, `wer`, `similarity`, `utmos`),
        OR (`stage_group == "speed"` AND `direction == "tightens"`).
        Edit using rules in (b).
      - **auto-skip** iff `direction == "equal"` (nothing to do).
@@ -1183,6 +1189,10 @@ The `metric_sources` block in `config.yaml` declares, per test file:
   for every metric in this test)
 - `paths` — `{metric_key: "dotted.path"}`, or `"file::dotted.path"`
   inline if the metric lives in a different JSON than the default
+- `sample_counts_by_group` — optional per-stage-group override for
+  `sample_counts` when speed/WER/UTMOS artifacts live in different files
+- `ignored_constants` — optional list of top-level constants to skip during
+  discovery when a test keeps an old or disabled threshold literal around
 - `variants` — *optional*; for tests that produce parallel result
   trees (e.g. nonstream / stream voice-clone in the same pytest run).
   Each variant entry has `constant_filter` (regex matched against the
