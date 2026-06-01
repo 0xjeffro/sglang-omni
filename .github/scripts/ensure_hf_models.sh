@@ -45,11 +45,6 @@ def hf_hub_dir() -> Path:
     return Path(os.environ["HF_HOME"]) / "hub"
 
 
-def modelscope_model_dir(repo_id: str) -> Path:
-    root = Path(os.environ["MODELSCOPE_CACHE"])
-    return root / "hub" / "models" / repo_id
-
-
 def weights_ready(model_dir: Path) -> bool:
     if not (model_dir / "config.json").exists():
         return False
@@ -61,6 +56,36 @@ def weights_ready(model_dir: Path) -> bool:
         and not path.name.endswith(".incomplete")
     ]
     return bool(weight_files)
+
+
+def _unique_paths(paths: list[Path]) -> list[Path]:
+    seen: set[str] = set()
+    out: list[Path] = []
+    for path in paths:
+        key = str(path)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(path)
+    return out
+
+
+def modelscope_model_candidates(
+    repo_id: str, downloaded: Path | None = None
+) -> list[Path]:
+    root = Path(os.environ["MODELSCOPE_CACHE"])
+    escaped_repo_id = repo_id.replace(".", "___")
+    candidates = []
+    if downloaded is not None:
+        candidates.append(downloaded)
+    for base in (root / "models", root / "hub" / "models"):
+        candidates.extend(
+            [
+                base / repo_id,
+                base / escaped_repo_id,
+            ]
+        )
+    return _unique_paths(candidates)
 
 
 def hf_cache_snapshot(repo_id: str) -> Path | None:
@@ -102,9 +127,9 @@ def seed_hf_cache_from_local(repo_id: str, local_dir: Path) -> Path:
 
 
 def modelscope_weights_dir(repo_id: str) -> Path | None:
-    cache_dir = modelscope_model_dir(repo_id)
-    if weights_ready(cache_dir):
-        return cache_dir
+    for cache_dir in modelscope_model_candidates(repo_id):
+        if weights_ready(cache_dir):
+            return cache_dir
     return None
 
 
@@ -116,11 +141,22 @@ def download_via_modelscope(repo_id: str) -> Path:
 
     print(f"HF cache miss; downloading model weights via ModelScope: {repo_id}")
     ms_dir = Path(ms_snapshot_download(repo_id))
-    cached = modelscope_weights_dir(repo_id)
+    cached = next(
+        (
+            path
+            for path in modelscope_model_candidates(repo_id, downloaded=ms_dir)
+            if weights_ready(path)
+        ),
+        None,
+    )
     if cached is None:
+        checked_paths = modelscope_model_candidates(repo_id, downloaded=ms_dir)
+        checked = ", ".join(
+            str(path) for path in checked_paths
+        )
         raise SystemExit(
             f"ModelScope download for {repo_id} finished but weights look incomplete "
-            f"under {ms_dir}"
+            f"under checked path(s): {checked}"
         )
     print(f"ModelScope download complete: {repo_id} -> {cached}")
     return cached
