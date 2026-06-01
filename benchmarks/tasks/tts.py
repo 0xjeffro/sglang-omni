@@ -42,7 +42,11 @@ from benchmarks.benchmarker.utils import (
     save_json_results,
 )
 from benchmarks.dataset.seedtts import SampleInput, load_seedtts_samples
-from benchmarks.metrics.performance import build_speed_results
+from benchmarks.metrics.performance import (
+    build_speed_results,
+    load_tts_speed_summary,
+    print_saved_tts_speed_summary,
+)
 from benchmarks.metrics.speaker_similarity import WavLMSpeakerSimilarity
 from benchmarks.metrics.speaker_similarity_assets import (
     ensure_speaker_similarity_assets,
@@ -1022,8 +1026,20 @@ def run_seedtts_transcribe(
     asr_metrics = calculate_asr_speed_metrics(outputs, wall_time_s=asr_wall_time_s)
     asr_metrics["asr_concurrency"] = asr_concurrency
 
+    tts_speed_summary = load_tts_speed_summary(config.output_dir)
+    print_saved_tts_speed_summary(
+        config.output_dir,
+        config.model,
+        concurrency=wer_config.get("concurrency"),
+        generation_mode=generation_mode,
+    )
     print_asr_speed_summary(asr_metrics, config.model)
-    print_wer_summary(wer_metrics, config.model, generation_mode)
+    print_wer_summary(
+        wer_metrics,
+        config.model,
+        generation_mode,
+        tts_speed_summary=tts_speed_summary,
+    )
 
     save_wer_results(outputs, wer_metrics, wer_config, config.output_dir)
     save_json_results(asr_metrics, config.output_dir, "asr_speed_results.json")

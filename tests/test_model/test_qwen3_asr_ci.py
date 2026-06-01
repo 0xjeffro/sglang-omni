@@ -34,7 +34,7 @@ from tests.test_model.omni_router_utils import (
 from tests.utils import MetricCheckCollector, apply_wer_slack, disable_proxy
 
 QWEN3_ASR_CI_MODEL_PATH = QWEN3_ASR_MODEL_PATH
-QWEN3_ASR_CONCURRENCY = 2
+QWEN3_ASR_CONCURRENCY = 32
 QWEN3_ASR_WARMUP_REQUESTS = QWEN3_ASR_CONCURRENCY * 2
 SEEDTTS_ASR_CORRECTNESS_SAMPLES = 20
 

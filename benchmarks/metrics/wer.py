@@ -7,7 +7,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from benchmarks.metrics._format import SPEED_LABEL_WIDTH, SPEED_LINE_WIDTH
+from benchmarks.metrics._format import (
+    SPEED_LABEL_WIDTH,
+    SPEED_LINE_WIDTH,
+    print_speed_metric_line,
+)
 
 if TYPE_CHECKING:
     from benchmarks.tasks.tts import SampleOutput
@@ -32,6 +36,9 @@ def calculate_wer_metrics(outputs: list["SampleOutput"], lang: str) -> dict:
             "n_above_50_pct_wer": 0,
             "pct_above_50_pct_wer": 0.0,
             "latency_mean_s": 0.0,
+            "latency_median_s": 0.0,
+            "latency_p95_s": 0.0,
+            "rtf_mean": 0.0,
             "audio_duration_mean_s": 0.0,
         }
 
@@ -42,6 +49,12 @@ def calculate_wer_metrics(outputs: list["SampleOutput"], lang: str) -> dict:
     wer_arr = np.array([o.wer for o in successes])
     latencies = [o.latency_s for o in successes]
     audio_durations = [o.audio_duration_s for o in successes if o.audio_duration_s > 0]
+    latency_arr = np.array(latencies) if latencies else np.array([0.0])
+    rtf_values = [
+        o.latency_s / o.audio_duration_s
+        for o in successes
+        if o.audio_duration_s > 0 and o.latency_s > 0
+    ]
 
     n_above_50 = int(np.sum(wer_arr > 0.5))
     ok_samples = [o for o in successes if o.wer <= 0.5]
@@ -68,7 +81,10 @@ def calculate_wer_metrics(outputs: list["SampleOutput"], lang: str) -> dict:
         "wer_below_50_corpus": float(wer_below_50_micro),
         "n_above_50_pct_wer": n_above_50,
         "pct_above_50_pct_wer": (n_above_50 / len(successes) * 100 if successes else 0),
-        "latency_mean_s": float(np.mean(latencies)),
+        "latency_mean_s": float(np.mean(latency_arr)),
+        "latency_median_s": float(np.median(latency_arr)),
+        "latency_p95_s": float(np.percentile(latency_arr, 95)),
+        "rtf_mean": float(np.mean(rtf_values)) if rtf_values else 0.0,
         "audio_duration_mean_s": (
             float(np.mean(audio_durations)) if audio_durations else 0
         ),
@@ -76,7 +92,11 @@ def calculate_wer_metrics(outputs: list["SampleOutput"], lang: str) -> dict:
 
 
 def print_wer_summary(
-    metrics: dict, model_name: str, generation_mode: str | None = None
+    metrics: dict,
+    model_name: str,
+    generation_mode: str | None = None,
+    *,
+    tts_speed_summary: dict | None = None,
 ) -> None:
     lw = SPEED_LABEL_WIDTH
     w = SPEED_LINE_WIDTH
@@ -135,10 +155,18 @@ def print_wer_summary(
         f"({metrics.get('pct_above_50_pct_wer', 0):.1f}%)"
     )
     print(f"{'-' * w}")
-    print(f"  {'Latency mean (s):':<{lw}} {metrics.get('latency_mean_s', 'N/A')}")
-    print(
-        f"  {'Audio duration mean (s):':<{lw}} "
-        f"{metrics.get('audio_duration_mean_s', 'N/A')}"
+    print_speed_metric_line(lw, "Latency mean (s):", metrics, "latency_mean_s")
+    print_speed_metric_line(lw, "Latency p95 (s):", metrics, "latency_p95_s")
+    print_speed_metric_line(lw, "RTF mean:", metrics, "rtf_mean")
+    if tts_speed_summary is not None:
+        print_speed_metric_line(
+            lw, "TTFC mean (s):", tts_speed_summary, "audio_ttfp_mean_s"
+        )
+        print_speed_metric_line(
+            lw, "Throughput (req/s):", tts_speed_summary, "throughput_qps"
+        )
+    print_speed_metric_line(
+        lw, "Audio duration mean (s):", metrics, "audio_duration_mean_s"
     )
     print(f"{'=' * w}\n")
 

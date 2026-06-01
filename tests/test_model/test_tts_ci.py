@@ -41,7 +41,7 @@ from benchmarks.eval.benchmark_tts_seedtts import (
     TtsSeedttsBenchmarkConfig,
     run_tts_seedtts_benchmark,
 )
-from benchmarks.metrics.performance import print_speed_summary
+from benchmarks.metrics.performance import print_saved_tts_speed_summary
 from tests.test_model.conftest import (
     TTS_STAGE_CONSISTENCY,
     TTS_STAGE_NONSTREAM,
@@ -160,18 +160,19 @@ def _print_saved_tts_speed_summary(
     concurrency: int | None = None,
     stream: bool = False,
 ) -> None:
+    mode = "streaming" if stream else "non-streaming"
     results_path = Path(output_dir) / "speed_results.json"
     assert results_path.exists(), f"TTS speed results file not found: {results_path}"
     with open(results_path) as f:
         speed_results = json.load(f)
     _validate_speed_results_keys(speed_results)
-    mode = "streaming" if stream else "non-streaming"
-    print_speed_summary(
-        speed_results["summary"],
+    printed = print_saved_tts_speed_summary(
+        output_dir,
         TTS_MODEL_PATH,
         concurrency=concurrency,
-        title=f"TTS Speed Benchmark Result ({mode})",
+        generation_mode=mode,
     )
+    assert printed, f"Failed to print TTS speed summary from {results_path}"
 
 
 def _run_benchmark(
@@ -911,11 +912,6 @@ def test_voice_cloning_wer(
             "transcribe speed-stage WAVs",
         )
         output_dir = wer_input_dirs["non_stream"][concurrency]
-        _print_saved_tts_speed_summary(
-            output_dir,
-            concurrency=concurrency,
-            stream=False,
-        )
         results = _run_wer_transcribe(
             dataset_repo,
             output_dir,
@@ -992,11 +988,6 @@ def test_voice_cloning_streaming_wer(
             "speed-stage WAVs",
         )
         output_dir = wer_input_dirs["stream"][concurrency]
-        _print_saved_tts_speed_summary(
-            output_dir,
-            concurrency=concurrency,
-            stream=True,
-        )
         results = _run_wer_transcribe(
             dataset_repo,
             output_dir,
