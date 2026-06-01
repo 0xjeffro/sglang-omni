@@ -159,6 +159,7 @@ from benchmarks.metrics.performance import (
     print_speed_summary,
 )
 from benchmarks.tasks.tts import (
+    DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
     QWEN3_ASR_MODEL_PATH,
     build_base_url,
     make_tts_send_fn,
@@ -215,6 +216,7 @@ class TtsSeedttsBenchmarkConfig:
     device: str = "cuda:0"
     similarity_checkpoint: str | None = None
     asr_model_path: str = QWEN3_ASR_MODEL_PATH
+    asr_concurrency: int = DEFAULT_ASR_TRANSCRIBE_CONCURRENCY
 
 
 def _build_generation_kwargs(config: TtsSeedttsBenchmarkConfig) -> dict:
@@ -331,6 +333,7 @@ def run_tts_seedtts_transcribe(
         "max_samples": config.max_samples,
         "stream": config.stream,
         "concurrency": config.concurrency,
+        "asr_concurrency": config.asr_concurrency,
     }
     return run_seedtts_transcribe(
         config,
@@ -372,6 +375,7 @@ def _config_from_args(args: argparse.Namespace) -> TtsSeedttsBenchmarkConfig:
         device=args.device,
         similarity_checkpoint=args.similarity_checkpoint,
         asr_model_path=args.asr_model_path,
+        asr_concurrency=args.asr_concurrency,
     )
 
 
@@ -508,6 +512,12 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="HuggingFace model id for the ASR server started in the "
         f"transcribe phase. Defaults to {QWEN3_ASR_MODEL_PATH}; "
         "openai/whisper-large-v3 can also be used.",
+    )
+    parser.add_argument(
+        "--asr-concurrency",
+        type=int,
+        default=DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
+        help="Concurrent transcription requests during WER evaluation.",
     )
     parser.add_argument(
         "--similarity-checkpoint",

@@ -21,7 +21,11 @@ from jiwer import process_words
 from benchmarks.benchmarker.utils import get_wav_duration
 from benchmarks.dataset.prepare import DATASETS
 from benchmarks.dataset.seedtts import SampleInput, load_seedtts_samples
-from benchmarks.tasks.tts import QWEN3_ASR_MODEL_PATH, normalize_text
+from benchmarks.tasks.tts import (
+    QWEN3_ASR_MAX_NEW_TOKENS,
+    QWEN3_ASR_MODEL_PATH,
+    normalize_text,
+)
 from tests.test_model.omni_router_utils import (
     ManagedRouterHandle,
     launch_managed_router,
@@ -31,6 +35,7 @@ from tests.utils import MetricCheckCollector, apply_wer_slack, disable_proxy
 
 WHISPER_MODEL_PATH = QWEN3_ASR_MODEL_PATH
 WHISPER_ASR_CONCURRENCY = 2
+WHISPER_ASR_WARMUP_REQUESTS = WHISPER_ASR_CONCURRENCY * 2
 SEEDTTS_ASR_CORRECTNESS_SAMPLES = 20
 
 # P95 reference values calibrated by tune.py (worst-of-N).
@@ -113,6 +118,7 @@ def _transcribe_with_omni(port: int, sample: SampleInput) -> tuple[str, float, f
                 "model": WHISPER_MODEL_PATH,
                 "language": "en",
                 "response_format": "json",
+                "max_new_tokens": str(QWEN3_ASR_MAX_NEW_TOKENS),
             },
             files={
                 "file": (
@@ -144,6 +150,28 @@ def _percentile(values: list[float], percentile: float) -> float:
     return ordered[lower] * (1.0 - weight) + ordered[upper] * weight
 
 
+def _warm_up_asr_router(port: int, samples: list[SampleInput]) -> None:
+    warmup_samples = samples[:WHISPER_ASR_WARMUP_REQUESTS]
+    if not warmup_samples:
+        return
+
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=WHISPER_ASR_CONCURRENCY,
+    ) as executor:
+        futures = [
+            executor.submit(_transcribe_with_omni, port, sample)
+            for sample in warmup_samples
+        ]
+        for future in concurrent.futures.as_completed(futures):
+            future.result()
+
+    print(
+        "\n[Whisper ASR warmup] "
+        f"requests={len(warmup_samples)} "
+        f"concurrency={WHISPER_ASR_CONCURRENCY}"
+    )
+
+
 @pytest.mark.benchmark
 def test_whisper_asr_matches_seedtts_reference_text(
     seedtts_en_samples: list[SampleInput],
@@ -167,6 +195,7 @@ def test_whisper_asr_matches_seedtts_reference_text(
         whisper_asr_router_server,
         label="Whisper ASR SeedTTS",
     ) as router_guard:
+        _warm_up_asr_router(whisper_asr_router_server.port, seedtts_en_samples)
         wall_start_s = time.perf_counter()
 
         def _transcribe_sample(

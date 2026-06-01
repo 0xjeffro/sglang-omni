@@ -155,6 +155,7 @@ from benchmarks.metrics.performance import (
     print_speed_summary,
 )
 from benchmarks.tasks.tts import (
+    DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
     QWEN3_ASR_MODEL_PATH,
     VoiceCloneOmni,
     build_base_url,
@@ -196,6 +197,7 @@ class OmniSeedttsBenchmarkConfig:
     # Transcribe phase
     device: str = "cuda:0"
     asr_model_path: str = QWEN3_ASR_MODEL_PATH
+    asr_concurrency: int = DEFAULT_ASR_TRANSCRIBE_CONCURRENCY
     similarity_checkpoint: str | None = None
     # Optional system prompt prepended to chat messages. Default ``None``
     # preserves the legacy Qwen3-Omni behavior (no system role). Pass a
@@ -375,6 +377,7 @@ def evaluate_generated_audio(
         "voice_clone": config.voice_clone,
         "meta": config.meta,
         "max_samples": config.max_samples,
+        "asr_concurrency": config.asr_concurrency,
     }
     return run_seedtts_transcribe(
         config,
@@ -411,6 +414,7 @@ def _config_from_args(args: argparse.Namespace) -> OmniSeedttsBenchmarkConfig:
         disable_tqdm=args.disable_tqdm,
         device=device,
         asr_model_path=args.asr_model_path,
+        asr_concurrency=args.asr_concurrency,
         similarity_checkpoint=args.similarity_checkpoint,
         system_prompt=args.system_prompt,
     )
@@ -532,6 +536,12 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="HuggingFace model id served by the ASR endpoint on --port. "
         f"Defaults to {QWEN3_ASR_MODEL_PATH}; openai/whisper-large-v3 "
         "can also be used.",
+    )
+    parser.add_argument(
+        "--asr-concurrency",
+        type=int,
+        default=DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
+        help="Concurrent transcription requests during WER evaluation.",
     )
     parser.add_argument(
         "--similarity-checkpoint",
