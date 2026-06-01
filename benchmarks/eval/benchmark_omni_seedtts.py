@@ -364,7 +364,8 @@ def evaluate_generated_audio(
 ) -> dict:
     """Transcribe previously saved audio with ASR and compute WER + ASR speed.
 
-    note (Chenyang): The ASR server is expected on ``config.port``.
+    note (Chenyang): Stop the TTS server first; the ASR server is expected on
+    ``config.port``.
 
     Returns a dict with keys: wer_summary, asr_speed, per_sample.
     """

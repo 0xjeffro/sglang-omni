@@ -147,13 +147,11 @@ import argparse
 import asyncio
 import logging
 import os
-import sys
-from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 from benchmarks.benchmarker.runner import BenchmarkRunner, RunConfig
+from benchmarks.benchmarker.utils import managed_omni_server
 from benchmarks.dataset.seedtts import load_seedtts_samples
 from benchmarks.metrics.performance import (
     build_speed_results,
@@ -170,7 +168,6 @@ from benchmarks.tasks.tts import (
     save_generated_audio_metadata,
     save_speed_results,
 )
-from tests.utils import start_server_from_cmd, stop_server, wait_for_gpu_memory_release
 
 logging.basicConfig(
     level=logging.INFO,
@@ -218,44 +215,6 @@ class TtsSeedttsBenchmarkConfig:
     device: str = "cuda:0"
     similarity_checkpoint: str | None = None
     asr_model_path: str = QWEN3_ASR_MODEL_PATH
-
-
-@contextmanager
-def _managed_omni_server(
-    config: TtsSeedttsBenchmarkConfig,
-    *,
-    model_path: str,
-    log_name: str,
-    server_timeout: int,
-) -> Iterator[None]:
-    log_dir = Path(config.output_dir) / "server_logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    log_path = log_dir / log_name
-    cmd = [
-        sys.executable,
-        "-m",
-        "sglang_omni.cli",
-        "serve",
-        "--model-path",
-        model_path,
-        "--port",
-        str(config.port),
-        "--host",
-        config.host,
-    ]
-    logger.info(f"Starting server: {' '.join(cmd)}")
-    proc = start_server_from_cmd(
-        cmd,
-        log_path,
-        config.port,
-        timeout=server_timeout,
-    )
-    try:
-        yield
-    finally:
-        logger.info(f"Stopping server ({model_path})")
-        stop_server(proc)
-        wait_for_gpu_memory_release()
 
 
 def _build_generation_kwargs(config: TtsSeedttsBenchmarkConfig) -> dict:
@@ -605,31 +564,34 @@ def main() -> None:
         return
 
     if args.transcribe_only:
-        with _managed_omni_server(
-            config,
+        with managed_omni_server(
             model_path=config.asr_model_path,
-            log_name="asr_server.log",
-            server_timeout=args.server_timeout,
+            port=config.port,
+            host=config.host,
+            log_file=Path(config.output_dir) / "server_logs" / "asr_server.log",
+            timeout=args.server_timeout,
         ):
             run_tts_seedtts_transcribe(config, asr_router_port=config.port)
         return
 
-    with _managed_omni_server(
-        config,
+    with managed_omni_server(
         model_path=config.model,
-        log_name="tts_server.log",
-        server_timeout=args.server_timeout,
+        port=config.port,
+        host=config.host,
+        log_file=Path(config.output_dir) / "server_logs" / "tts_server.log",
+        timeout=args.server_timeout,
     ):
         asyncio.run(benchmark(config))
 
     if args.generate_only:
         return
 
-    with _managed_omni_server(
-        config,
+    with managed_omni_server(
         model_path=config.asr_model_path,
-        log_name="asr_server.log",
-        server_timeout=args.server_timeout,
+        port=config.port,
+        host=config.host,
+        log_file=Path(config.output_dir) / "server_logs" / "asr_server.log",
+        timeout=args.server_timeout,
     ):
         run_tts_seedtts_transcribe(config, asr_router_port=config.port)
 
