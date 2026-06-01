@@ -160,6 +160,7 @@ Relevant model CI ownership:
 - `test_qwen3_asr_ci.py`: Qwen3-ASR correctness + speed via SGLang Omni
   router (`/v1/audio/transcriptions`). Uses the first 20 English SeedTTS
   clips; writes `qwen3_asr_results.json` for threshold calibration
+  (plus a legacy `whisper_asr_results.json` copy for compatibility)
   (`qwen3-asr-v1` in `tune-ci-thresholds`).
 - `test_whisper_asr_ci.py`: compatibility wrapper for the existing GitHub
   Actions command; keep new Qwen3-ASR test logic in `test_qwen3_asr_ci.py`.

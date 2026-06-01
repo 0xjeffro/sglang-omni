@@ -21,6 +21,7 @@ from jiwer import process_words
 from benchmarks.benchmarker.utils import get_wav_duration
 from benchmarks.dataset.prepare import DATASETS
 from benchmarks.dataset.seedtts import SampleInput, load_seedtts_samples
+from benchmarks.metrics.wer import print_asr_speed_summary, print_asr_wer_summary
 from benchmarks.tasks.tts import (
     QWEN3_ASR_MAX_NEW_TOKENS,
     QWEN3_ASR_MODEL_PATH,
@@ -222,6 +223,7 @@ def test_qwen3_asr_matches_seedtts_reference_text(
     high_wer_samples: list[str] = []
     ref_norms: list[str] = []
     hyp_norms: list[str] = []
+    sample_wers: list[float] = []
     for sample in seedtts_en_samples:
         omni_text = omni_outputs[sample.sample_id]
         ref_norm = normalize_text(sample.ref_text, "en")
@@ -229,6 +231,7 @@ def test_qwen3_asr_matches_seedtts_reference_text(
         ref_norms.append(ref_norm)
         hyp_norms.append(omni_norm)
         sample_wer = process_words(ref_norm, omni_norm).wer
+        sample_wers.append(sample_wer)
         if sample_wer > 0:
             diff = "\n".join(
                 [
@@ -244,12 +247,11 @@ def test_qwen3_asr_matches_seedtts_reference_text(
             if sample_wer > SEEDTTS_ASR_SAMPLE_WER_THRESHOLD:
                 high_wer_samples.append(diff)
 
-    if sample_diffs:
-        print("\n[Qwen3-ASR correctness diffs]\n" + "\n\n".join(sample_diffs))
-
     corpus_wer = process_words(ref_norms, hyp_norms).wer
     latency_mean_s = statistics.mean(latencies_s)
+    latency_median_s = statistics.median(latencies_s)
     latency_p95_s = _percentile(latencies_s, 95)
+    latency_p99_s = _percentile(latencies_s, 99)
     throughput_samples_per_s = len(latencies_s) / wall_clock_s
     rtfs = [
         latency_s / audio_duration_s
@@ -257,54 +259,84 @@ def test_qwen3_asr_matches_seedtts_reference_text(
         if audio_duration_s > 0
     ]
     rtf_mean = statistics.mean(rtfs)
+    rtf_median = statistics.median(rtfs)
     rtf_p95 = _percentile(rtfs, 95)
-    print(
-        "\n[Qwen3-ASR correctness] "
-        f"samples={len(seedtts_en_samples)} "
-        f"diff_samples={len(sample_diffs)} "
-        f"corpus_wer={corpus_wer:.4f}"
+    per_sample_wer_max = max(sample_wers, default=0.0)
+    below_50_pairs = [
+        (ref_norm, hyp_norm)
+        for ref_norm, hyp_norm, sample_wer in zip(ref_norms, hyp_norms, sample_wers)
+        if sample_wer <= 0.5
+    ]
+    wer_below_50_corpus = (
+        process_words(
+            [ref_norm for ref_norm, _ in below_50_pairs],
+            [hyp_norm for _, hyp_norm in below_50_pairs],
+        ).wer
+        if below_50_pairs
+        else 0.0
     )
-    print(
-        "\n[Qwen3-ASR speed] "
-        f"wall_clock_s={wall_clock_s:.3f} "
-        f"concurrency={QWEN3_ASR_CONCURRENCY} "
-        f"throughput_samples_per_s={throughput_samples_per_s:.3f} "
-        f"latency_mean_s={latency_mean_s:.3f} "
-        f"latency_p95_s={latency_p95_s:.3f} "
-        f"rtf_mean={rtf_mean:.4f} "
-        f"rtf_p95={rtf_p95:.4f}"
-    )
-    per_sample_wer_max = max(
-        (
-            process_words(
-                normalize_text(sample.ref_text, "en"),
-                normalize_text(omni_outputs[sample.sample_id], "en"),
-            ).wer
-            for sample in seedtts_en_samples
+    n_above_50 = sum(1 for sample_wer in sample_wers if sample_wer > 0.5)
+    wer_summary = {
+        "lang": "en",
+        "total_samples": len(seedtts_en_samples),
+        "evaluated": len(seedtts_en_samples),
+        "skipped": 0,
+        "corpus_wer": corpus_wer,
+        "wer_corpus": corpus_wer,
+        "wer_per_sample_mean": statistics.mean(sample_wers) if sample_wers else 0.0,
+        "wer_per_sample_median": statistics.median(sample_wers) if sample_wers else 0.0,
+        "wer_per_sample_std": (
+            statistics.pstdev(sample_wers) if len(sample_wers) > 1 else 0.0
         ),
-        default=0.0,
-    )
-    results_path = tmp_path_factory.getbasetemp() / "qwen3_asr_results.json"
-    results_path.write_text(
-        json.dumps(
-            {
-                "summary": {
-                    "total_samples": len(seedtts_en_samples),
-                    "evaluated": len(seedtts_en_samples),
-                    "corpus_wer": corpus_wer,
-                    "wer_per_sample_max": per_sample_wer_max,
-                },
-                "speed": {
-                    "throughput_samples_per_s": throughput_samples_per_s,
-                    "latency_mean_s": latency_mean_s,
-                    "latency_p95_s": latency_p95_s,
-                    "rtf_mean": rtf_mean,
-                    "rtf_p95": rtf_p95,
-                },
-            },
-            indent=2,
-        )
-    )
+        "wer_per_sample_p95": _percentile(sample_wers, 95),
+        "wer_per_sample_max": per_sample_wer_max,
+        "wer_below_50_corpus": wer_below_50_corpus,
+        "n_above_50_pct_wer": n_above_50,
+        "pct_above_50_pct_wer": (
+            n_above_50 / len(sample_wers) * 100 if sample_wers else 0.0
+        ),
+        "latency_mean_s": latency_mean_s,
+        "latency_median_s": latency_median_s,
+        "latency_p95_s": latency_p95_s,
+        "rtf_mean": rtf_mean,
+        "audio_duration_mean_s": (
+            statistics.mean(audio_durations_s) if audio_durations_s else 0.0
+        ),
+    }
+    speed_metrics = {
+        "total_samples": len(seedtts_en_samples),
+        "evaluated": len(seedtts_en_samples),
+        "skipped": 0,
+        "asr_model": QWEN3_ASR_CI_MODEL_PATH,
+        "asr_concurrency": QWEN3_ASR_CONCURRENCY,
+        "asr_latency_mean_s": latency_mean_s,
+        "asr_latency_median_s": latency_median_s,
+        "asr_latency_p95_s": latency_p95_s,
+        "asr_latency_p99_s": latency_p99_s,
+        "asr_total_time_s": wall_clock_s,
+        "asr_latency_sum_s": sum(latencies_s),
+        "asr_throughput_samples_per_s": throughput_samples_per_s,
+        "asr_rtf_mean": rtf_mean,
+        "asr_rtf_median": rtf_median,
+        "asr_rtf_p95": rtf_p95,
+        "asr_audio_processed_s": sum(audio_durations_s),
+        # Backward-compatible calibration paths.
+        "throughput_samples_per_s": throughput_samples_per_s,
+        "latency_mean_s": latency_mean_s,
+        "latency_p95_s": latency_p95_s,
+        "rtf_mean": rtf_mean,
+        "rtf_p95": rtf_p95,
+    }
+
+    print_asr_wer_summary(wer_summary, QWEN3_ASR_CI_MODEL_PATH)
+    if sample_diffs:
+        print("\n[ASR WER diagnostic diffs]\n" + "\n\n".join(sample_diffs))
+    print_asr_speed_summary(speed_metrics, QWEN3_ASR_CI_MODEL_PATH)
+
+    results = {"summary": wer_summary, "speed": speed_metrics}
+    for filename in ("qwen3_asr_results.json", "whisper_asr_results.json"):
+        results_path = tmp_path_factory.getbasetemp() / filename
+        results_path.write_text(json.dumps(results, indent=2))
     checks.check(
         corpus_wer <= SEEDTTS_ASR_CORPUS_WER_THRESHOLD,
         f"Qwen3-ASR corpus WER {corpus_wer:.4f} exceeds "

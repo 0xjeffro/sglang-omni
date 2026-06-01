@@ -1,11 +1,11 @@
 # Model-specific config for the TTS CI threshold skill.
 #
 # Notes:
-# - Stage 1 (Qwen3-ASR): test_whisper_asr_ci.py — runs in parallel with Higgs
-#   stages in CI DAG. The file/stage/constant names still use the legacy
-#   `whisper_asr` prefix; calibrate via `--model tts --stages whisper_asr` or
-#   full `--stages ALL`. tune.py writes P95 reference constants; CI asserts
-#   via derived *_THRESHOLD values with 10% slack (0.9 / 1.1).
+# - Stage 1 (Qwen3-ASR): test_whisper_asr_ci.py runs in parallel with Higgs
+#   stages in CI DAG as a compatibility wrapper. Calibration stages target
+#   test_qwen3_asr_ci.py so tune.py writes the real QWEN3_ASR_* constants.
+#   The stage key still uses the legacy `whisper_asr` prefix; calibrate via
+#   `--model tts --stages whisper_asr` or full `--stages ALL`.
 # - test_tts_ci.py runs stages 2–4 internal stages (nonstream / stream /
 #   consistency) controlled by --tts-stage. tune.py runs the full file once
 #   per repeat (all pytest functions that match the selected stage filter).
@@ -22,7 +22,8 @@
 #   budgets are not calibrated.
 # - Stage 3 (streaming consistency) has no numeric threshold in tune.py; see
 #   SKILL.md § TTS stage 3.
-# - Concurrency: CI uses --concurrency 16. Discover reads the conc=16 row.
+# - Concurrency: Higgs/TTS generation CI uses --concurrency 16. Qwen3-ASR
+#   router/transcribe fan-out for WER uses 32 at DP=2.
 # - Venv: CI uses omni under OMNI_CI_HOME (see omni_ci_home below).
 # - Auth: export HF_TOKEN before precheck/run unless the private TTS model
 #   weights are already present in the configured HF cache.
@@ -30,6 +31,8 @@ name: tts
 description: "TTS CI (Higgs / SeedTTS EN)"
 hf_model_id: "boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999"
 hf_model_ids_by_test:
+  test_qwen3_asr_ci.py:
+    - "Qwen/Qwen3-ASR-1.7B"
   test_whisper_asr_ci.py:
     - "Qwen/Qwen3-ASR-1.7B"
 hf_datasets:
@@ -55,6 +58,7 @@ auto_env:
   SEEDTTS_SIM_CACHE_DIR: "/github/home/seedtts-wavlm-sim"
 # TTS CI stage 1 (Qwen3-ASR) + stages 2–4 (Higgs voice clone) share omni venv.
 gpus_per_test:
+  test_qwen3_asr_ci.py: 2
   test_whisper_asr_ci.py: 2
   test_tts_ci.py: 2
 test_globs:
@@ -70,7 +74,7 @@ stage_base_strip_suffix: "_ci"
 stage_base_docs_override: "tts_docs"
 metric_sources:
   test_whisper_asr_ci.py:
-    json_file: "whisper_asr_results.json"
+    json_file: "qwen3_asr_results.json"
     sample_counts:
       total: "summary.total_samples"
       ok: "summary.evaluated"

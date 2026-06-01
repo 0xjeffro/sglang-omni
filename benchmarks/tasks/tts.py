@@ -231,7 +231,10 @@ def load_omni_whisper_asr(
 QWEN3_ASR_MODEL_PATH = os.getenv("QWEN3_ASR_MODEL_PATH", "Qwen/Qwen3-ASR-1.7B")
 QWEN3_ASR_REQUEST_TIMEOUT_S = 300
 QWEN3_ASR_MAX_NEW_TOKENS = int(os.getenv("QWEN3_ASR_MAX_NEW_TOKENS", "128"))
-DEFAULT_ASR_TRANSCRIBE_CONCURRENCY = int(os.getenv("SEEDTTS_ASR_CONCURRENCY", "2"))
+# ASR transcription fan-out for WER, not TTS generation concurrency.
+DEFAULT_ASR_TRANSCRIBE_CONCURRENCY = int(
+    os.getenv("QWEN3_ASR_CONCURRENCY", os.getenv("SEEDTTS_ASR_CONCURRENCY", "32"))
+)
 
 
 def load_qwen3_asr(
@@ -875,6 +878,7 @@ class SeedttsTranscribeConfig(Protocol):
     output_dir: str
     lang: str
     device: str
+    asr_model_path: str
     asr_concurrency: int
 
 
@@ -965,11 +969,12 @@ def run_seedtts_transcribe(
         generated: list[dict] = json.load(f)
     logger.info(f"Loaded {len(generated)} entries from {generated_path}")
 
+    asr_model_path = getattr(config, "asr_model_path", QWEN3_ASR_MODEL_PATH)
     asr = _resolve_asr_backend(
         config.lang,
         config.device,
         asr_router_port=asr_router_port,
-        asr_model_path=getattr(config, "asr_model_path", QWEN3_ASR_MODEL_PATH),
+        asr_model_path=asr_model_path,
         generation_mode=generation_mode,
     )
 
@@ -1024,6 +1029,7 @@ def run_seedtts_transcribe(
 
     wer_metrics = calculate_wer_metrics(outputs, config.lang)
     asr_metrics = calculate_asr_speed_metrics(outputs, wall_time_s=asr_wall_time_s)
+    asr_metrics["asr_model"] = asr_model_path
     asr_metrics["asr_concurrency"] = asr_concurrency
 
     tts_speed_summary = load_tts_speed_summary(config.output_dir)
@@ -1033,13 +1039,13 @@ def run_seedtts_transcribe(
         concurrency=wer_config.get("concurrency"),
         generation_mode=generation_mode,
     )
-    print_asr_speed_summary(asr_metrics, config.model)
     print_wer_summary(
         wer_metrics,
         config.model,
         generation_mode,
         tts_speed_summary=tts_speed_summary,
     )
+    print_asr_speed_summary(asr_metrics, asr_model_path)
 
     save_wer_results(outputs, wer_metrics, wer_config, config.output_dir)
     save_json_results(asr_metrics, config.output_dir, "asr_speed_results.json")

@@ -340,7 +340,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption(
         TTS_CONCURRENCY_OPTION,
         action="store",
-        default="1",
+        default="16",
         help=(
             "Select the TTS benchmark concurrency. "
             "Use one of {1,2,4,8,16} or 'all' for the full sweep."

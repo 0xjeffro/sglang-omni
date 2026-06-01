@@ -24,6 +24,8 @@ default_venv_python:
 # (contractions expanded, numbers→words, etc.). precheck warns if the local
 # venv falls back to the punctuation-strip path.
 expected_wer_normalizer: "english"
+# Concurrency: Qwen3-Omni talker/TTS WER CI stages use CONCURRENCY=16 for
+# generation. Their Qwen3-ASR WER router/transcribe fan-out uses 32 at DP=2.
 # Env vars tune.py applies at startup (matches .github/actions/omni-setup).
 auto_env:
   HOME: "/github/home"

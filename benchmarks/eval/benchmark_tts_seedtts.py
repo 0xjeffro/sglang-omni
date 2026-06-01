@@ -131,7 +131,7 @@ discrete talker LM tokens emitted at audio frame rate. Cross-model comparison of
 this rate is not meaningful; use latency_mean_s / rtf_mean / throughput_qps
 instead when comparing backends.
 
-ASR speed (accuracy.asr_speed) — Qwen3-ASR-1.7B server for EN/ZH
+ASR speed (asr_speed_results.json) — Qwen3-ASR-1.7B server for EN/ZH
 
 | Model     | Lang | asr_latency_mean_s | asr_rtf_mean | asr_throughput_samples_per_s | Source                                          |
 | --------- | ---- | ------------------ | ------------ | ---------------------------- | ----------------------------------------------- |
@@ -176,6 +176,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+DEFAULT_TTS_BENCHMARK_CONCURRENCY = int(os.getenv("TTS_BENCHMARK_CONCURRENCY", "16"))
+
 
 @dataclass
 class TtsSeedttsBenchmarkConfig:
@@ -207,7 +209,7 @@ class TtsSeedttsBenchmarkConfig:
     repetition_penalty: float | None = None
     seed: int | None = None
     warmup: int = 1
-    concurrency: int = 1
+    concurrency: int = DEFAULT_TTS_BENCHMARK_CONCURRENCY
     request_rate: float = float("inf")
     stream: bool = False
     disable_tqdm: bool = False
@@ -322,6 +324,8 @@ def run_tts_seedtts_transcribe(
     generation_mode = "streaming" if config.stream else "non-streaming"
     wer_config = {
         "model": config.model,
+        "tts_model": config.model,
+        "asr_model": config.asr_model_path,
         "meta": config.meta,
         "voice_clone": config.voice_clone,
         "ref_format": config.ref_format,
@@ -470,7 +474,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "--max-concurrency",
         dest="concurrency",
         type=int,
-        default=1,
+        default=DEFAULT_TTS_BENCHMARK_CONCURRENCY,
         help="Maximum concurrent requests.",
     )
     parser.add_argument(

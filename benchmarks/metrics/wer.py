@@ -91,22 +91,34 @@ def calculate_wer_metrics(outputs: list["SampleOutput"], lang: str) -> dict:
     }
 
 
-def print_wer_summary(
+def _metric_value(metrics: dict, *keys: str, default: float = 0.0) -> float:
+    for key in keys:
+        value = metrics.get(key)
+        if value is not None:
+            return value
+    return default
+
+
+def _print_wer_summary_table(
     metrics: dict,
     model_name: str,
-    generation_mode: str | None = None,
     *,
+    title: str,
+    model_label: str,
+    generation_mode: str | None = None,
     tts_speed_summary: dict | None = None,
 ) -> None:
     lw = SPEED_LABEL_WIDTH
     w = SPEED_LINE_WIDTH
-    title = "TTS WER Benchmark Result"
     if generation_mode:
-        title = f"TTS WER Benchmark Result ({generation_mode})"
+        title = f"{title} ({generation_mode})"
+    wer_corpus = _metric_value(metrics, "wer_corpus", "corpus_wer")
+    wer_per_sample_mean = _metric_value(metrics, "wer_per_sample_mean")
+    wer_per_sample_max = _metric_value(metrics, "wer_per_sample_max")
     print(f"\n{'=' * w}")
     print(f"{title:^{w}}")
     print(f"{'=' * w}")
-    print(f"  {'Model:':<{lw}} {model_name}")
+    print(f"  {model_label:<{lw}} {model_name}")
     if generation_mode:
         print(f"  {'Generation mode:':<{lw}} {generation_mode}")
     print(f"  {'Language:':<{lw}} {metrics.get('lang', 'N/A')}")
@@ -118,36 +130,36 @@ def print_wer_summary(
     print(f"{'-' * w}")
     print(
         f"  {'WER (corpus, micro-avg):':<{lw}} "
-        f"{metrics.get('wer_corpus', 0):.4f} "
-        f"({metrics.get('wer_corpus', 0) * 100:.2f}%)"
+        f"{wer_corpus:.4f} "
+        f"({wer_corpus * 100:.2f}%)"
     )
     print(f"{'-' * w}")
     print(
         f"  {'WER per-sample mean:':<{lw}} "
-        f"{metrics.get('wer_per_sample_mean', 0):.4f} "
-        f"({metrics.get('wer_per_sample_mean', 0) * 100:.2f}%)"
+        f"{wer_per_sample_mean:.4f} "
+        f"({wer_per_sample_mean * 100:.2f}%)"
     )
     print(
         f"  {'WER per-sample median:':<{lw}} "
-        f"{metrics.get('wer_per_sample_median', 0):.4f}"
+        f"{_metric_value(metrics, 'wer_per_sample_median'):.4f}"
     )
     print(
         f"  {'WER per-sample std:':<{lw}} "
-        f"{metrics.get('wer_per_sample_std', 0):.4f}"
+        f"{_metric_value(metrics, 'wer_per_sample_std'):.4f}"
     )
     print(
         f"  {'WER per-sample p95:':<{lw}} "
-        f"{metrics.get('wer_per_sample_p95', 0):.4f}"
+        f"{_metric_value(metrics, 'wer_per_sample_p95'):.4f}"
     )
     print(
         f"  {'WER per-sample max:':<{lw}} "
-        f"{metrics.get('wer_per_sample_max', 0):.4f} "
-        f"({metrics.get('wer_per_sample_max', 0) * 100:.2f}%)"
+        f"{wer_per_sample_max:.4f} "
+        f"({wer_per_sample_max * 100:.2f}%)"
     )
     print(
         f"  {'WER corpus (excl >50%):':<{lw}} "
-        f"{metrics.get('wer_below_50_corpus', 0):.4f} "
-        f"({metrics.get('wer_below_50_corpus', 0) * 100:.2f}%)"
+        f"{_metric_value(metrics, 'wer_below_50_corpus'):.4f} "
+        f"({_metric_value(metrics, 'wer_below_50_corpus') * 100:.2f}%)"
     )
     print(
         f"  {'>50% WER samples:':<{lw}} "
@@ -169,6 +181,32 @@ def print_wer_summary(
         lw, "Audio duration mean (s):", metrics, "audio_duration_mean_s"
     )
     print(f"{'=' * w}\n")
+
+
+def print_wer_summary(
+    metrics: dict,
+    model_name: str,
+    generation_mode: str | None = None,
+    *,
+    tts_speed_summary: dict | None = None,
+) -> None:
+    _print_wer_summary_table(
+        metrics,
+        model_name,
+        title="TTS WER Benchmark Result",
+        model_label="TTS model:",
+        generation_mode=generation_mode,
+        tts_speed_summary=tts_speed_summary,
+    )
+
+
+def print_asr_wer_summary(metrics: dict, model_name: str) -> None:
+    _print_wer_summary_table(
+        metrics,
+        model_name,
+        title="ASR WER Benchmark Result",
+        model_label="ASR model:",
+    )
 
 
 def calculate_asr_speed_metrics(
@@ -240,7 +278,7 @@ def print_asr_speed_summary(metrics: dict, model_name: str) -> None:
     print(f"\n{'=' * w}")
     print(f"{'ASR Speed Benchmark Result':^{w}}")
     print(f"{'=' * w}")
-    print(f"  {'Model:':<{lw}} {model_name}")
+    print(f"  {'ASR model:':<{lw}} {model_name}")
     print(
         f"  {'Evaluated / Total:':<{lw}} "
         f"{metrics.get('evaluated', 0)}/{metrics.get('total_samples', 0)}"
@@ -267,6 +305,8 @@ def print_asr_speed_summary(metrics: dict, model_name: str) -> None:
     )
     print(f"  {'ASR RTF mean:':<{lw}} {metrics.get('asr_rtf_mean', 'N/A')}")
     print(f"  {'ASR RTF median:':<{lw}} {metrics.get('asr_rtf_median', 'N/A')}")
+    if metrics.get("asr_rtf_p95") is not None:
+        print(f"  {'ASR RTF p95:':<{lw}} {metrics['asr_rtf_p95']}")
     print(
         f"  {'ASR total time (s):':<{lw}} " f"{metrics.get('asr_total_time_s', 'N/A')}"
     )

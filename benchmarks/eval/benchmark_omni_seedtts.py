@@ -96,7 +96,7 @@ are not comparable to codec-token TTS models (e.g. S2-Pro in
 benchmark_tts_seedtts.py); the two backends emit token streams with different
 semantics and rates.
 
-ASR speed (accuracy.asr_speed) — historical baseline
+ASR speed (asr.speed) — historical baseline
 
 | Lang | asr_latency_mean_s | asr_rtf_mean | asr_throughput_samples_per_s | Source                                      |
 | ---- | ------------------ | ------------ | ---------------------------- | ------------------------------------------- |
@@ -173,6 +173,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 TEXT_PREVIEW_LENGTH = 60
+DEFAULT_TTS_BENCHMARK_CONCURRENCY = int(os.getenv("TTS_BENCHMARK_CONCURRENCY", "16"))
 
 
 @dataclass
@@ -191,7 +192,7 @@ class OmniSeedttsBenchmarkConfig:
     max_new_tokens: int = 256
     temperature: float = 0.7
     warmup: int = 1
-    max_concurrency: int = 1
+    max_concurrency: int = DEFAULT_TTS_BENCHMARK_CONCURRENCY
     request_rate: float = float("inf")
     disable_tqdm: bool = False
     # Transcribe phase
@@ -373,6 +374,8 @@ def evaluate_generated_audio(
     """
     wer_config = {
         "model": config.model,
+        "tts_model": config.model,
+        "asr_model": config.asr_model_path,
         "speaker": config.speaker,
         "voice_clone": config.voice_clone,
         "meta": config.meta,
@@ -499,7 +502,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--max-concurrency",
         type=int,
-        default=1,
+        default=DEFAULT_TTS_BENCHMARK_CONCURRENCY,
         help="Maximum concurrent requests.",
     )
     parser.add_argument(
@@ -634,8 +637,10 @@ def main() -> None:
             "per_request": gen_results["per_request"],
         },
         "accuracy": {
-            "asr_speed": accuracy_results["asr_speed"],
             "wer": accuracy_results["wer_summary"],
+        },
+        "asr": {
+            "speed": accuracy_results["asr_speed"],
         },
     }
     if similarity_results is not None:

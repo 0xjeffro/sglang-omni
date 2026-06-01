@@ -35,7 +35,10 @@ from tests.test_model.omni_router_utils import (
     print_worker_snapshot,
     router_get_json,
 )
-from tests.test_model.qwen3_asr_wer_utils import wait_for_gpu_memory_release
+from tests.test_model.qwen3_asr_wer_utils import (
+    QWEN3_ASR_WER_CONCURRENCY,
+    wait_for_gpu_memory_release,
+)
 from tests.utils import (
     MetricCheckCollector,
     apply_mos_slack,
@@ -150,6 +153,7 @@ def _run_wer_transcribe(
         lang=lang,
         device=device,
         port=asr_router_port,
+        asr_concurrency=QWEN3_ASR_WER_CONCURRENCY,
     )
     evaluate_generated_audio(config)
 

@@ -38,6 +38,7 @@ from tests.test_model.omni_router_utils import (
     ManagedRouterHandle,
     router_worker_traffic_guard,
 )
+from tests.test_model.qwen3_asr_wer_utils import QWEN3_ASR_WER_CONCURRENCY
 from tests.utils import (
     MetricCheckCollector,
     apply_slack,
@@ -101,6 +102,7 @@ def _build_args(port: int, output_dir: str) -> argparse.Namespace:
         seed=None,
         lang="en",
         asr_device=ASR_DEVICE,
+        asr_concurrency=QWEN3_ASR_WER_CONCURRENCY,
         timeout_s=500,
     )
 
@@ -203,6 +205,7 @@ def test_mmsu_talker_wer(
         audio_dir=wer_eval_artifacts.audio_dir,
         text_key="raw_response",
         asr_router_port=qwen3_asr_wer_router.port,
+        asr_concurrency=QWEN3_ASR_WER_CONCURRENCY,
     )
     print_wer_summary(wer["summary"], "qwen3-omni")
     persist_wer_in_benchmark_results(

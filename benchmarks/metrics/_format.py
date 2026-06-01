@@ -13,15 +13,11 @@ BREAKDOWN_KEY_WIDTH = 14
 MMSU_CATEGORY_WIDTH = 18
 
 
-def _metric_display(metrics: dict, key: str) -> Any:
+def print_speed_metric_line(lw: int, label: str, metrics: dict, key: str) -> None:
     value = metrics.get(key)
     if value is None:
-        return "N/A"
-    return value
-
-
-def print_speed_metric_line(lw: int, label: str, metrics: dict, key: str) -> None:
-    print(f"  {label:<{lw}} {_metric_display(metrics, key)}")
+        return
+    print(f"  {label:<{lw}} {value}")
 
 
 def print_accuracy_breakdown(

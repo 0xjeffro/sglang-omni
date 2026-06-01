@@ -11,7 +11,7 @@ def create_sglang_qwen3_asr_executor(
     *,
     device: str = "cuda:0",
     dtype: str = "float16",
-    max_running_requests: int = 16,
+    max_running_requests: int = 32,
     max_new_tokens: int = 256,
     # 0.6B/1.7B are tiny; a large static KV-cache pool wastes VRAM and OOMs
     # under load. 0.3 leaves ample headroom on an H200.

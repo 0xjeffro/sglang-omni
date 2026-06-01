@@ -357,6 +357,8 @@ test) explicitly marks as missing or misaligned.
 ### Stage-specific shortcuts (still check-first)
 
 - **Qwen3-ASR (TTS CI stage 1 / `--model tts`)**: uses `omni`, **2 GPU / router DP=2**.
+  Qwen3-ASR concurrency is **32** at DP=2; Higgs/TTS generation stages use
+  **16**.
   Included in `--model tts --stages ALL`; calibrate alone with
   `--stages whisper_asr` (legacy stage key from the test filename). Venv must
   pass full precheck including `flashinfer-jit-cache` (same as CI
@@ -444,18 +446,21 @@ python .claude/skills/tune-ci-thresholds/tune.py --model tts run \
 ### TTS CI stage 1 — Qwen3-ASR (mandatory in full TTS calibration)
 
 TTS GitHub Actions runs **`test_whisper_asr_ci.py` in parallel with Higgs stages**
-(CI stage 1 in the DAG; no longer blocks non-streaming/streaming). Full
-`--model tts --stages ALL` calibration **must** include these stages — never
-calibrate Higgs thresholds alone while leaving Qwen3-ASR on stale literals.
+(CI stage 1 in the DAG; no longer blocks non-streaming/streaming). That file is
+a compatibility wrapper; calibration stages point at `test_qwen3_asr_ci.py` so
+threshold writes update the real literals. Full `--model tts --stages ALL`
+calibration **must** include these stages — never calibrate Higgs thresholds
+alone while leaving Qwen3-ASR on stale literals.
 
 | Stage key | Group | What gets written | Test constant(s) |
 |-----------|-------|-------------------|------------------|
 | `whisper_asr_wer` | wer | corpus + per-sample WER ref | `SEEDTTS_ASR_CORPUS_WER_MAX`, `SEEDTTS_ASR_SAMPLE_WER_MAX` |
-| `whisper_asr_speed` | speed | throughput + latency + RTF P95 refs | `WHISPER_ASR_THROUGHPUT_MIN`, `WHISPER_ASR_LATENCY_*`, `WHISPER_ASR_RTF_*` |
+| `whisper_asr_speed` | speed | throughput + latency + RTF P95 refs | `QWEN3_ASR_THROUGHPUT_MIN`, `QWEN3_ASR_LATENCY_*`, `QWEN3_ASR_RTF_*` |
 
 Notes:
 - Uses **`Qwen/Qwen3-ASR-1.7B`** via `hf_model_ids_by_test` (not the Higgs
   checkpoint). Same **`omni`** venv and 2-GPU router DP=2 as TTS stages.
+  ASR concurrency is **32** at DP=2.
 - Sample count for strict audit: **`SEEDTTS_ASR_CORRECTNESS_SAMPLES`** (=20),
   JSON `summary.evaluated` / `summary.total_samples`.
 - **CI slack:** tune.py writes P95 reference constants only; assertions use
@@ -475,6 +480,8 @@ Notes:
 `STREAMING_BENCHMARK_MAX_SAMPLES` (=None → full 1088). These define *how many*
 samples CI runs; tune.py only uses them indirectly for strict-audit sample counts
 (JSON `total_requests` / WER `evaluated` must match those presets).
+Generation concurrency is **16** for both non-streaming and streaming TTS stages;
+the Qwen3-ASR WER transcribe phase remains **32**.
 
 **Calibrated thresholds** (worst-of-N → `apply-plan` → test file):
 
@@ -695,6 +702,8 @@ do **not** treat that as a threshold or code regression.
 
 **WER CI with Qwen3-ASR router (DP=2):** still uses the **parent model’s**
 venv/slice for the benchmark fixture (Qwen3 → qwen3 env; TTS → tts env; standalone ASR → tts env).
+Qwen3-Omni/TTS generation concurrency is **16** where the test has a
+`CONCURRENCY` knob; Qwen3-ASR WER router/transcribe fan-out is **32**.
 Only the Qwen3-ASR router stage needs 2 free GPUs after `delete_gpu_process.sh`.
 
 ### Agent operational rules (mandatory)
@@ -937,7 +946,7 @@ Two gates — **both** required before apply:
    c. Load `precheck.json` for GPU count + model.
    d. Replace the placeholder with one line, e.g.:
       `— <N>× <gpu_model> from precheck.json, 2000 samples,
-      max_tokens=32, concurrency=8, 5 runs`.
+      max_tokens=32, concurrency=<CONCURRENCY from test>, 5 runs`.
       If the stage is the docs stage (no threshold constants), write
       `— <N>× <gpu_model>, docs smoke, <N> runs`.
    e. If a context var is not found in the file, write `?`. Never

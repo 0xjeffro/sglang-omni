@@ -121,16 +121,16 @@ python -m benchmarks.eval.benchmark_omni_videomme \
 python -m benchmarks.eval.benchmark_omni_videoamme \
     --model qwen3-omni --port 8000 \
     --repo-id zhaochenyang20/Video_AMME_ci \
-    --max-samples 50 --max-concurrency 8 \
+    --max-samples 50 --max-concurrency 16 \
     --video-fps 2 --video-max-frames 128 --video-max-pixels 401408
 
 # 7b. Qwen3-Omni — Video-AMME Talker (text + audio output)
 python -m benchmarks.eval.benchmark_omni_videoamme \
     --model qwen3-omni --port 8000 \
     --repo-id zhaochenyang20/Video_AMME_ci \
-    --max-samples 50 --max-concurrency 8 \
+    --max-samples 50 --max-concurrency 16 \
     --video-fps 2 --video-max-frames 128 --video-max-pixels 401408 \
-    --enable-audio --asr-device cuda:0
+    --enable-audio --asr-device cuda:0 --asr-concurrency 32
 ```
 
 ## Eval Scripts

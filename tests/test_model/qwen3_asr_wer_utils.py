@@ -7,7 +7,10 @@ from collections.abc import Iterator
 
 import pytest
 
-from benchmarks.tasks.tts import QWEN3_ASR_MODEL_PATH
+from benchmarks.tasks.tts import (
+    DEFAULT_ASR_TRANSCRIBE_CONCURRENCY,
+    QWEN3_ASR_MODEL_PATH,
+)
 from tests.test_model.omni_router_utils import (
     ManagedRouterHandle,
     launch_managed_router,
@@ -15,6 +18,7 @@ from tests.test_model.omni_router_utils import (
 from tests.utils import wait_for_gpu_memory_release
 
 QWEN3_ASR_WER_MODEL_PATH = QWEN3_ASR_MODEL_PATH
+QWEN3_ASR_WER_CONCURRENCY = DEFAULT_ASR_TRANSCRIBE_CONCURRENCY
 QWEN3_ASR_ROUTER_STARTUP_TIMEOUT = 600
 
 

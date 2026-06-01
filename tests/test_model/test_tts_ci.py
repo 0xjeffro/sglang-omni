@@ -16,9 +16,9 @@ Author:
     Yitong Guan https://github.com/minleminzui
     Xuesong Ye https://github.com/yxs
 
-The benchmark supports one selected concurrency per test run. Use --concurrency 16
-in CI, run without the flag to use concurrency 1, or pass --concurrency all
-to sweep all supported concurrency values locally.
+The benchmark supports one selected concurrency per test run. It defaults to
+concurrency 16 for CI; pass --concurrency all to sweep all supported
+concurrency values locally.
 """
 
 from __future__ import annotations
@@ -54,6 +54,7 @@ from tests.test_model.omni_router_utils import (
     print_router_diagnostics,
     router_get_json,
 )
+from tests.test_model.qwen3_asr_wer_utils import QWEN3_ASR_WER_CONCURRENCY
 from tests.utils import (
     MetricCheckCollector,
     apply_mos_slack,
@@ -208,6 +209,7 @@ def _run_wer_transcribe(
     output_dir: str,
     *,
     asr_router_port: int,
+    concurrency: int,
     stream: bool = False,
     lang: str = "en",
     device: str = "cuda:0",
@@ -225,6 +227,8 @@ def _run_wer_transcribe(
         lang=lang,
         device=device,
         stream=stream,
+        concurrency=concurrency,
+        asr_concurrency=QWEN3_ASR_WER_CONCURRENCY,
     )
     run_tts_seedtts_transcribe(
         config,
@@ -916,6 +920,7 @@ def test_voice_cloning_wer(
             dataset_repo,
             output_dir,
             asr_router_port=qwen3_asr_wer_router.port,
+            concurrency=concurrency,
         )
         _assert_full_seedtts_en_wer_results(
             results,
@@ -993,6 +998,7 @@ def test_voice_cloning_streaming_wer(
             output_dir,
             stream=True,
             asr_router_port=qwen3_asr_wer_router.port,
+            concurrency=concurrency,
         )
         _assert_full_seedtts_en_wer_results(
             results,
