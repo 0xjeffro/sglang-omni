@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from sglang_omni.models.ming_omni.io import PipelineState
+from sglang_omni.models.ming_omni.io import MingOmniPipelineState
 from sglang_omni.models.ming_omni.pipeline.next_stage import AUDIO_STAGE, IMAGE_STAGE
 from sglang_omni.models.ming_omni.pipeline.usage import build_text_usage
 from sglang_omni.proto import StagePayload
@@ -24,8 +24,8 @@ def project_preprocessing_to_image_encoder(payload: StagePayload) -> StagePayloa
 
 
 def project_preprocessing_to_mm_aggregate(payload: StagePayload) -> StagePayload:
-    state = PipelineState.from_dict(payload.data)
-    projected = PipelineState(
+    state = MingOmniPipelineState.from_dict(payload.data)
+    projected = MingOmniPipelineState(
         prompt=dict(state.prompt) if isinstance(state.prompt, dict) else None,
         mm_inputs=dict(state.mm_inputs),
         encoder_inputs=_project_encoder_input_metadata(state.encoder_inputs),
@@ -35,9 +35,9 @@ def project_preprocessing_to_mm_aggregate(payload: StagePayload) -> StagePayload
 
 
 def project_encoder_to_mm_aggregate(payload: StagePayload) -> StagePayload:
-    state = PipelineState.from_dict(payload.data)
+    state = MingOmniPipelineState.from_dict(payload.data)
     stage_name = _single_encoder_stage_name(state)
-    projected = PipelineState(
+    projected = MingOmniPipelineState(
         encoder_outs={stage_name: state.encoder_outs.get(stage_name, {})}
     )
     return _payload_with_state(payload, projected)
@@ -48,15 +48,19 @@ def _project_preprocessing_to_encoder(
     *,
     stage_name: str,
 ) -> StagePayload:
-    state = PipelineState.from_dict(payload.data)
+    state = MingOmniPipelineState.from_dict(payload.data)
     stage_inputs = state.encoder_inputs.get(stage_name)
     projected_inputs = (
         {stage_name: dict(stage_inputs)} if isinstance(stage_inputs, dict) else {}
     )
-    return _payload_with_state(payload, PipelineState(encoder_inputs=projected_inputs))
+    return _payload_with_state(
+        payload, MingOmniPipelineState(encoder_inputs=projected_inputs)
+    )
 
 
-def _payload_with_state(payload: StagePayload, state: PipelineState) -> StagePayload:
+def _payload_with_state(
+    payload: StagePayload, state: MingOmniPipelineState
+) -> StagePayload:
     return StagePayload(
         request_id=payload.request_id,
         request=payload.request,
@@ -82,7 +86,7 @@ def _project_encoder_input_metadata(
     return projected
 
 
-def _single_encoder_stage_name(state: PipelineState) -> str:
+def _single_encoder_stage_name(state: MingOmniPipelineState) -> str:
     if len(state.encoder_outs) != 1:
         raise ValueError(
             f"Expected exactly one encoder output in payload, got {sorted(state.encoder_outs)}"
@@ -92,7 +96,7 @@ def _single_encoder_stage_name(state: PipelineState) -> str:
 
 def _attach_decode_final_metadata(
     result: dict[str, Any],
-    state: PipelineState,
+    state: MingOmniPipelineState,
     thinker_out: dict[str, Any],
 ) -> None:
     finish_reason = thinker_out.get("finish_reason")
@@ -161,7 +165,7 @@ def create_audio_encoder_executor(
     model = MingAudioEncoder(model_path=model_path, device=device, dtype=dtype)
 
     def _encode(payload: StagePayload) -> StagePayload:
-        state = PipelineState.from_dict(payload.data)
+        state = MingOmniPipelineState.from_dict(payload.data)
         inputs = state.encoder_inputs.get(AUDIO_STAGE)
         if not isinstance(inputs, dict) or not inputs:
             result = {}
@@ -202,7 +206,7 @@ def create_image_encoder_executor(
     )
 
     def _encode(payload: StagePayload) -> StagePayload:
-        state = PipelineState.from_dict(payload.data)
+        state = MingOmniPipelineState.from_dict(payload.data)
         inputs = state.encoder_inputs.get(IMAGE_STAGE)
         if not isinstance(inputs, dict) or not inputs:
             result = {}
@@ -318,7 +322,7 @@ def create_streaming_talker_executor(
 
 def create_decode_executor(model_path: str):
     from sglang_omni.models.ming_omni.components.common import load_ming_tokenizer
-    from sglang_omni.models.ming_omni.io import OmniEvent
+    from sglang_omni.models.ming_omni.io import MingOmniEvent
     from sglang_omni.models.ming_omni.pipeline.merge import decode_events
     from sglang_omni.models.ming_omni.pipeline.next_stage import THINKER_STAGE
     from sglang_omni.models.ming_omni.pipeline.state_io import load_state
@@ -327,7 +331,7 @@ def create_decode_executor(model_path: str):
     tokenizer = load_ming_tokenizer(model_path)
     eos_token_id = getattr(tokenizer, "eos_token_id", None)
 
-    def _event_to_dict(event: OmniEvent) -> dict[str, Any]:
+    def _event_to_dict(event: MingOmniEvent) -> dict[str, Any]:
         return {
             "type": event.type,
             "modality": event.modality,
