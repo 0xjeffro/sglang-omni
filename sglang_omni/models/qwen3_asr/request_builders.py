@@ -168,7 +168,7 @@ def make_qwen3_asr_scheduler_adapters(
         # since sglang 0.5.8's MultimodalDataItem has no such field.)
         num_mel_frames = int(feature_attention_mask.sum().item())
         num_audio_tokens = int(_num_audio_tokens(num_mel_frames))
-        logger.info(
+        logger.debug(
             f"[qwen3-asr] mel_frames={num_mel_frames} "
             f"num_audio_tokens={num_audio_tokens} feat_shape={tuple(features.shape)}"
         )
@@ -220,7 +220,7 @@ def make_qwen3_asr_scheduler_adapters(
             # tag then EOS); upstream uses 0.01 near-greedy.
             temperature = 0.01
         request_max_new_tokens = int(params.get("max_new_tokens") or max_new_tokens)
-        logger.info(
+        logger.debug(
             f"[qwen3-asr] sampling temp={temperature} "
             f"max_new_tokens={request_max_new_tokens} params={dict(params)}"
         )
@@ -262,7 +262,7 @@ def make_qwen3_asr_scheduler_adapters(
         # Qwen3-ASR emits "language English<asr_text><transcription>". Strip the
         # lead-in up to and including <asr_text>, then drop any remaining specials.
         raw = tokenizer.decode(output_ids, skip_special_tokens=False)
-        logger.info(
+        logger.debug(
             f"[qwen3-asr] n_out={len(output_ids)} ids={output_ids[:40]} " f"raw={raw!r}"
         )
         if "<asr_text>" in raw:
