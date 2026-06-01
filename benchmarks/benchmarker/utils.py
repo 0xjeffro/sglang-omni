@@ -22,7 +22,7 @@ import requests as requests_lib
 logger = logging.getLogger(__name__)
 
 STARTUP_TIMEOUT = 600
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 GPU_CLEANUP_SCRIPT = REPO_ROOT / ".github/scripts/ensure_gpus_idle.sh"
 GPU_IDLE_THRESHOLD_MB = 2048
 GPU_IDLE_WAIT_SECONDS = 600
