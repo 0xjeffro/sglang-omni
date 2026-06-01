@@ -180,12 +180,12 @@ def _run_wer_transcribe(
     meta: str,
     output_dir: str,
     *,
-    whisper_router_port: int,
+    asr_router_port: int,
     stream: bool = False,
     lang: str = "en",
     device: str = "cuda:0",
 ) -> dict:
-    """Transcribe saved audio and compute WER via Omni Whisper router."""
+    """Transcribe saved audio and compute WER via Qwen3-ASR router."""
     from benchmarks.eval.benchmark_tts_seedtts import (
         TtsSeedttsBenchmarkConfig,
         run_tts_seedtts_transcribe,
@@ -201,7 +201,7 @@ def _run_wer_transcribe(
     )
     run_tts_seedtts_transcribe(
         config,
-        whisper_router_port=whisper_router_port,
+        asr_router_port=asr_router_port,
     )
 
     results_path = Path(output_dir) / "wer_results.json"
@@ -887,7 +887,7 @@ def test_voice_cloning_wer(
         results = _run_wer_transcribe(
             dataset_repo,
             wer_input_dirs["non_stream"][concurrency],
-            whisper_router_port=omni_whisper_wer_router.port,
+            asr_router_port=omni_whisper_wer_router.port,
         )
         _assert_full_seedtts_en_wer_results(
             results,
@@ -963,7 +963,7 @@ def test_voice_cloning_streaming_wer(
             dataset_repo,
             wer_input_dirs["stream"][concurrency],
             stream=True,
-            whisper_router_port=omni_whisper_wer_router.port,
+            asr_router_port=omni_whisper_wer_router.port,
         )
         _assert_full_seedtts_en_wer_results(
             results,
