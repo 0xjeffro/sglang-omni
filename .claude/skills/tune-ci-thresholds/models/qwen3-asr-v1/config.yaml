@@ -1,7 +1,7 @@
 # Qwen3-ASR CI threshold calibration (shared omni venv).
 name: qwen3-asr-v1
 description: "Qwen3-ASR via SGLang Omni"
-hf_model_id: "Qwen/Qwen3-ASR-1.7B"
+hf_model_id: "Qwen/Qwen3-ASR-0.6B"
 hf_datasets:
   - "zhaochenyang20/seed-tts-eval-arrow"
 omni_ci_home: "/github/home/calibration"

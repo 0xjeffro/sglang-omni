@@ -454,7 +454,7 @@ calibrate Higgs thresholds alone while leaving Qwen3-ASR on stale literals.
 | `whisper_asr_speed` | speed | throughput + latency + RTF P95 refs | `WHISPER_ASR_THROUGHPUT_MIN`, `WHISPER_ASR_LATENCY_*`, `WHISPER_ASR_RTF_*` |
 
 Notes:
-- Uses **`Qwen/Qwen3-ASR-1.7B`** via `hf_model_ids_by_test` (not the Higgs
+- Uses **`Qwen/Qwen3-ASR-0.6B`** via `hf_model_ids_by_test` (not the Higgs
   checkpoint). Same **`omni`** venv and 2-GPU router DP=2 as TTS stages.
 - Sample count for strict audit: **`SEEDTTS_ASR_CORRECTNESS_SAMPLES`** (=20),
   JSON `summary.evaluated` / `summary.total_samples`.
