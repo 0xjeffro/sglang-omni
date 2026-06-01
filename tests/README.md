@@ -12,9 +12,7 @@ tests/
 │   ├── test_qwen3_omni_*_ci.py
 │   ├── test_qwen3_omni_videoamme_talker_tp2_ci.py
 │   ├── test_tts_ci.py
-│   ├── test_qwen3_asr_ci.py
-│   ├── test_whisper_asr_ci.py  # legacy workflow wrapper
-│   └── qwen3_asr_wer_utils.py
+│   └── test_qwen3_asr_ci.py
 └── unit_test/
     ├── benchmarks/
     │   └── test_dataset_regressions.py
@@ -171,13 +169,10 @@ Relevant model CI ownership:
 - `test_qwen3_asr_ci.py`: Qwen3-ASR correctness + speed via SGLang Omni
   router (`/v1/audio/transcriptions`). Uses the first 20 English SeedTTS
   clips; writes `qwen3_asr_results.json` for threshold calibration
-  (plus a legacy `whisper_asr_results.json` copy for compatibility)
   (`qwen3-asr-v1` in `tune-ci-thresholds`). Its stdout uses the same boxed
   summary style as the other benchmark stages: `ASR WER Benchmark Result`
   followed by `ASR Speed Benchmark Result`.
-- `test_whisper_asr_ci.py`: compatibility wrapper for the existing GitHub
-  Actions command; keep new Qwen3-ASR test logic in `test_qwen3_asr_ci.py`.
-- `qwen3_asr_wer_utils.py`: shared fixture/helpers for talker/TTS WER CI —
+- `utils.py`: shared fixture/helpers for talker/TTS WER CI —
   stops the upstream model server, runs `ensure_gpus_idle.sh`, then launches
   a Qwen3-ASR router. It also owns the WER ASR concurrency constant
   (`QWEN3_ASR_WER_CONCURRENCY`, currently 32). Used by Qwen3 talker WER tests

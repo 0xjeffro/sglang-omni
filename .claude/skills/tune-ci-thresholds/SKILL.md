@@ -360,9 +360,8 @@ test) explicitly marks as missing or misaligned.
   Qwen3-ASR concurrency is **32** at DP=2; Higgs/TTS generation stages use
   **16**.
   Included in `--model tts --stages ALL`; calibrate alone with
-  `--stages whisper_asr` (legacy stage key from the test filename). Venv must
-  pass full precheck including `flashinfer-jit-cache` (same as CI
-  `omni-setup`). If missing, run
+  `--stages qwen3_asr`. Venv must pass full precheck including
+  `flashinfer-jit-cache` (same as CI `omni-setup`). If missing, run
   `install_flashinfer_jit_cache.sh omni` from host cache — do **not** use
   `--skip-precheck`. Source `.github/scripts/ci_env.sh` before pytest/calibration.
 - **Qwen3-ASR (standalone `--model qwen3-asr-v1`)**: same runtime as above;
@@ -440,22 +439,20 @@ python .claude/skills/tune-ci-thresholds/tune.py --model tts run \
 
 # Stage 1 only (Qwen3-ASR on SeedTTS EN 20-sample correctness subset):
 python .claude/skills/tune-ci-thresholds/tune.py --model tts run \
-  --stages whisper_asr --repeats 5 --output-dir .tune-runs/<timestamp>_tts_qwen3_asr_r5
+  --stages qwen3_asr --repeats 5 --output-dir .tune-runs/<timestamp>_tts_qwen3_asr_r5
 ```
 
 ### TTS CI stage 1 — Qwen3-ASR (mandatory in full TTS calibration)
 
-TTS GitHub Actions runs **`test_whisper_asr_ci.py` in parallel with Higgs stages**
-(CI stage 1 in the DAG; no longer blocks non-streaming/streaming). That file is
-a compatibility wrapper; calibration stages point at `test_qwen3_asr_ci.py` so
-threshold writes update the real literals. Full `--model tts --stages ALL`
-calibration **must** include these stages — never calibrate Higgs thresholds
-alone while leaving Qwen3-ASR on stale literals.
+TTS GitHub Actions runs **`test_qwen3_asr_ci.py` in parallel with Higgs stages**
+(CI stage 1 in the DAG; no longer blocks non-streaming/streaming). Full
+`--model tts --stages ALL` calibration **must** include these stages — never
+calibrate Higgs thresholds alone while leaving Qwen3-ASR on stale literals.
 
 | Stage key | Group | What gets written | Test constant(s) |
 |-----------|-------|-------------------|------------------|
-| `whisper_asr_wer` | wer | corpus + per-sample WER ref | `SEEDTTS_ASR_CORPUS_WER_MAX`, `SEEDTTS_ASR_SAMPLE_WER_MAX` |
-| `whisper_asr_speed` | speed | throughput + latency + RTF P95 refs | `QWEN3_ASR_THROUGHPUT_MIN`, `QWEN3_ASR_LATENCY_*`, `QWEN3_ASR_RTF_*` |
+| `qwen3_asr_wer` | wer | corpus + per-sample WER ref | `SEEDTTS_ASR_CORPUS_WER_MAX`, `SEEDTTS_ASR_SAMPLE_WER_MAX` |
+| `qwen3_asr_speed` | speed | throughput + latency + RTF P95 refs | `QWEN3_ASR_THROUGHPUT_MIN`, `QWEN3_ASR_LATENCY_*`, `QWEN3_ASR_RTF_*` |
 
 Notes:
 - Uses **`Qwen/Qwen3-ASR-1.7B`** via `hf_model_ids_by_test` (not the Higgs
@@ -467,8 +464,7 @@ Notes:
   derived `*_THRESHOLD` values with **10% slack** (`THRESHOLD_SLACK_HIGHER=0.9`,
   `THRESHOLD_SLACK_LOWER=1.1` via `apply_wer_slack()` for WER). Do **not**
   bake slack into calibrated literals.
-- Shortcuts: `whisper_asr`, `@wer`, `@speed` (`whisper_asr` is the legacy
-  stage key for the Qwen3-ASR test file).
+- Shortcuts: `qwen3_asr`, `@wer`, `@speed`.
 - Standalone model **`qwen3-asr-v1`** remains for isolated ASR runs;
   **TTS pipeline calibration uses `--model tts`** so Qwen3-ASR and Higgs stages
   share one run directory and provenance.

@@ -45,7 +45,7 @@ jobs:
           source omni/bin/activate
           export PYTHONPATH=$PWD
           bash .github/scripts/run_flaky_pytest.sh \
-            pytest tests/test_model/test_whisper_asr_ci.py -v -s -x
+            pytest tests/test_model/test_qwen3_asr_ci.py -v -s -x
         env:
           HF_ENDPOINT: https://hf-mirror.com
           HF_HUB_DISABLE_XET: "1"

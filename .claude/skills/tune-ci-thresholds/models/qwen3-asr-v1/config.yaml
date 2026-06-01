@@ -25,15 +25,14 @@ auto_env:
   SEEDTTS_SIM_CACHE_DIR: "/github/home/seedtts-wavlm-sim"
 gpus_per_test:
   test_qwen3_asr_ci.py: 2
-  test_whisper_asr_ci.py: 2
 test_globs:
-  - "tests/test_model/test_whisper_asr_ci.py"
+  - "tests/test_model/test_qwen3_asr_ci.py"
 extra_env: {}
 pytest_extra_args: {}
 stage_base_strip_prefix: "test_"
 stage_base_strip_suffix: "_ci"
 metric_sources:
-  test_whisper_asr_ci.py:
+  test_qwen3_asr_ci.py:
     json_file: "qwen3_asr_results.json"
     sample_counts:
       total: "summary.total_samples"

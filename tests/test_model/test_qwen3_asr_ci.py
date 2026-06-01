@@ -334,9 +334,8 @@ def test_qwen3_asr_matches_seedtts_reference_text(
     print_asr_speed_summary(speed_metrics, QWEN3_ASR_CI_MODEL_PATH)
 
     results = {"summary": wer_summary, "speed": speed_metrics}
-    for filename in ("qwen3_asr_results.json", "whisper_asr_results.json"):
-        results_path = tmp_path_factory.getbasetemp() / filename
-        results_path.write_text(json.dumps(results, indent=2))
+    results_path = tmp_path_factory.getbasetemp() / "qwen3_asr_results.json"
+    results_path.write_text(json.dumps(results, indent=2))
     checks.check(
         corpus_wer <= SEEDTTS_ASR_CORPUS_WER_THRESHOLD,
         f"Qwen3-ASR corpus WER {corpus_wer:.4f} exceeds "

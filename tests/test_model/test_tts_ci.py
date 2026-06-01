@@ -34,8 +34,6 @@ from typing import Literal
 
 import pytest
 
-pytest_plugins = ["tests.test_model.qwen3_asr_wer_utils"]
-
 from benchmarks.dataset.prepare import DATASETS, download_dataset
 from benchmarks.eval.benchmark_tts_seedtts import (
     TtsSeedttsBenchmarkConfig,
@@ -54,8 +52,8 @@ from tests.test_model.omni_router_utils import (
     print_router_diagnostics,
     router_get_json,
 )
-from tests.test_model.qwen3_asr_wer_utils import QWEN3_ASR_WER_CONCURRENCY
 from tests.utils import (
+    QWEN3_ASR_WER_CONCURRENCY,
     MetricCheckCollector,
     apply_mos_slack,
     apply_slack,

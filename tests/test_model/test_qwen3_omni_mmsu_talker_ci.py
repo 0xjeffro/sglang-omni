@@ -26,8 +26,6 @@ from pathlib import Path
 
 import pytest
 
-pytest_plugins = ["tests.test_model.qwen3_asr_wer_utils"]
-
 from benchmarks.dataset.mmsu import load_mmsu_samples
 from benchmarks.dataset.prepare import DATASETS
 from benchmarks.eval.benchmark_omni_mmsu import run as run_mmsu
@@ -38,8 +36,8 @@ from tests.test_model.omni_router_utils import (
     ManagedRouterHandle,
     router_worker_traffic_guard,
 )
-from tests.test_model.qwen3_asr_wer_utils import QWEN3_ASR_WER_CONCURRENCY
 from tests.utils import (
+    QWEN3_ASR_WER_CONCURRENCY,
     MetricCheckCollector,
     apply_slack,
     apply_wer_slack,

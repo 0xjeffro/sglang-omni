@@ -21,8 +21,6 @@ from pathlib import Path
 
 import pytest
 
-pytest_plugins = ["tests.test_model.qwen3_asr_wer_utils"]
-
 from benchmarks.dataset.prepare import DATASETS
 from benchmarks.eval.benchmark_omni_videoamme import run_videoamme_eval
 from benchmarks.eval.benchmark_omni_videomme import VideoEvalConfig
@@ -31,8 +29,8 @@ from benchmarks.metrics.video import print_videomme_accuracy_summary
 from benchmarks.metrics.wer import print_wer_summary
 from benchmarks.tasks.tts import compute_text_audio_consistency_from_records
 from tests.test_model.omni_router_utils import ManagedRouterHandle
-from tests.test_model.qwen3_asr_wer_utils import QWEN3_ASR_WER_CONCURRENCY
 from tests.utils import (
+    QWEN3_ASR_WER_CONCURRENCY,
     MetricCheckCollector,
     ServerHandle,
     apply_slack,

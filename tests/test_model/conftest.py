@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+pytest_plugins = ["tests.utils"]
+
 if TYPE_CHECKING:
     from typing import Generator
 

@@ -1,11 +1,9 @@
 # Model-specific config for the TTS CI threshold skill.
 #
 # Notes:
-# - Stage 1 (Qwen3-ASR): test_whisper_asr_ci.py runs in parallel with Higgs
-#   stages in CI DAG as a compatibility wrapper. Calibration stages target
-#   test_qwen3_asr_ci.py so tune.py writes the real QWEN3_ASR_* constants.
-#   The stage key still uses the legacy `whisper_asr` prefix; calibrate via
-#   `--model tts --stages whisper_asr` or full `--stages ALL`.
+# - Stage 1 (Qwen3-ASR): test_qwen3_asr_ci.py runs in parallel with Higgs
+#   stages in the CI DAG and writes the Qwen3-ASR WER/speed baselines.
+#   Calibrate via `--model tts --stages qwen3_asr` or full `--stages ALL`.
 # - test_tts_ci.py runs stages 2–4 internal stages (nonstream / stream /
 #   consistency) controlled by --tts-stage. tune.py runs the full file once
 #   per repeat (all pytest functions that match the selected stage filter).
@@ -33,8 +31,6 @@ hf_model_id: "boson-sglang/higgs-audio-v3-TTS-4B-grpo05200410999"
 hf_model_ids_by_test:
   test_qwen3_asr_ci.py:
     - "Qwen/Qwen3-ASR-1.7B"
-  test_whisper_asr_ci.py:
-    - "Qwen/Qwen3-ASR-1.7B"
 hf_datasets:
   - "zhaochenyang20/seed-tts-eval-arrow"
 omni_ci_home: "/github/home/calibration"
@@ -59,10 +55,9 @@ auto_env:
 # TTS CI stage 1 (Qwen3-ASR) + stages 2–4 (Higgs voice clone) share omni venv.
 gpus_per_test:
   test_qwen3_asr_ci.py: 2
-  test_whisper_asr_ci.py: 2
   test_tts_ci.py: 2
 test_globs:
-  - "tests/test_model/test_whisper_asr_ci.py"
+  - "tests/test_model/test_qwen3_asr_ci.py"
   - "tests/test_model/test_tts_ci.py"
 extra_env: {}
 pytest_extra_args:
@@ -73,7 +68,7 @@ stage_base_strip_prefix: "test_"
 stage_base_strip_suffix: "_ci"
 stage_base_docs_override: "tts_docs"
 metric_sources:
-  test_whisper_asr_ci.py:
+  test_qwen3_asr_ci.py:
     json_file: "qwen3_asr_results.json"
     sample_counts:
       total: "summary.total_samples"
