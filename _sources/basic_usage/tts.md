@@ -1,6 +1,6 @@
 # TTS Model Usage
 
-This guide uses [Fish Speech S2-Pro](https://huggingface.co/fishaudio/s2-pro) as an example TTS (text-to-speech) model with SGLang-Omni and the OpenAI-compatible API. The same `/v1/audio/speech` endpoint also supports Voxtral TTS and Qwen3-TTS.
+This guide uses [Fish Speech S2-Pro](https://huggingface.co/fishaudio/s2-pro) as an example TTS (text-to-speech) model with SGLang-Omni and the OpenAI-compatible API. The same `/v1/audio/speech` endpoint also supports Voxtral TTS, Qwen3-TTS, and MOSS-TTS.
 
 ## Prerequisites
 
@@ -27,6 +27,7 @@ uv pip install --no-deps qwen-tts==0.1.1
 | [Qwen3-TTS Base](../cookbook/qwen3_tts.md) | `examples/configs/qwen3_tts_0_6b.yaml`, `examples/configs/qwen3_tts_1_7b.yaml` | Requires reference audio through `ref_audio` or `references[0].audio_path`; `language` defaults to `auto` |
 | Qwen3-TTS CustomVoice | `examples/configs/qwen3_tts_0_6b_customvoice.yaml` | Text-only requests use the checkpoint speaker table; missing `voice` defaults to `Vivian` |
 | Qwen3-TTS VoiceDesign | `examples/configs/qwen3_tts_1_7b_voicedesign.yaml` | Requires `task_type="VoiceDesign"` and non-empty `instructions`; no reference audio is required |
+| [MOSS-TTS](../cookbook/moss_tts.md) | `examples/configs/moss_tts.yaml` | Voice cloning via `ref_audio` or `references[0].audio_path` (+ `text`); duration via `${token:N}` or `token_count`; benchmark at `--max-concurrency 8` |
 
 ## Launch the Server
 
@@ -70,6 +71,15 @@ For Qwen3-TTS VoiceDesign:
 sgl-omni serve \
   --model-path Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign \
   --config examples/configs/qwen3_tts_1_7b_voicedesign.yaml \
+  --port 8000
+```
+
+For MOSS-TTS:
+
+```bash
+sgl-omni serve \
+  --model-path OpenMOSS-Team/MOSS-TTS-v1.5 \
+  --config examples/configs/moss_tts.yaml \
   --port 8000
 ```
 
@@ -335,7 +345,7 @@ python -m benchmarks.eval.benchmark_tts_seedtts \
 SGLang-Omni ships with a Gradio-based playground for interactive TTS experimentation:
 
 ```bash
-./playground/tts/start.sh
+./playground/s2pro/start.sh
 ```
 
 The playground now exposes two demo modes against the same S2 Pro backend:
@@ -346,7 +356,7 @@ The playground now exposes two demo modes against the same S2 Pro backend:
 The launcher starts the backend first, waits for `/health`, then starts the Gradio UI with:
 
 ```bash
-python -m playground.tts.app --api-base http://localhost:8000
+python -m playground.s2pro.app --api-base http://localhost:8000
 ```
 
 A demo play video is available [here](https://x.com/lmsysorg/status/2031412267213008984/video/1). We highly recommend using playground since audio data is hard to interact with by CLI.

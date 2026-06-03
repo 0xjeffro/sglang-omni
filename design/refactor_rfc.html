@@ -33,8 +33,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=731335ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=a64801f4" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_log.css?v=a64801f4" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="May 31, 2026"/>
+    <meta name="docbuild:last-update" content="Jun 03, 2026"/>
   </head>
   
   
@@ -138,8 +138,8 @@
       
     
     
-    <img src="../_static/sgl-omni-logo.png" class="logo__image only-light" alt="SGLang - Home"/>
-    <img src="../_static/sgl-omni-logo.png" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.svg" class="logo__image only-light" alt="SGLang - Home"/>
+    <img src="../_static/sgl-omni-logo.svg" class="logo__image only-dark pst-js-only" alt="SGLang - Home"/>
   
   
 </a></div>
@@ -161,6 +161,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cookbook/higgs_tts.html">Higgs TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook/voxtral_tts.html">Voxtral TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_tts.html">Qwen3 TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook/moss_tts.html">MOSS-TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook/qwen3_omni.html">Qwen3-Omni</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cookbook/llada2_uni.html">LLaDA2.0-Uni</a></li>
 </ul>
@@ -451,7 +452,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-process-runner">Multi-Process Runner</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stageprocessspec"><code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stagelaunchconfig"><code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stagegroup"><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiprocessrunner"><code class="docutils literal notranslate"><span class="pre">MultiProcessRunner</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-parallelism-support">Tensor Parallelism Support</a></li>
@@ -583,12 +584,16 @@
 
     class ModelRunner {
         +execute(scheduler_output) ModelRunnerOutput
-        +prepare_forward()* hook
-        +post_forward()* hook
+        +before_prefill()* hook
+        +before_decode()* hook
+        +custom_prefill_forward()* hook
+        +custom_decode_forward()* hook
+        +post_prefill()* hook
+        +post_decode()* hook
     }
 
     class ThinkerModelRunner {
-        +prepare_forward(): inject multimodal embeds
+        +custom_prefill_forward(): inject multimodal embeds
     }
 
     class FeedbackARModelRunner {
@@ -829,8 +834,8 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 <hr class="docutils" />
 <section id="model-runner-callbacks">
 <h2>Model Runner + Callbacks<a class="headerlink" href="#model-runner-callbacks" title="Link to this heading">#</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ForwardBatch → prepare_forward() → forward() → post_forward() → sample() → ModelRunnerOutput
-                    ↑ hook                          ↑ hook
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ForwardBatch → before_*() → custom_*_forward() or standard forward → post_*() → sample/output
+                    ↑ hook             ↑ explicit custom path          ↑ hook
 </pre></div>
 </div>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -843,11 +848,11 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 <tbody>
 <tr class="row-even"><td><p><strong>ThinkerModelRunner</strong></p></td>
 <td><p>Qwen3 / Ming thinker</p></td>
-<td><p>prepare_forward: inject multimodal embeddings</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">custom_prefill_forward</span></code>: inject multimodal embeddings</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>FeedbackARModelRunner</strong></p></td>
 <td><p>Qwen3 talker, Fish TTS</p></td>
-<td><p>3 callbacks: write_buffers_fn, extract_output_fn, prefill_forward_fn</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">before_*</span></code> buffer writes + optional explicit <code class="docutils literal notranslate"><span class="pre">custom_*_forward</span></code> paths</p></td>
 </tr>
 </tbody>
 </table>
@@ -864,46 +869,56 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ModelRunner</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler_output</span><span class="p">):</span>
         <span class="n">forward_batch</span> <span class="o">=</span> <span class="n">ForwardBatch</span><span class="o">.</span><span class="n">init_new</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-        <span class="n">batch_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_forward</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># hook</span>
+        <span class="k">if</span> <span class="n">is_prefill</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">before_prefill</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+            <span class="n">batch_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_prefill_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">before_decode</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+            <span class="n">batch_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_decode_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">batch_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">batch_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tp_worker</span><span class="o">.</span><span class="n">forward_batch_generation</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">post_forward</span><span class="p">(</span><span class="n">batch_result</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>       <span class="c1"># hook</span>
+        <span class="k">if</span> <span class="n">is_prefill</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_prefill</span><span class="p">(</span><span class="n">batch_result</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_decode</span><span class="p">(</span><span class="n">batch_result</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
         <span class="c1"># sample, logit processing, output extraction</span>
         <span class="k">return</span> <span class="n">ModelRunnerOutput</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Shared: <code class="docutils literal notranslate"><span class="pre">ForwardBatch</span></code> construction, sampling, repetition penalty, codec suppression, output processing.</p>
 <blockquote>
-<div><p><strong>Note (Chenyang):</strong> The earlier <code class="docutils literal notranslate"><span class="pre">prepare_forward</span></code> / <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">batch_result</span> <span class="pre">is</span> <span class="pre">None</span></code> block was misleading — <code class="docutils literal notranslate"><span class="pre">prepare_forward</span></code> was doing two unrelated things (mutating the batch and short-circuiting to a custom forward result). The version above splits those into <code class="docutils literal notranslate"><span class="pre">before_forward</span></code> (always mutates in place) and an explicit <code class="docutils literal notranslate"><span class="pre">custom_forward</span></code> branch, which makes the prefill-with-injection path (Fish TTS) honest instead of disguising it as “the hook returned a value.” My suggestions are:</p>
+<div><p><strong>Note (Chenyang):</strong> The earlier <code class="docutils literal notranslate"><span class="pre">prepare_forward</span></code> / <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">batch_result</span> <span class="pre">is</span> <span class="pre">None</span></code> block was misleading — <code class="docutils literal notranslate"><span class="pre">prepare_forward</span></code> was doing two unrelated things (mutating the batch and short-circuiting to a custom forward result). The implementation now splits those concerns into phase-aware <code class="docutils literal notranslate"><span class="pre">before_prefill</span></code> / <code class="docutils literal notranslate"><span class="pre">before_decode</span></code> mutation hooks and explicit <code class="docutils literal notranslate"><span class="pre">custom_prefill_forward</span></code> / <code class="docutils literal notranslate"><span class="pre">custom_decode_forward</span></code> hooks.</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler_output</span><span class="p">):</span>
     <span class="n">forward_batch</span> <span class="o">=</span> <span class="n">ForwardBatch</span><span class="o">.</span><span class="n">init_new</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
-    <span class="c1"># Mutate forward_batch in place (e.g. inject multimodal embeds).</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">before_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-
-    <span class="c1"># Two mutually exclusive paths:</span>
-    <span class="c1">#   - custom_forward: model-specific forward (e.g. Fish TTS prefill</span>
-    <span class="c1">#     with VQ embedding injection).</span>
-    <span class="c1">#   - default forward: standard tp_worker.forward_batch_generation.</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_custom_forward</span><span class="p">:</span>
-        <span class="n">forward_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="c1"># Mutate request/model state in place.</span>
+    <span class="k">if</span> <span class="n">is_prefill</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_prefill</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="n">forward_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_prefill_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_decode</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="n">forward_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_decode_forward</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">forward_output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">forward_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tp_worker</span><span class="o">.</span><span class="n">forward_batch_generation</span><span class="p">(</span><span class="n">forward_batch</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">post_forward</span><span class="p">(</span><span class="n">forward_output</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_prefill</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_prefill</span><span class="p">(</span><span class="n">forward_output</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_decode</span><span class="p">(</span><span class="n">forward_output</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ModelRunnerOutput</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <blockquote>
-<div><p><strong>【TODO: Jingwen, have we done this part】</strong></p>
+<div><p>Resolved.</p>
 </div></blockquote>
 </section>
 <section id="thinkermodelrunner">
 <h3><code class="docutils literal notranslate"><span class="pre">ThinkerModelRunner</span></code><a class="headerlink" href="#thinkermodelrunner" title="Link to this heading">#</a></h3>
 <p>Injects multimodal embeddings (image / video / audio) + deepstack before forward.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ThinkerModelRunner</span><span class="p">(</span><span class="n">ModelRunner</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">custom_prefill_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
         <span class="c1"># Inject multimodal embeds into forward_batch</span>
         <span class="o">...</span>
 </pre></div>
@@ -917,14 +932,19 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
                  <span class="n">write_buffers_fn</span><span class="p">,</span> <span class="n">extract_output_fn</span><span class="p">,</span> <span class="n">prefill_forward_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">before_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">decode</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_write_buffers</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">prefill</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefill_forward</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">custom_prefill_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prefill</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefill_forward</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefill_forward</span><span class="p">(</span><span class="n">tp_worker</span><span class="p">,</span> <span class="n">forward_batch</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">post_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_prefill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_output</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">outbox</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extract_output</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">schedule_batch</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">outbox</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1022,7 +1042,7 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 ├── stages.py              — 8 factories
 ├── routing.py             — 8 routing functions
 ├── request_builders.py    — build thinker/talker/encoder requests
-├── payload_types.py       — PipelineState, OmniEvent, ThinkerOutput
+├── payload_types.py       — Qwen3OmniPipelineState, Qwen3OmniEvent, ThinkerOutput
 ├── callbacks.py           — write_talker_buffers, extract_talker_output, talker_prefill_forward
 ├── hf_config.py           — HF config classes
 ├── merge.py               — Merge 3 encoder outputs for thinker
@@ -1043,7 +1063,7 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 <blockquote>
 <div><p><strong>Note (Chenyang):</strong></p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">PipelineState</span></code> and <code class="docutils literal notranslate"><span class="pre">OmniEvent</span></code> are ambiguous names — both sound like they belong to the framework, but they’re model-specific. Rename later. <strong>【TODO: Jingwen, have we done this part】</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PipelineState</span></code> and <code class="docutils literal notranslate"><span class="pre">OmniEvent</span></code> were ambiguous names — both sounded like they belonged to the framework, but were model-specific. Resolved by using model-qualified payload names such as <code class="docutils literal notranslate"><span class="pre">Qwen3OmniPipelineState</span></code> / <code class="docutils literal notranslate"><span class="pre">Qwen3OmniEvent</span></code>.</p></li>
 <li><p>“Image tower” / “Audio tower” — why “tower”? Inherited terminology from VLM literature. Worth aligning on either “encoder” or “tower” consistently rather than mixing. Jingwen: this is followed the name from official qwen3-omni.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">image_encoder</span></code> → <code class="docutils literal notranslate"><span class="pre">audio_encoder</span></code> should run in parallel, not sequentially as the arrow chain might suggest. There should also be design space for offloading them to CPU. Jingwen: Changed.</p></li>
 </ol>
@@ -1217,8 +1237,7 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 <section id="multi-process-runner">
 <h2>Multi-Process Runner<a class="headerlink" href="#multi-process-runner" title="Link to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>pipeline/
-├── stage_process.py    # StageProcessSpec (picklable) + subprocess entrypoint
-├── stage_group.py      # StageGroup — manages N processes per stage
+├── stage_workers.py    # StageLaunchConfig, StageWorkerProcessSpec, entrypoint, StageGroup
 └── mp_runner.py        # MultiProcessRunner — orchestrates all groups
 </pre></div>
 </div>
@@ -1245,34 +1264,34 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 </pre></div>
 </div>
 <blockquote>
-<div><p><strong>Note (Chenyang):</strong> <code class="docutils literal notranslate"><span class="pre">stage_group.py</span></code> and <code class="docutils literal notranslate"><span class="pre">stage_process.py</span></code> are tightly coupled — <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> is the only consumer of <code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code>, the subprocess entrypoint is ~40 lines, and the spec is a small dataclass. None of the three justifies its own file. Merging into a single <code class="docutils literal notranslate"><span class="pre">stage_workers.py</span></code> keeps everything about “how a stage’s processes get defined, spawned, and managed” in one place, and leaves <code class="docutils literal notranslate"><span class="pre">mp_runner.py</span></code> focused on cross-stage orchestration. Two files, cleaner ownership.</p>
+<div><p><strong>Note (Chenyang):</strong> <code class="docutils literal notranslate"><span class="pre">stage_group.py</span></code> and <code class="docutils literal notranslate"><span class="pre">stage_process.py</span></code> are tightly coupled — <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> owns the worker process specs, the subprocess entrypoint is small, and the launch records are small dataclasses. None of the pieces justifies its own file. Merging into a single <code class="docutils literal notranslate"><span class="pre">stage_workers.py</span></code> keeps everything about “how stages’ processes get defined, spawned, and managed” in one place, and leaves <code class="docutils literal notranslate"><span class="pre">mp_runner.py</span></code> focused on cross-stage orchestration. Two files, cleaner ownership.</p>
 </div></blockquote>
 <blockquote>
-<div><p><strong>【TODO: Jingwen, have we merged these files】</strong></p>
+<div><p>Resolved: <code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code>, <code class="docutils literal notranslate"><span class="pre">StageWorkerProcessSpec</span></code>, <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code>, and the subprocess entrypoint now live together in <code class="docutils literal notranslate"><span class="pre">stage_workers.py</span></code>.</p>
 </div></blockquote>
-<section id="stageprocessspec">
-<h3><code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code><a class="headerlink" href="#stageprocessspec" title="Link to this heading">#</a></h3>
-<p>A fully-resolved, picklable dataclass built once in the main process. Subprocesses never re-compile the pipeline config — they just construct a <code class="docutils literal notranslate"><span class="pre">Stage</span></code> from the spec and run it.</p>
+<section id="stagelaunchconfig">
+<h3><code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code><a class="headerlink" href="#stagelaunchconfig" title="Link to this heading">#</a></h3>
+<p>A fully-resolved, picklable per-stage launch record built once in the main process. Child processes receive a <code class="docutils literal notranslate"><span class="pre">StageWorkerProcessSpec</span></code> containing one or more <code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code> records and never re-compile the pipeline config.</p>
 <blockquote>
 <div><p><strong>Note (Chenyang):</strong> “Spec” is too vague a class name. Rename to <code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code>.</p>
 </div></blockquote>
-<p>The main process resolves all dotted strings, injects <code class="docutils literal notranslate"><span class="pre">model_path</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code> into factory args, allocates ZMQ endpoints, and computes stream targets and relay config. The spec captures everything the child process needs.</p>
-<p>The subprocess entrypoint (<code class="docutils literal notranslate"><span class="pre">stage_process_main</span></code>) is ~40 lines: import factory, call it, build routing callable from <code class="docutils literal notranslate"><span class="pre">route_fn</span></code> or <code class="docutils literal notranslate"><span class="pre">next_stages</span></code>, build input handler from <code class="docutils literal notranslate"><span class="pre">wait_for</span></code> / <code class="docutils literal notranslate"><span class="pre">merge_fn</span></code>, construct <code class="docutils literal notranslate"><span class="pre">Stage</span></code>, run.</p>
+<p>The main process resolves all dotted strings, injects <code class="docutils literal notranslate"><span class="pre">model_path</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code> into factory args, allocates ZMQ endpoints, and computes stream targets and relay config. Each launch config captures everything needed to construct one logical stage instance; <code class="docutils literal notranslate"><span class="pre">StageWorkerProcessSpec</span></code> is the OS-process payload that groups the launch configs sharing a process.</p>
+<p>The subprocess entrypoint (<code class="docutils literal notranslate"><span class="pre">stage_process_main</span></code>) imports each stage factory, calls it, builds routing callables from <code class="docutils literal notranslate"><span class="pre">route_fn</span></code> or <code class="docutils literal notranslate"><span class="pre">next_stages</span></code>, builds input handlers from <code class="docutils literal notranslate"><span class="pre">wait_for</span></code> / <code class="docutils literal notranslate"><span class="pre">merge_fn</span></code>, constructs all <code class="docutils literal notranslate"><span class="pre">Stage</span></code> instances assigned to that process, and runs them on one event loop.</p>
 <blockquote>
 <div><p><strong>Note (Chenyang):</strong> Promoting <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> to a top-level field treats TP as special, but it’s just one parallelism axis. Qwen3-Omni’s Thinker is MoE and could want EP; throughput-oriented stages might want DP across replicas. If we add those later, we’ll end up with <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> / <code class="docutils literal notranslate"><span class="pre">ep_size</span></code> / <code class="docutils literal notranslate"><span class="pre">dp_size</span></code> proliferating at the top level. Cleaner to group them under a single <code class="docutils literal notranslate"><span class="pre">parallelism:</span> <span class="pre">ParallelismConfig</span></code> field now — <code class="docutils literal notranslate"><span class="pre">ParallelismConfig(tp=N)</span></code> reads as clearly as <code class="docutils literal notranslate"><span class="pre">tp_size=N</span></code> and leaves room to add <code class="docutils literal notranslate"><span class="pre">ep</span></code>, <code class="docutils literal notranslate"><span class="pre">dp</span></code> without further schema churn. If the intent is TP-only for the foreseeable future, at least document that explicitly so readers don’t assume other strategies were deliberately excluded. (maybe we should add this as we get more parallelism and not now, or the class will only have tp attribute, increasing visual burden)</p>
 </div></blockquote>
 </section>
 <section id="stagegroup">
 <h3><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code><a class="headerlink" href="#stagegroup" title="Link to this heading">#</a></h3>
-<p>Manages the lifecycle (spawn, <code class="docutils literal notranslate"><span class="pre">wait_ready</span></code>, shutdown, health monitoring) of all OS processes backing one logical stage. For <code class="docutils literal notranslate"><span class="pre">tp_size</span> <span class="pre">==</span> <span class="pre">1</span></code> (default), one process. For <code class="docutils literal notranslate"><span class="pre">tp_size</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, spawns one process per TP rank with appropriate <code class="docutils literal notranslate"><span class="pre">tp_rank</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>.</p>
+<p>Manages the lifecycle (spawn, <code class="docutils literal notranslate"><span class="pre">wait_ready</span></code>, shutdown, health monitoring) of one topology group. A group can be a colocated set of non-TP stages packed into one <code class="docutils literal notranslate"><span class="pre">StageWorkerProcessSpec</span></code>, or a TP stage spread across one worker process per rank. TP stages must own their worker processes exclusively, so each TP rank process carries exactly one <code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code> with the appropriate <code class="docutils literal notranslate"><span class="pre">tp_rank</span></code> / <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>.</p>
 </section>
 <section id="multiprocessrunner">
 <h3><code class="docutils literal notranslate"><span class="pre">MultiProcessRunner</span></code><a class="headerlink" href="#multiprocessrunner" title="Link to this heading">#</a></h3>
-<p>Orchestrates startup across all <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code>s. <code class="docutils literal notranslate"><span class="pre">_build_stage_groups(config)</span></code> turns a <code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> into <code class="docutils literal notranslate"><span class="pre">list[StageGroup]</span></code> by iterating over stages, resolving factory args, allocating endpoints, and building one <code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code> per TP rank per stage. The Coordinator runs in the main process and only talks to rank 0 of each group.</p>
+<p>Orchestrates startup across all <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code>s. <code class="docutils literal notranslate"><span class="pre">_build_stage_groups(config)</span></code> turns a <code class="docutils literal notranslate"><span class="pre">PipelineConfig</span></code> into <code class="docutils literal notranslate"><span class="pre">list[StageGroup]</span></code> by iterating over stages, resolving factory args, allocating endpoints, building one <code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code> per non-TP stage or TP rank, and packing those records into <code class="docutils literal notranslate"><span class="pre">StageWorkerProcessSpec</span></code> objects according to the process topology. The Coordinator runs in the main process; it registers every externally owned stage endpoint and only talks to rank 0 inside a TP group.</p>
 </section>
 <section id="tensor-parallelism-support">
 <h3>Tensor Parallelism Support<a class="headerlink" href="#tensor-parallelism-support" title="Link to this heading">#</a></h3>
-<p>TP within a stage is orthogonal to pipeline parallelism between stages. The <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> spawns <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> processes per AR stage. Each process runs a full <code class="docutils literal notranslate"><span class="pre">OmniScheduler</span></code> + <code class="docutils literal notranslate"><span class="pre">ModelWorker</span></code> with a different <code class="docutils literal notranslate"><span class="pre">tp_rank</span></code> and <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>. NCCL collectives inside the model forward keep TP ranks in lockstep. The Coordinator is TP-unaware — it only talks to rank 0 of each group.</p>
+<p>TP within a stage is orthogonal to pipeline parallelism between stages. For a TP stage, its <code class="docutils literal notranslate"><span class="pre">StageGroup</span></code> spawns <code class="docutils literal notranslate"><span class="pre">tp_size</span></code> processes. Each process runs a full <code class="docutils literal notranslate"><span class="pre">OmniScheduler</span></code> + <code class="docutils literal notranslate"><span class="pre">ModelWorker</span></code> with a different <code class="docutils literal notranslate"><span class="pre">tp_rank</span></code> and <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>. NCCL collectives inside the model forward keep TP ranks in lockstep. The Coordinator is TP-unaware and only talks to rank 0 inside the TP group.</p>
 <p>Within a TP group, rank 0 receives from the control plane and broadcasts to peer ranks. All ranks make identical scheduling decisions. Only rank 0 sends results downstream. Each stage gets its own NCCL port (<code class="docutils literal notranslate"><span class="pre">_NcclPortAllocator</span></code> in <code class="docutils literal notranslate"><span class="pre">mp_runner.py</span></code>).</p>
 <p>Declaring TP in a stage:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">StageConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;thinker&quot;</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">tp_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -1431,7 +1450,7 @@ The same OOM behaves differently across models today: S2-Pro and Voxtral return 
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-process-runner">Multi-Process Runner</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stageprocessspec"><code class="docutils literal notranslate"><span class="pre">StageProcessSpec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stagelaunchconfig"><code class="docutils literal notranslate"><span class="pre">StageLaunchConfig</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stagegroup"><code class="docutils literal notranslate"><span class="pre">StageGroup</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiprocessrunner"><code class="docutils literal notranslate"><span class="pre">MultiProcessRunner</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-parallelism-support">Tensor Parallelism Support</a></li>
@@ -1480,7 +1499,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 31, 2026.
+  Last updated on Jun 03, 2026.
   <br/>
 </p>
   </div>
