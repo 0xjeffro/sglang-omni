@@ -171,10 +171,10 @@ def make_qwen3_asr_scheduler_adapters(
         audio_duration_s = float(len(audio) / _SAMPLE_RATE)
         fingerprint = _audio_fingerprint(audio)
 
-        # note (Jeffro Qu): unlike Whisper's default 30s window, here we pad the mel to the clip's true length. 
+        # note (Jeffro Qu): unlike Whisper's default 30s window, here we pad the mel to the clip's true length.
         # WhisperFeatureExtractor defaults to padding="max_length", padding every clip to nb_max_frames=3000 (~30s),
-        # so a short clip pays the full 30s of mel FFT on silence. 
-        # This is safefor Qwen3-ASR because its encoder is variable-length and keeps only the
+        # so a short clip pays the full 30s of mel FFT on silence.
+        # This is safe for Qwen3-ASR because its encoder is variable-length and keeps only the
         # valid frames via feature_attention_mask; vanilla Whisper's fixed-length encoder would instead break on padding="longest" (see ref: transformers#26241).
         # refs:
         #  https://github.com/huggingface/transformers/blob/main/src/transformers/models/whisper/feature_extraction_whisper.py
