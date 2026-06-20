@@ -194,8 +194,8 @@ def make_qwen3_asr_scheduler_adapters(
             feature_attention_mask = torch.ones(
                 (features.shape[0], features.shape[-1]), dtype=torch.long
             )
-        # get_audio_feature uses the mask to select valid frames; its no-mask
-        # branch transposes wrong, so the mask path must be taken.
+        # note (Jeffro Qu): get_audio_feature uses the mask to select valid
+        # frames; its no-mask branch transposes wrong, so the mask path must be taken.
         num_mel_frames = int(feature_attention_mask.sum().item())
         num_audio_tokens = int(qwen3_asr_num_audio_tokens(num_mel_frames))
         logger.debug(
