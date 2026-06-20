@@ -51,15 +51,16 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'cookbook/llada2_uni';</script>
     <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <script src="../_static/js/ming_omni_server_generator.js?v=694b1473"></script>
     <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Omni Model Usage" href="../basic_usage/qwen3_omni.html" />
-    <link rel="prev" title="Qwen3-Omni" href="qwen3_omni.html" />
+    <link rel="prev" title="Ming-Omni" href="ming_omni.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="Jun 03, 2026"/>
+    <meta name="docbuild:last-update" content="Jun 20, 2026"/>
   </head>
   
   
@@ -160,12 +161,17 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="higgs_tts.html">Higgs TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="voxtral_tts.html">Voxtral TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fishaudio_s2_pro.html">Fish Audio S2-Pro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="qwen3_tts.html">Qwen3 TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moss_tts.html">MOSS-TTS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moss_tts_local.html">MOSS-TTS-Local</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qwen3_asr.html">Qwen3-ASR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whisper_asr.html">Whisper ASR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="qwen3_omni.html">Qwen3-Omni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ming_omni.html">Ming-Omni</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">LLaDA2.0-Uni</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Basic Usage</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">General Usage</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/qwen3_omni.html">Omni Model Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/tts.html">TTS Model Usage</a></li>
@@ -183,6 +189,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../developer_reference/config.html">Config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer_reference/communication.html">Communication</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer_reference/profiler.html">Request-level profiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_reference/rl_admin_control.html">RL Admin Control</a></li>
 </ul>
 
     </div>
@@ -419,6 +426,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incoming-features">Incoming Features</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known Limitations</a></li>
 </ul>
             </nav>
         </div>
@@ -432,7 +440,7 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="llada2-0-uni">
 <h1>LLaDA2.0-Uni<a class="headerlink" href="#llada2-0-uni" title="Link to this heading">#</a></h1>
-<p><a class="reference external" href="https://huggingface.co/inclusionAI/LLaDA2.0-Uni">LLaDA2.0-Uni</a> is a multi-modal model that accepts text, and image input and can produce text-only or image-only or text + image output.</p>
+<p><a class="reference external" href="https://huggingface.co/inclusionAI/LLaDA2.0-Uni">LLaDA2.0-Uni</a> is a multimodal model that accepts text and image input. This SGLang-Omni cookbook covers the experimental text-output serving path.</p>
 <section id="highlights">
 <h2>Highlights<a class="headerlink" href="#highlights" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -452,7 +460,9 @@
 </section>
 <section id="server-configuration">
 <h2>Server Configuration<a class="headerlink" href="#server-configuration" title="Link to this heading">#</a></h2>
-<p>LLaDA2.0-Uni runs a 4-stage pipeline (<code class="docutils literal notranslate"><span class="pre">preprocessing</span> <span class="pre">→</span> <span class="pre">image_encoder</span> <span class="pre">→</span> <span class="pre">thinker</span> <span class="pre">→</span> <span class="pre">decode</span></code>) on a single GPU.</p>
+<p>LLaDA2.0-Uni runs a 4-stage pipeline
+(<code class="docutils literal notranslate"><span class="pre">preprocessing</span> <span class="pre">→</span> <span class="pre">image_encoder</span> <span class="pre">→</span> <span class="pre">thinker</span> <span class="pre">→</span> <span class="pre">decode</span></code>) on a single GPU. The
+thinker disables CUDA graph by default for this experimental DLLM path.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgl-omni<span class="w"> </span>serve<span class="w"> </span>--model-path<span class="w"> </span>inclusionAI/LLaDA2.0-Uni<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
 </pre></div>
 </div>
@@ -595,6 +605,14 @@
 </ul>
 </section>
 </section>
+<section id="known-limitations">
+<h2>Known Limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Text output is supported for text and image input. Image generation and
+interleaved generation are not wired to the OpenAI-compatible response path
+yet.</p></li>
+</ul>
+</section>
 </section>
 
 
@@ -609,12 +627,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="qwen3_omni.html"
+       href="ming_omni.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Qwen3-Omni</p>
+        <p class="prev-next-title">Ming-Omni</p>
       </div>
     </a>
     <a class="right-next"
@@ -654,6 +672,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incoming-features">Incoming Features</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known Limitations</a></li>
 </ul>
   </nav></div>
 
@@ -687,7 +706,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 03, 2026.
+  Last updated on Jun 20, 2026.
   <br/>
 </p>
   </div>
