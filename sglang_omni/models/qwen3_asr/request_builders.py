@@ -154,7 +154,9 @@ def make_qwen3_asr_scheduler_adapters(
     asr_text_token_ids = _encode_literal(tokenizer, _ASR_TEXT)
 
     @lru_cache(maxsize=_PROMPT_TOKEN_CACHE_SIZE)
-    def _build_prompt_ids_cached(num_audio_tokens: int, language: str) -> tuple[int, ...]:
+    def _build_prompt_ids_cached(
+        num_audio_tokens: int, language: str
+    ) -> tuple[int, ...]:
         prompt = (
             f"<|im_start|>user\n"
             f"{_AUDIO_START}{_AUDIO_PAD * num_audio_tokens}{_AUDIO_END}"

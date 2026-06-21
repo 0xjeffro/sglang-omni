@@ -66,7 +66,6 @@ from benchmarks.tasks.tts import SampleOutput, normalize_text
 DEFAULT_CONCURRENCIES = "1,2,4,8,16,32,64"
 
 
-
 def build_asr_eval_results(
     samples: list[SampleInput],
     outputs: list[RequestResult],
