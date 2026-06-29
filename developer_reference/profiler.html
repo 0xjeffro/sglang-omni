@@ -60,7 +60,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="Jun 23, 2026"/>
+    <meta name="docbuild:last-update" content="Jun 29, 2026"/>
   </head>
   
   
@@ -517,9 +517,9 @@ first executable prefill / extend batch is selected.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">stage_first_stream_chunk_sent</span></code> (terminal stage → coordinator)</p></td>
 <td><p>same</p></td>
 </tr>
-<tr class="row-odd"><td><p>Talker request build start / end</p></td>
+<tr class="row-odd"><td><p>Talker request build execution start / end</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">scheduler_request_build_start</span></code> / <code class="docutils literal notranslate"><span class="pre">_end</span></code> (stage = talker)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">OmniScheduler.process_input_requests</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OmniScheduler._run_request_builder</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Talker prefill start</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">scheduler_prefill_start</span></code> (stage = talker)</p></td>
@@ -865,7 +865,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 23, 2026.
+  Last updated on Jun 29, 2026.
   <br/>
 </p>
   </div>
