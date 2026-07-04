@@ -60,7 +60,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="Jun 29, 2026"/>
+    <meta name="docbuild:last-update" content="Jul 04, 2026"/>
   </head>
   
   
@@ -524,7 +524,7 @@ belongs in stages, schedulers, model runners, and model-local payload logic.</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">factory_args</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Any]</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
-<td><p>Arguments forwarded to the factory. Runtime prep may inject <code class="docutils literal notranslate"><span class="pre">model_path</span></code> and <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code> if the factory accepts them and they are not already set.</p></td>
+<td><p>Explicit arguments forwarded to the factory after runtime overrides and typed runtime fields are merged. Signature-dependent defaults such as <code class="docutils literal notranslate"><span class="pre">model_path</span></code>, <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>, and <code class="docutils literal notranslate"><span class="pre">total_gpu_memory_fraction</span></code> are not written here during runtime prep; the worker injects them after importing the factory. <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code> is owned by placement and is <strong>rejected</strong> here (set the device via <code class="docutils literal notranslate"><span class="pre">gpu</span></code> instead).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">next</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">str</span></code>, <code class="docutils literal notranslate"><span class="pre">list[str]</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
@@ -717,10 +717,12 @@ if fusion connects two process groups, those groups are merged.</p>
 <li><p>validate stage names and static topology</p></li>
 <li><p>compute the entry stage and terminal stages</p></li>
 <li><p>allocate ZMQ endpoints</p></li>
-<li><p>resolve dotted factory, merge, and projection functions</p></li>
-<li><p>merge <code class="docutils literal notranslate"><span class="pre">factory_args</span></code> with <code class="docutils literal notranslate"><span class="pre">runtime_overrides</span></code></p></li>
-<li><p>inject global values such as <code class="docutils literal notranslate"><span class="pre">model_path</span></code> and <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code> into factory args when
-accepted by the factory</p></li>
+<li><p>carry dotted factory, merge, route, and projection paths into worker specs</p></li>
+<li><p>merge <code class="docutils literal notranslate"><span class="pre">factory_args</span></code> with <code class="docutils literal notranslate"><span class="pre">runtime_overrides</span></code> and typed runtime fields without
+importing stage factories</p></li>
+<li><p>prepare signature-dependent defaults such as <code class="docutils literal notranslate"><span class="pre">model_path</span></code>, <code class="docutils literal notranslate"><span class="pre">gpu_id</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">total_gpu_memory_fraction</span></code>; the worker injects them after importing the
+factory when the factory accepts them</p></li>
 <li><p>build relay config from stage placement and relay backend</p></li>
 <li><p>wire stream targets and same-GPU stream fast paths</p></li>
 </ul>
@@ -869,7 +871,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 29, 2026.
+  Last updated on Jul 04, 2026.
   <br/>
 </p>
   </div>

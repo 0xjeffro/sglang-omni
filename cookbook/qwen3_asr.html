@@ -60,7 +60,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="Jun 29, 2026"/>
+    <meta name="docbuild:last-update" content="Jul 04, 2026"/>
   </head>
   
   
@@ -525,8 +525,11 @@
 </section>
 <section id="benchmarking">
 <h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Link to this heading">#</a></h2>
-<p>The current repository does not contain <code class="docutils literal notranslate"><span class="pre">benchmarks/eval/benchmark_qwen3_asr_concurrency.py</span></code>. Qwen3-ASR correctness and concurrency coverage is in <code class="docutils literal notranslate"><span class="pre">tests/test_model/test_qwen3_asr_ci.py</span></code>, which transcribes SeedTTS samples through <code class="docutils literal notranslate"><span class="pre">/v1/audio/transcriptions</span></code> and checks WER, throughput, latency, and RTF.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">QWEN3_ASR_CI_CONCURRENCY</span><span class="o">=</span><span class="m">32</span><span class="w"> </span>pytest<span class="w"> </span>tests/test_model/test_qwen3_asr_ci.py<span class="w"> </span>-s
+<p>Use <code class="docutils literal notranslate"><span class="pre">benchmarks/eval/benchmark_asr_seedtts.py</span></code> to sweep ASR concurrency on
+SeedTTS reference audio through <code class="docutils literal notranslate"><span class="pre">/v1/audio/transcriptions</span></code>. ASR CI reuses
+the same single-pass benchmark entry point in <code class="docutils literal notranslate"><span class="pre">tests/test_model/test_asr_ci.py</span></code>
+and applies WER, throughput, latency, and RTF thresholds.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">QWEN3_ASR_CI_CONCURRENCY</span><span class="o">=</span><span class="m">32</span><span class="w"> </span>pytest<span class="w"> </span>tests/test_model/test_asr_ci.py<span class="w"> </span>-s
 </pre></div>
 </div>
 </section>
@@ -626,7 +629,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 29, 2026.
+  Last updated on Jul 04, 2026.
   <br/>
 </p>
   </div>
