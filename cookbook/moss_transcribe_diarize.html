@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Qwen3-ASR &#8212; SGLang</title>
+    <title>MOSS-Transcribe-Diarize &#8212; SGLang</title>
   
   
   
@@ -49,14 +49,14 @@
     <script src="../_static/copybutton.js?v=ccdb6887"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'cookbook/qwen3_asr';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cookbook/moss_transcribe_diarize';</script>
     <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
     <script src="../_static/js/ming_omni_server_generator.js?v=694b1473"></script>
     <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="MOSS-Transcribe-Diarize" href="moss_transcribe_diarize.html" />
-    <link rel="prev" title="MOSS-TTS-Local" href="moss_tts_local.html" />
+    <link rel="next" title="Whisper ASR" href="whisper_asr.html" />
+    <link rel="prev" title="Qwen3-ASR" href="qwen3_asr.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
@@ -165,8 +165,8 @@
 <li class="toctree-l1"><a class="reference internal" href="qwen3_tts.html">Qwen3 TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moss_tts.html">MOSS-TTS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moss_tts_local.html">MOSS-TTS-Local</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Qwen3-ASR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="moss_transcribe_diarize.html">MOSS-Transcribe-Diarize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qwen3_asr.html">Qwen3-ASR</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">MOSS-Transcribe-Diarize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="whisper_asr.html">Whisper ASR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="qwen3_omni.html">Qwen3-Omni</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ming_omni.html">Ming-Omni</a></li>
@@ -268,7 +268,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/cookbook/qwen3_asr.md?plain=1" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/blob/main/docs/cookbook/moss_transcribe_diarize.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -285,7 +285,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/cookbook/qwen3_asr.md" target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/edit/main/docs/cookbook/moss_transcribe_diarize.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -302,7 +302,7 @@
       
       
       
-      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fcookbook/qwen3_asr.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/sgl-project/sglang-omni/issues/new?title=Issue%20on%20page%20%2Fcookbook/moss_transcribe_diarize.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -332,7 +332,7 @@
       
       
       
-      <li><a href="../_sources/cookbook/qwen3_asr.md" target="_blank"
+      <li><a href="../_sources/cookbook/moss_transcribe_diarize.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -408,7 +408,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Qwen3-ASR</h1>
+    <h1>MOSS-Transcribe-Diarize</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -418,12 +418,19 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#server-configuration">Server Configuration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transcribe-audio">Transcribe Audio</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#request-parameters">Request Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-usage">Model Usage</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-commands">Launching Commands</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sending-requests">Sending Requests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#request-parameters">Request Parameters</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmarking">Benchmarking</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-results">Benchmark Results</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#movies800times">movies800times</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aishell4-long">aishell4_long</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
 </ul>
             </nav>
         </div>
@@ -435,32 +442,61 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="qwen3-asr">
-<h1>Qwen3-ASR<a class="headerlink" href="#qwen3-asr" title="Link to this heading">#</a></h1>
-<p><a class="reference external" href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B">Qwen3-ASR</a> is an audio transcription model served through the OpenAI-compatible <code class="docutils literal notranslate"><span class="pre">/v1/audio/transcriptions</span></code> endpoint. It accepts one uploaded audio file per request and returns text.</p>
-<section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="moss-transcribe-diarize">
+<h1>MOSS-Transcribe-Diarize<a class="headerlink" href="#moss-transcribe-diarize" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://huggingface.co/OpenMOSS-Team/MOSS-Transcribe-Diarize">MOSS-Transcribe-Diarize</a> is a multi-speaker ASR and diarization model from the OpenMOSS team.</p>
+<p><img alt="Model Architecture" src="https://huggingface.co/OpenMOSS-Team/MOSS-Transcribe-Diarize/resolve/main/Model_Architecture.png" /></p>
+<p>It transcribes speech, assigns speakers, and predicts timestamps in a single generation pass. With 128K context, it supports up to ~90-minute audio, handles meetings, interruptions, long conversations, and overlapping speech, and adds hotword boosting for names, companies, product terms, and domain vocabulary. MOSS-Transcribe-Diarize is served through the OpenAI-compatible <code class="docutils literal notranslate"><span class="pre">/v1/audio/transcriptions</span></code> endpoint.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Spec</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Architecture</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MossTranscribeDiarizeForConditionalGeneration</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Audio encoder</p></td>
+<td><p>Whisper encoder (24 L, d_model=1024)</p></td>
+</tr>
+<tr class="row-even"><td><p>Text decoder</p></td>
+<td><p>Qwen3 (28 L, hidden=1024, GQA 16/8)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output</p></td>
+<td><p>Speaker-labelled transcript with start/end timestamps</p></td>
+</tr>
+<tr class="row-even"><td><p>Endpoint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/v1/audio/transcriptions</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="model-usage">
+<h2>Model Usage<a class="headerlink" href="#model-usage" title="Link to this heading">#</a></h2>
+<section id="launching-commands">
+<h3>Launching Commands<a class="headerlink" href="#launching-commands" title="Link to this heading">#</a></h3>
 <p>Install <code class="docutils literal notranslate"><span class="pre">sglang-omni</span></code> by following <a class="reference internal" href="../get_started/installation.html"><span class="std std-doc">Installation</span></a>, then download the model:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hf<span class="w"> </span>download<span class="w"> </span>Qwen/Qwen3-ASR-1.7B
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hf<span class="w"> </span>download<span class="w"> </span>OpenMOSS-Team/MOSS-Transcribe-Diarize
 </pre></div>
 </div>
-</section>
-<section id="server-configuration">
-<h2>Server Configuration<a class="headerlink" href="#server-configuration" title="Link to this heading">#</a></h2>
-<p>Qwen3-ASR runs a single ASR stage on one GPU.</p>
+<p>Serve the model:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgl-omni<span class="w"> </span>serve<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--model-path<span class="w"> </span>Qwen/Qwen3-ASR-1.7B<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span>
+<span class="w">  </span>--model-path<span class="w"> </span>OpenMOSS-Team/MOSS-Transcribe-Diarize<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">8000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-running-requests<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cuda-graph-max-bs<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mem-fraction-static<span class="w"> </span><span class="m">0</span>.80
 </pre></div>
 </div>
 </section>
-<section id="transcribe-audio">
-<h2>Transcribe Audio<a class="headerlink" href="#transcribe-audio" title="Link to this heading">#</a></h2>
+<section id="sending-requests">
+<h3>Sending Requests<a class="headerlink" href="#sending-requests" title="Link to this heading">#</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">response_format=verbose_json</span></code> when you need parsed speaker segments. <code class="docutils literal notranslate"><span class="pre">json</span></code> returns the raw transcript text only.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/transcriptions<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-F<span class="w"> </span><span class="nv">model</span><span class="o">=</span>Qwen/Qwen3-ASR-1.7B<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-F<span class="w"> </span><span class="nv">model</span><span class="o">=</span>OpenMOSS-Team/MOSS-Transcribe-Diarize<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-F<span class="w"> </span><span class="nv">file</span><span class="o">=</span>@tests/data/query_to_cars.wav<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-F<span class="w"> </span><span class="nv">language</span><span class="o">=</span>en<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-F<span class="w"> </span><span class="nv">response_format</span><span class="o">=</span>json
+<span class="w">  </span>-F<span class="w"> </span><span class="nv">response_format</span><span class="o">=</span>verbose_json
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
@@ -469,21 +505,33 @@
     <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
         <span class="s2">&quot;http://localhost:8000/v1/audio/transcriptions&quot;</span><span class="p">,</span>
         <span class="n">data</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;Qwen/Qwen3-ASR-1.7B&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;response_format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenMOSS-Team/MOSS-Transcribe-Diarize&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;response_format&quot;</span><span class="p">:</span> <span class="s2">&quot;verbose_json&quot;</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;query_to_cars.wav&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="s2">&quot;audio/wav&quot;</span><span class="p">)},</span>
         <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
     <span class="p">)</span>
 
 <span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;segments&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">segment</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">segment</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">segment</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>For longer multi-speaker audio, raise <code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code> so the decoder can finish the full diarized transcript. The example below uses a repo-local clip with two speakers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/v1/audio/transcriptions<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-F<span class="w"> </span><span class="nv">model</span><span class="o">=</span>OpenMOSS-Team/MOSS-Transcribe-Diarize<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-F<span class="w"> </span><span class="nv">file</span><span class="o">=</span>@docs/_static/audio/gaokao-listening.wav<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-F<span class="w"> </span><span class="nv">response_format</span><span class="o">=</span>verbose_json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-F<span class="w"> </span><span class="nv">max_new_tokens</span><span class="o">=</span><span class="m">65536</span>
 </pre></div>
 </div>
 </section>
 <section id="request-parameters">
-<h2>Request Parameters<a class="headerlink" href="#request-parameters" title="Link to this heading">#</a></h2>
+<h3>Request Parameters<a class="headerlink" href="#request-parameters" title="Link to this heading">#</a></h3>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -505,8 +553,8 @@
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">language</span></code></p></td>
 <td><p>string</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">en</span></code></p></td>
-<td><p>Language hint; <code class="docutils literal notranslate"><span class="pre">zh</span></code>/<code class="docutils literal notranslate"><span class="pre">cn</span></code> select Chinese, other values use English prompting</p></td>
+<td><p>unset</p></td>
+<td><p>Optional language hint</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">response_format</span></code></p></td>
 <td><p>string</p></td>
@@ -515,33 +563,161 @@
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
 <td><p>float</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">0.01</span></code> effective</p></td>
-<td><p>Sampling temperature; <code class="docutils literal notranslate"><span class="pre">0</span></code> is converted to near-greedy <code class="docutils literal notranslate"><span class="pre">0.01</span></code></p></td>
+<td><p>model default (<code class="docutils literal notranslate"><span class="pre">0.0</span></code>)</p></td>
+<td><p>Sampling temperature</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code></p></td>
+<td><p>int</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5120</span></code></p></td>
+<td><p>Max generated tokens; raise for long audio (e.g. <code class="docutils literal notranslate"><span class="pre">65536</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">prompt</span></code></p></td>
+<td><p>string</p></td>
+<td><p>unset</p></td>
+<td><p>Optional instruction override; omit to use the built-in transcribe+diarize prompt</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">verbose_json</span></code> is accepted, but currently returns the same minimal JSON shape as <code class="docutils literal notranslate"><span class="pre">json</span></code>:
-<code class="docutils literal notranslate"><span class="pre">{&quot;text&quot;:</span> <span class="pre">&quot;...&quot;}</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code> is supported inside the model request builder, but the public transcription endpoint does not currently expose it as a form field. The route uses the ASR stage default unless the pipeline is configured another way.</p>
+<p><code class="docutils literal notranslate"><span class="pre">verbose_json</span></code> parses the model markup into OpenAI-style <code class="docutils literal notranslate"><span class="pre">segments</span></code> with
+<code class="docutils literal notranslate"><span class="pre">start</span></code>, <code class="docutils literal notranslate"><span class="pre">end</span></code>, and speaker-prefixed <code class="docutils literal notranslate"><span class="pre">text</span></code> (for example <code class="docutils literal notranslate"><span class="pre">[S01]...</span></code>).
+<code class="docutils literal notranslate"><span class="pre">json</span></code> / <code class="docutils literal notranslate"><span class="pre">text</span></code> return the full transcript string without segment parsing.</p>
+</section>
 </section>
 <section id="benchmarking">
 <h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Link to this heading">#</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">benchmarks/eval/benchmark_asr_seedtts.py</span></code> to sweep ASR concurrency on
-SeedTTS reference audio through <code class="docutils literal notranslate"><span class="pre">/v1/audio/transcriptions</span></code>. ASR CI reuses
-the same single-pass benchmark entry point in <code class="docutils literal notranslate"><span class="pre">tests/test_model/test_asr_ci.py</span></code>
-and applies WER, throughput, latency, and RTF thresholds.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">QWEN3_ASR_CI_CONCURRENCY</span><span class="o">=</span><span class="m">32</span><span class="w"> </span>pytest<span class="w"> </span>tests/test_model/test_asr_ci.py<span class="w"> </span>-s
+<p>Thanks to the Moss team for providing the benchmark datasets, we prepare movies800times and aishell4_long as benchmark datasets for multi-speaker ASR. movies800times is a short-sequence dataset with 800 dialog clips, and aishell4_long is a long-sequence dataset with 20 long-form meeting audio. These two datasets are right now under private license, and you can contact the Moss team for access.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Short-sequence ASR / diarization</span>
+python<span class="w"> </span>-m<span class="w"> </span>benchmarks.eval.benchmark_asr_transcribe_diarize<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dataset<span class="w"> </span>movies800times<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--concurrency<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-running-requests<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cuda-graph-max-bs<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mem-fraction-static<span class="w"> </span><span class="m">0</span>.80<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>results/moss_transcribe_diarize_movies800times
+
+<span class="c1"># Long-sequence ASR / diarization</span>
+python<span class="w"> </span>-m<span class="w"> </span>benchmarks.eval.benchmark_asr_transcribe_diarize<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dataset<span class="w"> </span>aishell4_long<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--concurrency<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-running-requests<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cuda-graph-max-bs<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mem-fraction-static<span class="w"> </span><span class="m">0</span>.80<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-new-tokens<span class="w"> </span><span class="m">65536</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--request-timeout-s<span class="w"> </span><span class="m">1800</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>results/moss_transcribe_diarize_aishell4_long
 </pre></div>
 </div>
 </section>
-<section id="known-limitations">
-<h2>Known Limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h2>
+<section id="benchmark-results">
+<h2>Benchmark Results<a class="headerlink" href="#benchmark-results" title="Link to this heading">#</a></h2>
+<p>Here we provide the benchmark results of movies800times and aishell4_long on a single H100 80GB GPU. Each row is the <strong>mean of 3 runs</strong> against a server with <code class="docutils literal notranslate"><span class="pre">max_running_requests=16</span></code>, <code class="docutils literal notranslate"><span class="pre">cuda_graph_max_bs=16</span></code>, and <code class="docutils literal notranslate"><span class="pre">mem_fraction_static=0.80</span></code>.</p>
+<section id="movies800times">
+<h3>movies800times<a class="headerlink" href="#movies800times" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Concurrency</p></th>
+<th class="head text-right"><p>Throughput (req/s)</p></th>
+<th class="head text-right"><p>Mean latency (s)</p></th>
+<th class="head text-right"><p>RTF mean</p></th>
+<th class="head text-right"><p>audio_s/s</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>2.57</p></td>
+<td class="text-right"><p>0.388</p></td>
+<td class="text-right"><p>0.0612</p></td>
+<td class="text-right"><p>29.76</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>2</p></td>
+<td class="text-right"><p>4.89</p></td>
+<td class="text-right"><p>0.409</p></td>
+<td class="text-right"><p>0.0659</p></td>
+<td class="text-right"><p>56.55</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>4</p></td>
+<td class="text-right"><p>6.62</p></td>
+<td class="text-right"><p>0.513</p></td>
+<td class="text-right"><p>0.0790</p></td>
+<td class="text-right"><p>76.64</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>8</p></td>
+<td class="text-right"><p>6.80</p></td>
+<td class="text-right"><p>0.533</p></td>
+<td class="text-right"><p>0.0810</p></td>
+<td class="text-right"><p>78.70</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>16</p></td>
+<td class="text-right"><p>7.08</p></td>
+<td class="text-right"><p>0.659</p></td>
+<td class="text-right"><p>0.0922</p></td>
+<td class="text-right"><p>81.98</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="aishell4-long">
+<h3>aishell4_long<a class="headerlink" href="#aishell4-long" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Concurrency</p></th>
+<th class="head text-right"><p>Throughput (req/s)</p></th>
+<th class="head text-right"><p>Mean latency (s)</p></th>
+<th class="head text-right"><p>RTF mean</p></th>
+<th class="head text-right"><p>audio_s/s</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>0.022</p></td>
+<td class="text-right"><p>45.2</p></td>
+<td class="text-right"><p>0.0197</p></td>
+<td class="text-right"><p>50.64</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>2</p></td>
+<td class="text-right"><p>0.032</p></td>
+<td class="text-right"><p>60.7</p></td>
+<td class="text-right"><p>0.0265</p></td>
+<td class="text-right"><p>74.25</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>4</p></td>
+<td class="text-right"><p>0.036</p></td>
+<td class="text-right"><p>105.6</p></td>
+<td class="text-right"><p>0.0461</p></td>
+<td class="text-right"><p>81.64</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>8</p></td>
+<td class="text-right"><p>0.040</p></td>
+<td class="text-right"><p>172.6</p></td>
+<td class="text-right"><p>0.0754</p></td>
+<td class="text-right"><p>90.62</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>16</p></td>
+<td class="text-right"><p>0.043</p></td>
+<td class="text-right"><p>282.8</p></td>
+<td class="text-right"><p>0.1237</p></td>
+<td class="text-right"><p>98.83</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <ul class="simple">
-<li><p>The endpoint accepts one uploaded file per request.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">prompt</span></code> is accepted by the HTTP endpoint for OpenAI compatibility, but Qwen3-ASR currently ignores it.</p></li>
-<li><p>Audio is resampled to 16 kHz before transcription.</p></li>
+<li><p><strong>Concurrency</strong> — Maximum number of in-flight client requests (<code class="docutils literal notranslate"><span class="pre">--concurrency</span></code>).</p></li>
+<li><p><strong>Throughput (req/s)</strong> — Completed requests divided by total benchmark wall-clock time.</p></li>
+<li><p><strong>Mean latency</strong> — Average end-to-end time per request (send to full response received).</p></li>
+<li><p><strong>RTF mean</strong> — Average ratio of processing time to input audio duration per request. <code class="docutils literal notranslate"><span class="pre">&lt;1</span></code> is faster than real time.</p></li>
+<li><p><strong>audio_s/s</strong> — Total seconds of input audio processed divided by total benchmark wall-clock time.</p></li>
 </ul>
+<p>To reproduce the results, follow the commands above or the entry point in <a class="reference external" href="https://github.com/sgl-project/sglang-omni/blob/main/benchmarks/eval/benchmark_asr_transcribe_diarize.py"><code class="docutils literal notranslate"><span class="pre">benchmark_asr_transcribe_diarize.py</span></code></a>.</p>
+</section>
+</section>
+<section id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading">#</a></h2>
+<p>Thanks for the joint effort of the OpenMOSS team and SGLang Omni team.</p>
+<p>MOSS Team: Donghua Yu, Zhengyuan Lin, Hanfu Chen, Yiyang Zhang, Yang Gao, Zhaoye Fei, Qinyuan Cheng, Shimin Li, Xipeng Qiu</p>
+<p>SGLang Omni Team: Yijiang Tian, Xinli Jing, Xiangrui Ke, Zhihao Guo, Ruoqi Zhang, Lifan Shen, Jintao Qu, Xuxiang Tian, Kaige Li, Ratish P, Haoguang Cai, Zijie Xia, Chenchen Hong, Xuesong Ye, Jingwen Gu,  Jiaxin Deng, Jiaxuan Luo, Xinyu Lu, Hao Jin, Chenyang Zhao, Yichi Zhang</p>
 </section>
 </section>
 
@@ -557,20 +733,20 @@ and applies WER, throughput, latency, and RTF thresholds.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="moss_tts_local.html"
+       href="qwen3_asr.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">MOSS-TTS-Local</p>
+        <p class="prev-next-title">Qwen3-ASR</p>
       </div>
     </a>
     <a class="right-next"
-       href="moss_transcribe_diarize.html"
+       href="whisper_asr.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">MOSS-Transcribe-Diarize</p>
+        <p class="prev-next-title">Whisper ASR</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -592,12 +768,19 @@ and applies WER, throughput, latency, and RTF thresholds.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#server-configuration">Server Configuration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transcribe-audio">Transcribe Audio</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#request-parameters">Request Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-usage">Model Usage</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-commands">Launching Commands</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sending-requests">Sending Requests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#request-parameters">Request Parameters</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmarking">Benchmarking</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-results">Benchmark Results</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#movies800times">movies800times</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aishell4-long">aishell4_long</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
 </ul>
   </nav></div>
 

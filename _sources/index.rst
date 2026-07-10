@@ -75,6 +75,7 @@ Supported Models
    cookbook/moss_tts.md
    cookbook/moss_tts_local.md
    cookbook/qwen3_asr.md
+   cookbook/moss_transcribe_diarize.md
    cookbook/whisper_asr.md
    cookbook/qwen3_omni.md
    cookbook/ming_omni.md
@@ -105,5 +106,6 @@ Supported Models
    developer_reference/pipeline.md
    developer_reference/config.md
    developer_reference/communication.md
+   developer_reference/reference_encode_service.md
    developer_reference/profiler.md
    developer_reference/rl_admin_control.md
