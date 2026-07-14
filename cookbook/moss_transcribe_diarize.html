@@ -50,7 +50,7 @@
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'cookbook/moss_transcribe_diarize';</script>
-    <script src="../_static/js/qwen3_omni_server_generator.js?v=621ec60e"></script>
+    <script src="../_static/js/qwen3_omni_server_generator.js?v=94f3a115"></script>
     <script src="../_static/js/ming_omni_server_generator.js?v=694b1473"></script>
     <link rel="icon" href="../_static/logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -60,7 +60,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
-    <meta name="docbuild:last-update" content="Jul 11, 2026"/>
+    <meta name="docbuild:last-update" content="Jul 14, 2026"/>
   </head>
   
   
@@ -177,6 +177,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/qwen3_omni.html">Omni Model Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/tts.html">TTS Model Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/omni_router.html">Omni Router Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/mps_dp.html">Same-GPU Data Parallelism with CUDA MPS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul class="nav bd-sidenav">
@@ -611,7 +612,8 @@
 <h3>Optimization Strategies<a class="headerlink" href="#optimization-strategies" title="Link to this heading">#</a></h3>
 <p><img alt="Optimization Overview" src="../_images/moss-td-optimization.svg" /></p>
 <p>The optimization stack mirrors <a class="reference external" href="https://github.com/zhaochenyang20/Awesome-ML-SYS-Tutorial/blob/main/sglang/sglang-omni/tts-optimization.md">what we built for TTS</a>, sharing the same core infrastructure with ASR-specific adaptations.</p>
-<p><strong>CUDA Graph.</strong> The LLM decode step pads batch size to predefined buckets (1, 2, 4, 8, …) and replays a captured CUDA graph, eliminating kernel launch overhead on every token. This is the single biggest optimization for AR Decode. Encoder CUDA Graph is also implemented — the Whisper encoder is a stateless function where only the chunk count varies across requests, so we bucket over chunk count and pad to the nearest captured bucket on replay — but this is not yet merged to main.</p>
+<p><strong>CUDA Graph.</strong> The LLM decode step pads batch size to predefined buckets (1, 2, 4, 8, …) and replays a captured CUDA graph, eliminating kernel launch overhead on every token. This is the single biggest optimization for AR Decode. The Whisper encoder gets the same treatment, bucketed over chunk count (<code class="docutils literal notranslate"><span class="pre">encoder_chunk_buckets</span></code>, default <code class="docutils literal notranslate"><span class="pre">1..8</span></code> ≈ 4 min of audio).</p>
+<p><strong>Encoder Torch Compile (opt-in).</strong> <code class="docutils literal notranslate"><span class="pre">encoder_torch_compile=True</span></code> swaps the encoder CUDA graph for <code class="docutils literal notranslate"><span class="pre">torch.compile(mode=&quot;reduce-overhead&quot;)</span></code>, which adds kernel fusion on top of a CUDA graph and so beats the graph-only path. The two are mutually exclusive: reduce-overhead already owns a CUDA graph, so stacking the manual one is redundant (and illegal to nest). Prefer it for encoder-bound, high-concurrency short-audio serving — the cost is a one-time per-bucket compile at startup, trading a slower cold start for lower steady-state latency. <code class="docutils literal notranslate"><span class="pre">dynamic=False</span></code> means only the warmed chunk counts are accelerated; anything else runs eager.</p>
 <p><strong>Async Decode.</strong> Same one-step lookahead as TTS: launch the current decode step’s GPU work, then resolve the previous step’s host-side work (D2H copy, finish detection, result dispatch) in parallel. Falls back to synchronous mode at batch size 1, where the host work is too small to overlap. Two alternating pinned host buffers prevent read/write races between the GPU’s async D2H write and the CPU’s read. For the full mechanism and code pointers, see <a class="reference external" href="https://github.com/zhaochenyang20/Awesome-ML-SYS-Tutorial/blob/main/sglang/sglang-omni/tts-optimization.md#asynchronous-decode--lookahead">Asynchronous Decode + Lookahead</a> in the TTS optimization guide.</p>
 <p><strong>LRU Encoder Cache.</strong> The Whisper encoder forward is deterministic for identical input audio — same waveform always produces the same embeddings. We exploit this with an LRU cache (max 64 entries, 4 GB budget) that stores encoder outputs on CPU, keyed by a content hash of the input waveform. On a cache hit the stored tensor is transferred back to GPU asynchronously, skipping the encoder entirely. On a miss the encoder runs normally and the result is moved to CPU for storage. The cache evicts by both entry count and total bytes, always dropping the least-recently-used entry first.</p>
 <p>Unlike TTS where the same reference voice is reused across many prompts (high hit rate), ASR inputs are typically unique in production. The cache is most useful for request retries, A/B testing with different decoding parameters, and development iteration.</p>
@@ -972,7 +974,7 @@ By SGLang-Omni Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 11, 2026.
+  Last updated on Jul 14, 2026.
   <br/>
 </p>
   </div>
